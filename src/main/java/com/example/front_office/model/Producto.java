@@ -7,16 +7,24 @@ import java.math.BigDecimal;
 @Entity
 @Data
 public class Producto {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idProducto;
-    
-    private String nombre;
-    private BigDecimal precio;
-    private Integer stock;
+ @Id
+ @GeneratedValue(strategy = GenerationType.IDENTITY)
+private Integer idProducto;
 
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_categoria")
-    private Categoria categoria;
+ @Column(unique = true, nullable = false)
+ private String sku;
+
+    // --- AÑADE ESTA LÍNEA ---
+    private String ean; 
+    // -------------------------
+
+ private String urlImagen;
+
+ private String nombre;
+ private BigDecimal precio;
+ private Integer stock;
+ 
+ @ManyToOne(fetch = FetchType.LAZY)
+ @JoinColumn(name = "id_categoria")
+ private Categoria categoria;
 }

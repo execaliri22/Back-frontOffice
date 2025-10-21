@@ -26,10 +26,12 @@ public class PedidoService {
 
         boolean pagoExitoso = pasarelaPagoService.realizarCargo(token, pedido.getTotal());
 
+        //pasar a pasarelaPagoService la logica de pago
         if (pagoExitoso) {
             pedido.setEstado("PAGADO");
             inventarioService.actualizarStock(pedido);
             emailService.enviarConfirmacion(pedidoId);
+            
         } else {
             pedido.setEstado("RECHAZADO");
             inventarioService.liberarStock(pedido);

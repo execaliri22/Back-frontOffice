@@ -27,6 +27,10 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
                 .requestMatchers(toH2Console()).permitAll() // Permite el acceso a la consola H2
+                
+                // --- AÑADE ESTA LÍNEA ---
+                .requestMatchers("/api/productos/**").permitAll() 
+                
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

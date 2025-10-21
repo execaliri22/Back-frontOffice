@@ -14,8 +14,9 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //agregar url para imagen
     private Integer idUsuario;
-
+   
     private String nombre;
     @Column(unique = true)
     private String email;
