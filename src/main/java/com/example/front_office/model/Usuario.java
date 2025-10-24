@@ -1,5 +1,8 @@
 package com.example.front_office.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference; // <-- IMPORTAR
+// Ignora la contraseña al serializar a JSON por seguridad
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,24 +17,28 @@ public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //agregar url para imagen
     private Integer idUsuario;
-   
+
     private String nombre;
     @Column(unique = true)
     private String email;
+
+    @JsonIgnore // <-- IGNORAR contrasenaHash en respuestas JSON
     private String contrasenaHash;
     private String direccion;
 
-    
-    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY) // Considera LAZY fetching
+    @JsonManagedReference("usuario-carrito") // <-- Lado "principal" que se serializa
     private Carrito carrito;
 
-    // Y AQUÍ TAMBIÉN 👇
-    @OneToMany(mappedBy = "usuario")
-    private List<Pedido> pedidos; // Debe ser List<Pedido>
 
-    // --- Métodos de UserDetails (para Spring Security) ---
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY) // Considera LAZY fetching
+    @JsonManagedReference("usuario-pedidos") // <-- Lado "principal" que se serializa
+    private List<Pedido> pedidos;
+
+    // --- Métodos de UserDetails ---
+    // (Sin cambios aquí)
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() { return null; }
     @Override
