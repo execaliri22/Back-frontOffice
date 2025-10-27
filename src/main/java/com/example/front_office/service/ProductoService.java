@@ -72,4 +72,16 @@ public class ProductoService {
         // Usa el método existsById del repositorio
         return productoRepository.existsById(id);
     }
+
+    // --- NUEVO MÉTODO ---
+    /**
+     * Obtiene todos los productos que pertenecen a una categoría específica.
+     * @param idCategoria El ID de la categoría.
+     * @return Una lista de productos de esa categoría.
+     */
+    @SuppressWarnings("rawtypes")
+    public List<Producto> getProductosByCategoriaId(Integer idCategoria) {
+        // Llama al nuevo método definido en el repositorio
+        return productoRepository.findByCategoriaIdCategoria(idCategoria);
+    }
 }
