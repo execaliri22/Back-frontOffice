@@ -10,14 +10,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration; // <-- 1. IMPORTAR
-import org.springframework.web.cors.CorsConfigurationSource; // <-- 2. IMPORTAR
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // <-- 3. IMPORTAR
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays; // <-- 4. IMPORTAR
+import java.util.Arrays;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
-import static org.springframework.security.config.Customizer.withDefaults; // <-- 5. IMPORTAR
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -30,18 +30,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(withDefaults()) // <-- 6. Activa CORS usando la configuración del Bean corsConfigurationSource
+            .cors(withDefaults()) // Activa CORS usando la configuración del Bean corsConfigurationSource
             .csrf(AbstractHttpConfigurer::disable) // Deshabilita CSRF
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll() // Permite acceso público a /auth/**
                 .requestMatchers(toH2Console()).permitAll() // Permite acceso público a la consola H2
                 .requestMatchers("/api/productos/**").permitAll() // Permite acceso público a /api/productos/**
-                .requestMatchers("/api/categorias/**").permitAll() // <-- AÑADIDO: Permite acceso público a /api/categorias/**
+                .requestMatchers("/api/categorias/**").permitAll() // Permite acceso público a /api/categorias/**
+                .requestMatchers("/favoritos/**").authenticated() // Requiere autenticación para /favoritos/**
+                // Asegúrate de incluir otras rutas que requieran autenticación
+                .requestMatchers("/carrito/**").authenticated()
+                .requestMatchers("/checkout/**").authenticated()
                 .anyRequest().authenticated() // Cualquier otra petición requiere autenticación
             )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Usa sesiones sin estado (apropiado para JWT)
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Usa sesiones sin estado
             .authenticationProvider(authenticationProvider) // Configura el proveedor de autenticación
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Añade el filtro JWT antes del filtro de usuario/contraseña
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Añade el filtro JWT
 
         // Permite que la consola H2 se muestre en iframes
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
@@ -66,7 +70,7 @@ public class SecurityConfig {
         // Especifica las cabeceras permitidas
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
 
-        // Permite que el navegador envíe credenciales (como cookies o cabeceras de autenticación)
+        // Permite que el navegador envíe credenciales
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
