@@ -29,6 +29,8 @@ public class Usuario implements UserDetails {
 
     private String direccion;
 
+    private String fotoPerfilUrl; // <-- NUEVO CAMPO
+
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference("usuario-carrito") // Lado principal para serialización JSON (evita bucles)
     private Carrito carrito;

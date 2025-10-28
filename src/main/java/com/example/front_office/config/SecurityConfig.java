@@ -3,6 +3,7 @@ package com.example.front_office.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod; // <-- IMPORTAR HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,51 +31,45 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(withDefaults()) // Activa CORS usando la configuración del Bean corsConfigurationSource
-            .csrf(AbstractHttpConfigurer::disable) // Deshabilita CSRF
+            .cors(withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll() // Permite acceso público a /auth/**
-                .requestMatchers(toH2Console()).permitAll() // Permite acceso público a la consola H2
-                .requestMatchers("/api/productos/**").permitAll() // Permite acceso público a /api/productos/**
-                .requestMatchers("/api/categorias/**").permitAll() // Permite acceso público a /api/categorias/**
-                .requestMatchers("/favoritos/**").authenticated() // Requiere autenticación para /favoritos/**
-                // Asegúrate de incluir otras rutas que requieran autenticación
+                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers(toH2Console()).permitAll()
+                // Permite GET a recursos públicos
+                .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/uploads/perfil/**").permitAll() // <-- PERMITIR GET A FOTOS
+                // Requiere autenticación para otros métodos en productos/categorías (si los hubiera)
+                .requestMatchers("/api/productos/**").authenticated()
+                .requestMatchers("/api/categorias/**").authenticated()
+                // Requiere autenticación para el resto de rutas protegidas
+                .requestMatchers("/favoritos/**").authenticated()
                 .requestMatchers("/carrito/**").authenticated()
                 .requestMatchers("/checkout/**").authenticated()
-                .anyRequest().authenticated() // Cualquier otra petición requiere autenticación
+                .requestMatchers("/api/perfil/**").authenticated()
+                // Cualquier otra petición requiere autenticación
+                .anyRequest().authenticated()
             )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Usa sesiones sin estado
-            .authenticationProvider(authenticationProvider) // Configura el proveedor de autenticación
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Añade el filtro JWT
+            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Permite que la consola H2 se muestre en iframes
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }
 
-    /**
-     * Define la configuración CORS para la aplicación.
-     * @return CorsConfigurationSource con las reglas CORS definidas.
-     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // Especifica los orígenes permitidos (tu frontend Angular)
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-
-        // Especifica los métodos HTTP permitidos
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Asegúrate que sea el puerto correcto
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        // Especifica las cabeceras permitidas
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control"));
-
-        // Permite que el navegador envíe credenciales
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "X-Requested-With", "Accept"));
         configuration.setAllowCredentials(true);
+        // configuration.setExposedHeaders(Arrays.asList("header1", "header2")); // Si necesitas exponer alguna cabecera
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        // Aplica esta configuración a todas las rutas ("/**")
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
