@@ -1,0 +1,38 @@
+<aside class="tienda-filtros">
+  <div class="filtros-wrapper">
+    <div class="filtro-seccion">
+      <h4 class="filtro-titulo">Buscar</h4>
+      <input type="text" placeholder="Buscar producto..." class="filtro-buscar">
+    </div>
+    <div class="filtro-seccion">
+      <h4 class="filtro-titulo">Categorías</h4>
+      @if (categorias$ | async; as categorias) {
+        <nav class="filtro-categorias">
+         <ul>
+            <li>
+              <a (click)="seleccionarCategoria(null)"
+                 [class.activo]="categoriaSeleccionadaId() === null">
+                Todas
+              </a>
+            </li>
+            @for (cat of categorias; track cat.idCategoria) {
+              <li>
+                <a (click)="seleccionarCategoria(cat.idCategoria)"
+                   [class.activo]="categoriaSeleccionadaId() === cat.idCategoria">
+                  {{ cat.nombre }}
+                </a>
+              </li>
+            }
+          </ul>
+        </nav>
+      } @else if (errorCategorias) {
+         <p class="error-msg">{{ errorCategorias }}</p>
+      } @else {
+        <p>Cargando categorías...</p>
+      }
+    </div>
+  </div>
+</aside>
+<section>
+  <app-product-list [productos]="productos$ | async"></app-product-list>
+</section>

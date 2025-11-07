@@ -1,0 +1,15 @@
+ {
+      "extends": "./tsconfig.json",
+      "compilerOptions": {
+        "outDir": "./out-tsc/app",
+        "types": []
+      },
+      "files": [
+        "src/main.ts" // Solo el main.ts del cliente
+        // Asegúrate que no haya "src/main.server.ts" aquí
+      ],
+      "include": [
+        "src/**/*.d.ts"
+        // Asegúrate que no haya "server.ts" aquí
+      ]
+    }
