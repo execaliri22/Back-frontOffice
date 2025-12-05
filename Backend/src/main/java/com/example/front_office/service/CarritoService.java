@@ -31,7 +31,7 @@ public class CarritoService {
      * @return El carrito del usuario.
      */
     @Transactional // Es transaccional porque podría crear un carrito nuevo
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes", "unchecked", "null"})
     public Carrito obtenerCarritoPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + idUsuario));
@@ -54,7 +54,7 @@ public class CarritoService {
      * @return El carrito actualizado.
      */
     @Transactional
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes", "null"})
     public Carrito agregarItem(Integer idUsuario, Integer idProducto, int cantidad) {
         // Validar cantidad positiva
         if (cantidad <= 0) {

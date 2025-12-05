@@ -17,7 +17,7 @@ public class PedidoService {
     @SuppressWarnings("rawtypes")
     @Transactional
     public Pedido procesarPago(Integer pedidoId, String token) {
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings({ "rawtypes", "null" })
         Pedido pedido = pedidoRepository.findById(pedidoId)
             .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 

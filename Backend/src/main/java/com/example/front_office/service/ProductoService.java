@@ -29,7 +29,7 @@ public class ProductoService {
      * @param id El ID del producto.
      * @return Un Optional que contiene el producto si se encuentra, o vacío si no.
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "null" })
     public Optional<Producto> getProductoById(Integer id) {
         return productoRepository.findById(id);
     }
@@ -41,7 +41,7 @@ public class ProductoService {
      * @param producto El objeto Producto a guardar.
      * @return El producto guardado (con ID si es nuevo).
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "null" })
     @Transactional // Recomendado para operaciones de escritura
     public Producto saveProducto(Producto producto) {
         // Usa el método save del repositorio, que maneja tanto creación como actualización
@@ -53,6 +53,7 @@ public class ProductoService {
      * @param id El ID del producto a eliminar.
      * @return true si el producto existía y fue eliminado, false si no existía.
      */
+    @SuppressWarnings("null")
     @Transactional // Recomendado para operaciones de escritura
     public boolean deleteProductoById(Integer id) {
         if (productoRepository.existsById(id)) { // Verifica si existe antes de borrar
@@ -68,6 +69,7 @@ public class ProductoService {
      * @param id El ID del producto.
      * @return true si el producto existe, false si no.
      */
+    @SuppressWarnings("null")
     public boolean existsById(Integer id) {
         // Usa el método existsById del repositorio
         return productoRepository.existsById(id);

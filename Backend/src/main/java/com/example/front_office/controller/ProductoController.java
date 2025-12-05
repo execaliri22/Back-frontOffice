@@ -48,7 +48,7 @@ public class ProductoController {
      * @return Lista de productos de esa categoría y estado 200 OK (puede ser lista vacía).
      */
     @GetMapping("/categoria/{idCategoria}")
-    @SuppressWarnings("rawtypes") // Mantener si se devuelve la entidad directamente
+    @SuppressWarnings({ "rawtypes", "null" }) // Mantener si se devuelve la entidad directamente
     public ResponseEntity<List<Producto>> listarProductosPorCategoria(@PathVariable Integer idCategoria) {
         // Verifica primero si la categoría existe (opcional, pero buena práctica)
         if (!categoriaRepository.existsById(idCategoria)) {
@@ -64,6 +64,7 @@ public class ProductoController {
     @PostMapping
     public ResponseEntity<?> crearProducto(@RequestBody ProductoDTO productoDTO) {
         try {
+            @SuppressWarnings("null")
             Categoria categoria = categoriaRepository.findById(productoDTO.idCategoria())
                     .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada con ID: " + productoDTO.idCategoria()));
 
@@ -88,6 +89,7 @@ public class ProductoController {
     }
 
     // --- PUT (Actualizar) ---
+    @SuppressWarnings("null")
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarProducto(@PathVariable Integer id, @RequestBody ProductoDTO productoDTO) {
         try {

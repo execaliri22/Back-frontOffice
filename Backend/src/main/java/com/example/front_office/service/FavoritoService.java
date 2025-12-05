@@ -27,7 +27,7 @@ public class FavoritoService {
      * @return Lista de entidades Favorito (que incluyen el producto).
      */
     @Transactional(readOnly = true) // Transacción de solo lectura
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "null" })
     public List<Favorito> obtenerFavoritosPorUsuario(Integer idUsuario) {
         // Verifica que el usuario exista (aunque el controlador ya lo hace)
         if (!usuarioRepository.existsById(idUsuario)) {
@@ -44,7 +44,7 @@ public class FavoritoService {
      * @return El objeto Favorito creado (o el existente si ya estaba).
      */
     @Transactional
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "null" })
     public Favorito agregarFavorito(Integer idUsuario, Integer idProducto) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + idUsuario));
@@ -68,7 +68,7 @@ public class FavoritoService {
      * @param idProducto ID del producto a eliminar.
      */
     @Transactional
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "null" })
     public void eliminarFavorito(Integer idUsuario, Integer idProducto) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + idUsuario));

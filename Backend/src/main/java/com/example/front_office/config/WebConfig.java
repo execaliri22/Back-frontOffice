@@ -14,6 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${file.upload-dir:./uploads/perfil}") // Debe coincidir con PerfilService
     private String uploadDir;
 
+    @SuppressWarnings("null")
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         Path directorioUploadPath = Paths.get(uploadDir).toAbsolutePath();

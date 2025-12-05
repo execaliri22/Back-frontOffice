@@ -32,6 +32,7 @@ public class PerfilService {
     private String uploadDir;
     // --- Fin Configuración Ejemplo ---
 
+    @SuppressWarnings("null")
     @Transactional(readOnly = true)
     public Usuario obtenerPerfilUsuario(Integer idUsuario) {
         return usuarioRepository.findById(idUsuario)

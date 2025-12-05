@@ -37,6 +37,7 @@ public class CategoriaController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> obtenerCategoriaPorId(@PathVariable Integer id) {
+        @SuppressWarnings("null")
         Optional<Categoria> categoriaOptional = categoriaRepository.findById(id); // Busca por ID
 
         // Forma concisa de devolver 200 si existe, 404 si no
@@ -72,6 +73,7 @@ public class CategoriaController {
      * @param categoriaActualizada El objeto Categoria con los nuevos datos (viene del cuerpo JSON).
      * @return La categoría actualizada con estado 200 OK, o estado 404 Not Found si no existe.
      */
+    @SuppressWarnings("null")
     @PutMapping("/{id}")
     public ResponseEntity<Categoria> actualizarCategoriaExistente(@PathVariable Integer id, @RequestBody Categoria categoriaActualizada) {
         return categoriaRepository.findById(id) // Busca si existe la categoría
@@ -93,6 +95,7 @@ public class CategoriaController {
      * @param id El ID de la categoría a eliminar (viene de la URL).
      * @return Estado 204 No Content si se eliminó correctamente, o 404 Not Found si no existía.
      */
+    @SuppressWarnings("null")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarCategoriaPorId(@PathVariable Integer id) {
         if (!categoriaRepository.existsById(id)) { // Verifica si existe antes de intentar borrar
