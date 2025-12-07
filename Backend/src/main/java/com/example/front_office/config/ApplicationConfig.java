@@ -1,9 +1,11 @@
 package com.example.front_office.config;
 
+import com.example.front_office.repository.UsuarioBackRepository;
 import com.example.front_office.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary; // <--- IMPORTANTE IMPORTAR ESTO
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,18 +20,35 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioBackRepository usuarioBackRepository;
 
-    @Bean
+    @Bean("userDetailsService")
     public UserDetailsService userDetailsService() {
         return username -> usuarioRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Cliente no encontrado"));
     }
 
-    @SuppressWarnings("deprecation")
+    @Bean("adminUserDetailsService")
+    public UserDetailsService adminUserDetailsService() {
+        return username -> usuarioBackRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Admin no encontrado"));
+    }
+
+    // --- AQUÍ ESTÁ EL CAMBIO ---
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    @Primary // <--- AGREGA ESTA LÍNEA
+    public AuthenticationProvider userAuthenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setPasswordEncoder(passwordEncoder());
+        return authProvider;
+    }
+    // ---------------------------
+
+    @Bean
+    public AuthenticationProvider adminAuthenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(adminUserDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

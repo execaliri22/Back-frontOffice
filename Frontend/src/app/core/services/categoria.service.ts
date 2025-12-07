@@ -1,26 +1,28 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Categoria } from '../models/models';
-import { catchError } from 'rxjs/operators'; // Importar catchError
-import { throwError } from 'rxjs'; // Importar throwError
-
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Categoria } from '../models/models'; // Ajusta la ruta si es necesario
 
 @Injectable({ providedIn: 'root' })
 export class CategoriaService {
-  private apiUrl = '/api/categorias'; // URL base para categorías (usará proxy)
+  
+  // CAMBIO CLAVE: Usamos la URL completa del Backend
+  // Si usas proxy.conf.json, puedes dejarlo como '/api/categorias'
+  private apiUrl = 'http://localhost:8080/api/categorias'; 
+  
   private http = inject(HttpClient);
 
-  // GET /api/categorias
+  // GET /api/categorias (Público para los filtros)
   getCategorias(): Observable<Categoria[]> {
     return this.http.get<Categoria[]>(this.apiUrl).pipe(
-       catchError(this.handleError) // Manejo básico de errores
+       catchError(this.handleError)
     );
   }
 
-   // Manejador de errores simple
+  // Manejo de errores
   private handleError(error: any): Observable<never> {
-    console.error('Error al obtener categorías:', error);
-    return throwError(() => new Error('No se pudieron cargar las categorías. Intenta de nuevo.'));
+    console.error('Error en CategoriaService:', error);
+    return throwError(() => new Error('Error al cargar las categorías.'));
   }
 }

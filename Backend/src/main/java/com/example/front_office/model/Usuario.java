@@ -3,16 +3,24 @@ package com.example.front_office.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set; // Importar Set si usas la relación con Favorito
+import java.util.Set;
 
 @Entity
 @Data
+@Builder             // <-- Permite crear objetos así: Usuario.builder().email(...).build()
+@NoArgsConstructor   // <-- OBLIGATORIO para JPA/Hibernate
+@AllArgsConstructor  // <-- Necesario para que funcione @Builder
+@Table(name = "usuarios")
 public class Usuario implements UserDetails {
 
     @Id
@@ -21,49 +29,48 @@ public class Usuario implements UserDetails {
 
     private String nombre;
 
-    @Column(unique = true, nullable = false) // Email debe ser único y no nulo
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @JsonIgnore // No incluir hash de contraseña en respuestas JSON
+    @JsonIgnore
     private String contrasenaHash;
 
     private String direccion;
 
-    private String fotoPerfilUrl; // <-- NUEVO CAMPO
+    private String fotoPerfilUrl;
 
+    // Relaciones
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference("usuario-carrito") // Lado principal para serialización JSON (evita bucles)
+    @JsonManagedReference("usuario-carrito")
     private Carrito carrito;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY)
-    @JsonManagedReference("usuario-pedidos") // Lado principal para serialización JSON
+    @JsonManagedReference("usuario-pedidos")
     private List<Pedido> pedidos;
 
-    // Relación Opcional con Favoritos (añadida en la implementación anterior)
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonIgnore // Ignorar al serializar Usuario para evitar bucles
+    @JsonIgnore
     private Set<Favorito> favoritos;
 
     // --- Métodos de UserDetails ---
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Devuelve null si no usas roles/autoridades específicas
-        return null;
+        // ¡CRÍTICO! Nunca devuelvas null.
+        // Como esta entidad es SOLO para clientes, le asignamos el rol fijo.
+        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
     public String getPassword() {
-        // Devuelve el hash de la contraseña almacenado
         return this.contrasenaHash;
     }
 
     @Override
     public String getUsername() {
-        // Usa el email como nombre de usuario para Spring Security
         return this.email;
     }
 
-    // Los siguientes métodos pueden devolver true si no implementas lógica de expiración/bloqueo
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -81,7 +88,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        // Podrías tener un campo 'activo' en la BD y devolver su valor aquí
         return true;
     }
 }

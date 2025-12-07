@@ -1,20 +1,36 @@
 package com.example.front_office.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-// Podrías añadir @JsonIgnoreProperties("productos") si tuvieras List<Producto> aquí
-// import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
+@Builder             // Permite: Categoria.builder().nombre("Ropa").build()
+@NoArgsConstructor   // Obligatorio para JPA
+@AllArgsConstructor  // Obligatorio para @Builder
+@Table(name = "categorias")
 public class Categoria {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCategoria;
+
+    @Column(nullable = false, unique = true) // El nombre no puede repetirse
     private String nombre;
 
-    // Si en el futuro añades @OneToMany List<Producto> productos aquí,
-    // necesitarías @JsonIgnoreProperties("categoria") en esa lista
-    // o usar @JsonManagedReference aquí y @JsonBackReference en Producto.categoria
+    private String descripcion; // Campo útil para el frontend
+
+    // --- RELACIÓN CON PRODUCTOS ---
+    // mappedBy = "categoria" se refiere al nombre del atributo en la clase Producto
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference // Es el "Padre" de la relación. Serializa la lista.
+    @Builder.Default // Inicializa la lista vacía para evitar NullPointerException
+    private List<Producto> productos = new ArrayList<>();
 }

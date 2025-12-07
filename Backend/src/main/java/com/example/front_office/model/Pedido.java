@@ -18,8 +18,9 @@ public class Pedido {
     @Temporal(TemporalType.TIMESTAMP) // Mejor para fechas con hora
     private Date fecha;
     private BigDecimal total;
-    private String estado;
-
+    @Enumerated(EnumType.STRING)
+    private EstadoPedido estado;
+    
     @SuppressWarnings("rawtypes")
     @ManyToOne(fetch = FetchType.LAZY) // Considera LAZY fetching
     @JoinColumn(name = "id_usuario")

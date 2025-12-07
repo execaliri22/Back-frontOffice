@@ -81,7 +81,8 @@ public class ProductoService {
      */
     @SuppressWarnings("rawtypes")
     public List<Producto> getProductosByCategoriaId(Integer idCategoria) {
-        // Llama al nuevo método definido en el repositorio
-        return productoRepository.findByCategoriaIdCategoria(idCategoria);
+        // Actualiza la llamada aquí también:
+        return productoRepository.findByCategoria_IdCategoria(idCategoria);
     }
+
 }

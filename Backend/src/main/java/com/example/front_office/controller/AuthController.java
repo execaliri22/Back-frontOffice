@@ -20,12 +20,12 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         String token = authService.register(request);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(AuthResponse.builder().token(token).build());
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         String token = authService.login(request);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(AuthResponse.builder().token(token).build());
     }
 }

@@ -1,33 +1,65 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 
-// Importa los componentes
+// --- IMPORTACIONES CLIENTE ---
 import { TiendaComponent } from './pages/tienda/tienda.component';
-import { AuthComponent } from './pages/auth/auth.component';
+import { AuthComponent } from './pages/auth/auth.component'; // O LoginComponent si le cambiaste el nombre
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { CheckoutComponent } from './pages/checkout/checkout.component';
 import { HistorialPedidosComponent } from './pages/historial-pedidos/historial-pedidos.component';
 import { FavoritosComponent } from './pages/favoritos/favoritos.component';
-import { PerfilComponent } from './pages/perfil/perfil.component'; // <-- IMPORTA EL NUEVO COMPONENTE
+import { PerfilComponent } from './pages/perfil/perfil.component';
+
+// --- IMPORTACIONES ADMIN (NUEVAS) ---
+import { ProductListComponent } from './pages/admin/product-list/product-list';
+import { ProductFormComponent } from './pages/admin/product-form/product-form';
+import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard';
+import { CategoryListComponent } from './pages/admin/category-list/category-list';
 
 export const routes: Routes = [
-  // Rutas públicas
+  // ==========================================
+  // ZONA PÚBLICA
+  // ==========================================
   { path: '', redirectTo: '/tienda', pathMatch: 'full' },
   { path: 'tienda', component: TiendaComponent },
-  { path: 'auth', component: AuthComponent },
-
-  // Rutas protegidas
+  { path: 'auth', component: AuthComponent }, // Login de usuario/admin
+  { path: 'admin', component: AdminDashboardComponent, canActivate: [authGuard] },
+  
+// ==========================================
+  // ZONA CLIENTE (Protegida)
+  // ==========================================
   { path: 'carrito', component: CarritoComponent, canActivate: [authGuard] },
   { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
   { path: 'historial', component: HistorialPedidosComponent, canActivate: [authGuard] },
   { path: 'favoritos', component: FavoritosComponent, canActivate: [authGuard] },
-  { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] }, // <-- ACTUALIZA LA RUTA
+  { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] },
 
-  // Placeholder para otras rutas del menú (añade componentes cuando los crees)
-  // { path: 'direcciones', component: TiendaComponent, canActivate: [authGuard] }, // Temporalmente redirige a tienda
-  // { path: 'configuracion', component: TiendaComponent, canActivate: [authGuard] }, // Temporalmente redirige a tienda
+  // ==========================================
+  // ZONA ADMIN / BACKOFFICE (Protegida)
+  // ==========================================
+  { 
+    path: 'admin/productos', 
+    component: ProductListComponent, 
+    canActivate: [authGuard] 
+  },
+  { 
+    path: 'admin/productos/nuevo', 
+    component: ProductFormComponent, 
+    canActivate: [authGuard] 
+  },
+  { 
+    path: 'admin/productos/editar/:id', 
+    component: ProductFormComponent, 
+    canActivate: [authGuard] 
+  },
+  { 
+    path: 'admin/categorias', 
+    component: CategoryListComponent, 
+    canActivate: [authGuard] 
+  },
 
-
-  // Redirige cualquier otra ruta no encontrada a la tienda
+  // ==========================================
+  // WILDCARD (Error 404)
+  // ==========================================
   { path: '**', redirectTo: '/tienda' }
 ];

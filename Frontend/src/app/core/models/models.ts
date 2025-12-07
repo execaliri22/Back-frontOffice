@@ -12,6 +12,7 @@ export interface Producto {
   nombre: string;
   precio: number;
   stock: number;
+  descripcion: string;
   categoria: Categoria;
 }
 
@@ -20,6 +21,7 @@ export interface ItemCarrito {
   producto: Producto;
   cantidad: number;
   subtotal: number;
+  descripcion?: string;
 }
 
 export interface Carrito {

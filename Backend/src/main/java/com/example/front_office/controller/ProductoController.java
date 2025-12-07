@@ -1,64 +1,54 @@
 package com.example.front_office.controller;
 
-import com.example.front_office.controller.dto.ProductoDTO; // Importa el DTO
+import com.example.front_office.controller.dto.ProductoDTO;
 import com.example.front_office.model.Categoria;
 import com.example.front_office.model.Producto;
 import com.example.front_office.repository.CategoriaRepository;
 import com.example.front_office.service.ProductoService;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/productos")
+@RequiredArgsConstructor // Inyección de dependencias moderna
 public class ProductoController {
 
-    @Autowired
-    private ProductoService productoService;
-
-    @Autowired
-    private CategoriaRepository categoriaRepository;
+    private final ProductoService productoService;
+    private final CategoriaRepository categoriaRepository;
 
     // --- GET (Leer Todos) ---
     @GetMapping
-    @SuppressWarnings("rawtypes")
-    public List<Producto> listarProductos() {
-        return productoService.getAllProductos();
+    public ResponseEntity<List<Producto>> listarProductos() {
+        return ResponseEntity.ok(productoService.getAllProductos());
     }
 
     // --- GET (Leer por ID de Producto) ---
     @GetMapping("/{id}")
-    @SuppressWarnings("rawtypes")
     public ResponseEntity<Producto> obtenerProducto(@PathVariable Integer id) {
-        Optional<Producto> producto = productoService.getProductoById(id);
-        return producto.map(ResponseEntity::ok)
-                       .orElse(ResponseEntity.notFound().build());
+        return productoService.getProductoById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    // --- NUEVO ENDPOINT: GET (Leer por ID de Categoría) ---
-    /**
-     * Obtiene todos los productos pertenecientes a una categoría específica.
-     * Responde a: GET /api/productos/categoria/{idCategoria} (ej. /api/productos/categoria/2)
-     * @param idCategoria El ID de la categoría a filtrar (viene de la URL).
-     * @return Lista de productos de esa categoría y estado 200 OK (puede ser lista vacía).
-     */
+    // --- GET (Filtrar por Categoría) ---
     @GetMapping("/categoria/{idCategoria}")
-    @SuppressWarnings("rawtypes") // Mantener si se devuelve la entidad directamente
     public ResponseEntity<List<Producto>> listarProductosPorCategoria(@PathVariable Integer idCategoria) {
-        // Verifica primero si la categoría existe (opcional, pero buena práctica)
+        // 1. Validar si la categoría existe
         if (!categoriaRepository.existsById(idCategoria)) {
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // O devuelve una lista vacía si prefieres
-             // return ResponseEntity.ok(List.of()); // Devuelve 200 OK con lista vacía
+            return ResponseEntity.notFound().build();
         }
-        List<Producto> productos = productoService.getProductosByCategoriaId(idCategoria);
-        return ResponseEntity.ok(productos); // Siempre devuelve 200 OK, incluso si la lista está vacía
-    }
 
+        // 2. Llamar al servicio
+        // Asegúrate de tener este método creado en ProductoService (ver abajo)
+        List<Producto> productos = productoService.getProductosByCategoriaId(idCategoria);
+
+        return ResponseEntity.ok(productos);
+    }
 
     // --- POST (Crear) ---
     @PostMapping
@@ -67,64 +57,63 @@ public class ProductoController {
             Categoria categoria = categoriaRepository.findById(productoDTO.idCategoria())
                     .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada con ID: " + productoDTO.idCategoria()));
 
-            Producto nuevoProducto = new Producto();
-            nuevoProducto.setSku(productoDTO.sku());
-            nuevoProducto.setEan(productoDTO.ean());
-            nuevoProducto.setUrlImagen(productoDTO.urlImagen());
-            nuevoProducto.setNombre(productoDTO.nombre());
-            nuevoProducto.setPrecio(productoDTO.precio());
-            nuevoProducto.setStock(productoDTO.stock());
-            nuevoProducto.setCategoria(categoria);
+            Producto nuevoProducto = Producto.builder() // Usando Builder si lo tienes, sino new Producto()
+                    .sku(productoDTO.sku())
+                    .ean(productoDTO.ean())
+                    .urlImagen(productoDTO.urlImagen())
+                    .nombre(productoDTO.nombre())
+                    .descripcion(productoDTO.descripcion()) // Asegúrate de mapear esto si está en el DTO
+                    .precio(productoDTO.precio())
+                    .stock(productoDTO.stock())
+                    .categoria(categoria)
+                    .activo(true)
+                    .build();
 
-            @SuppressWarnings("rawtypes")
             Producto productoGuardado = productoService.saveProducto(nuevoProducto);
             return ResponseEntity.status(HttpStatus.CREATED).body(productoGuardado);
 
         } catch (EntityNotFoundException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al crear el producto: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error: " + e.getMessage());
         }
     }
-
-    // --- PUT (Actualizar) ---
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarProducto(@PathVariable Integer id, @RequestBody ProductoDTO productoDTO) {
         try {
-            @SuppressWarnings("rawtypes")
             Producto productoExistente = productoService.getProductoById(id)
-                    .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con ID: " + id));
+                    .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
 
-            Categoria categoria = productoExistente.getCategoria();
-            if (productoDTO.idCategoria() != null && !productoDTO.idCategoria().equals(categoria.getIdCategoria())) {
-                categoria = categoriaRepository.findById(productoDTO.idCategoria())
-                        .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada con ID: " + productoDTO.idCategoria()));
+            // Actualizar categoría si cambió
+            if (productoDTO.idCategoria() != null && !productoDTO.idCategoria().equals(productoExistente.getCategoria().getIdCategoria())) {
+                Categoria nuevaCategoria = categoriaRepository.findById(productoDTO.idCategoria())
+                        .orElseThrow(() -> new EntityNotFoundException("Categoría no encontrada"));
+                productoExistente.setCategoria(nuevaCategoria);
             }
 
+            // Actualizar campos
             productoExistente.setSku(productoDTO.sku());
             productoExistente.setEan(productoDTO.ean());
-            productoExistente.setUrlImagen(productoDTO.urlImagen());
             productoExistente.setNombre(productoDTO.nombre());
+            productoExistente.setUrlImagen(productoDTO.urlImagen());
             productoExistente.setPrecio(productoDTO.precio());
             productoExistente.setStock(productoDTO.stock());
-            productoExistente.setCategoria(categoria);
+            // productoExistente.setDescripcion(productoDTO.descripcion());
 
-            @SuppressWarnings("rawtypes")
-            Producto productoActualizado = productoService.saveProducto(productoExistente);
-            return ResponseEntity.ok(productoActualizado);
+            Producto actualizado = productoService.saveProducto(productoExistente);
+            return ResponseEntity.ok(actualizado);
 
         } catch (EntityNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
-           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al actualizar el producto: " + e.getMessage());
-       }
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
     }
 
     // --- DELETE (Eliminar) ---
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable Integer id) {
-        boolean eliminado = productoService.deleteProductoById(id);
-        if (eliminado) {
+        if (productoService.deleteProductoById(id)) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

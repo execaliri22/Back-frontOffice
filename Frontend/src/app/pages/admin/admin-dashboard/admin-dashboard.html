@@ -1,0 +1,26 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>👑 Panel de Administración</h1>
+    <button (click)="logout()" class="btn-logout">Cerrar Sesión</button>
+  </header>
+
+  <div class="stats-grid">
+    <div class="card" routerLink="/admin/productos">
+      <div class="icon">📦</div>
+      <h3>Productos</h3>
+      <p>Crear, editar y eliminar inventario.</p>
+    </div>
+
+    <div class="card" routerLink="/admin/categorias">
+      <div class="icon">🏷️</div>
+      <h3>Categorías</h3>
+      <p>Gestionar las familias de productos.</p>
+    </div>
+
+    <div class="card" routerLink="/admin/pedidos">
+      <div class="icon">🚚</div>
+      <h3>Pedidos</h3>
+      <p>Ver y actualizar estado de ventas.</p>
+    </div>
+  </div>
+</div>

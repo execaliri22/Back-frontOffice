@@ -1,0 +1,57 @@
+<div class="admin-container">
+  
+  <div class="header-actions">
+    <button routerLink="/admin" class="btn-back">⬅ Volver</button>
+    <h2>📦 Gestión de Inventario</h2>
+    <button routerLink="/admin/productos/nuevo" class="btn-primary">
+      + Nuevo Producto
+    </button>
+  </div>
+
+  <div *ngIf="loading">Cargando inventario...</div>
+
+  <table class="admin-table" *ngIf="!loading">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Imagen</th>
+        <th>Nombre</th>
+        <th>Categoría</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let prod of productos">
+        <td>{{ prod.idProducto }}</td>
+        <td>
+          <img [src]="prod.urlImagen" alt="img" class="thumb">
+        </td>
+        <td>
+          <strong>{{ prod.nombre }}</strong><br>
+          <small class="text-muted">{{ prod.sku }}</small>
+        </td>
+        <td>{{ prod.categoria?.nombre || 'Sin Cat.' }}</td> 
+        <td>$ {{ prod.precio }}</td>
+        
+        <td [class.low-stock]="prod.stock < 5">
+          {{ prod.stock }} u.
+        </td>
+        
+        <td class="actions">
+          <button [routerLink]="['/admin/productos/editar', prod.idProducto]" class="btn-edit">
+            ✏️
+          </button>
+          <button (click)="borrarProducto(prod.idProducto)" class="btn-delete">
+            🗑️
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && productos.length === 0" class="empty-state">
+    No hay productos registrados. ¡Crea el primero!
+  </div>
+</div>

@@ -1,41 +1,56 @@
 package com.example.front_office.service;
 
+import com.example.front_office.model.EstadoPedido; // Importante importar el Enum
 import com.example.front_office.model.Pedido;
 import com.example.front_office.repository.PedidoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor // Inyecta automáticamente los 'final'
 public class PedidoService {
 
-    @Autowired private PedidoRepository pedidoRepository;
-    @Autowired private InventarioService inventarioService;
-    @Autowired private PasarelaPagoService pasarelaPagoService;
-    @Autowired private EmailService emailService;
+    private final PedidoRepository pedidoRepository;
+    private final InventarioService inventarioService;
+    private final PasarelaPagoService pasarelaPagoService;
+    private final EmailService emailService;
 
-    @SuppressWarnings("rawtypes")
     @Transactional
     public Pedido procesarPago(Integer pedidoId, String token) {
-        @SuppressWarnings("rawtypes")
         Pedido pedido = pedidoRepository.findById(pedidoId)
-            .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado"));
 
         boolean stockReservado = inventarioService.reservarStock(pedido);
-        if (!stockReservado) throw new RuntimeException("Stock no disponible");
+
+        if (!stockReservado) {
+            throw new RuntimeException("Stock no disponible");
+        }
 
         boolean pagoExitoso = pasarelaPagoService.realizarCargo(token, pedido.getTotal());
 
-        //pasar a pasarelaPagoService la logica de pago
         if (pagoExitoso) {
-            pedido.setEstado("PAGADO");
+            // CORRECCIÓN: Usar el Enum, no String
+            pedido.setEstado(EstadoPedido.PAGADO);
             inventarioService.actualizarStock(pedido);
-            emailService.enviarConfirmacion(pedidoId);
-            
+
+            // Intenta enviar email, pero que no rompa el pedido si falla el correo
+            try {
+                emailService.enviarConfirmacion(pedidoId);
+            } catch (Exception e) {
+                // Loguear error pero no detener el flujo
+                System.err.println("Error enviando email: " + e.getMessage());
+            }
+
         } else {
-            pedido.setEstado("RECHAZADO");
+            // CORRECCIÓN: Usar el Enum, no String
+            pedido.setEstado(EstadoPedido.RECHAZADO);
             inventarioService.liberarStock(pedido);
         }
+
         return pedidoRepository.save(pedido);
     }
+
+    // IMPORTANTE: Asegúrate de tener los métodos que agregamos antes
+    // para que el controlador funcione (obtenerTodos, actualizarEstado, etc.)
 }

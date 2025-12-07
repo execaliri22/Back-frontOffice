@@ -3,7 +3,7 @@ package com.example.front_office.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod; // <-- IMPORTAR HttpMethod
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -31,30 +32,77 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(withDefaults())
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**").permitAll()
-                .requestMatchers(toH2Console()).permitAll()
-                // Permite GET a recursos públicos
-                .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/uploads/perfil/**").permitAll() // <-- PERMITIR GET A FOTOS
-                // Requiere autenticación para otros métodos en productos/categorías (si los hubiera)
-                .requestMatchers("/api/productos/**").authenticated()
-                .requestMatchers("/api/categorias/**").authenticated()
-                // Requiere autenticación para el resto de rutas protegidas
-                .requestMatchers("/favoritos/**").authenticated()
-                .requestMatchers("/carrito/**").authenticated()
-                .requestMatchers("/checkout/**").authenticated()
-                .requestMatchers("/api/perfil/**").authenticated()
-                // Cualquier otra petición requiere autenticación
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .cors(withDefaults()) // Utiliza el @Bean de corsConfigurationSource
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        // -----------------------------------------------------------
+                        // 1. ZONA PÚBLICA (WhiteList)
+                        // -----------------------------------------------------------
+                        .requestMatchers(toH2Console()).permitAll() // Consola H2
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/api/backoffice/auth/**").permitAll()
 
+                        // Documentación API (Swagger / OpenAPI) - ¡IMPORTANTE AGREGAR ESTO!
+                        .requestMatchers(
+                                "/v2/api-docs",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**",
+                                "/swagger-resources",
+                                "/swagger-resources/**",
+                                "/configuration/ui",
+                                "/configuration/security",
+                                "/swagger-ui/**",
+                                "/webjars/**",
+                                "/swagger-ui.html"
+                        ).permitAll()
+
+                        // Recursos estáticos (Imágenes de productos, perfiles, etc.)
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/images/**").permitAll()
+
+                        // Lectura pública de Catálogo
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+
+                        // -----------------------------------------------------------
+                        // 2. ZONA ADMIN (Back Office) - Requiere Rol ADMIN
+                        // -----------------------------------------------------------
+                        // Nota: hasRole("ADMIN") espera que en la BD el rol sea "ROLE_ADMIN"
+
+                        // Gestión de productos y categorías (Escritura)
+                        .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/categorias/**").hasRole("ADMIN")
+
+                        // Endpoints exclusivos de gestión
+                        .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
+                        .requestMatchers("/api/pedidos/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN") // Gestión de usuarios
+
+                        // -----------------------------------------------------------
+                        // 3. ZONA USUARIOS (Clientes) - Requiere estar autenticado
+                        // -----------------------------------------------------------
+                        // Rutas específicas de cliente
+                        .requestMatchers("/api/carrito/**").authenticated()
+                        .requestMatchers("/api/favoritos/**").authenticated()
+                        .requestMatchers("/api/checkout/**").authenticated()
+                        .requestMatchers("/api/perfil/**").authenticated()
+                        .requestMatchers("/api/pedidos/**").authenticated() // Ver sus propios pedidos
+
+                        // -----------------------------------------------------------
+                        // 4. RESTO DEL MUNDO (Deny All por defecto si no hay match)
+                        // -----------------------------------------------------------
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Configuración para permitir frames de H2 Console
         http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
@@ -63,11 +111,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200")); // Asegúrate que sea el puerto correcto
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Configura aquí tus orígenes permitidos
+        // Sugerencia: Agrega el puerto de tu backoffice si es distinto (ej: 5173 para Vite/React)
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:5173"));
+
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "X-Requested-With", "Accept"));
+        configuration.setExposedHeaders(List.of("Authorization")); // Útil si devuelves tokens en headers
         configuration.setAllowCredentials(true);
-        // configuration.setExposedHeaders(Arrays.asList("header1", "header2")); // Si necesitas exponer alguna cabecera
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
