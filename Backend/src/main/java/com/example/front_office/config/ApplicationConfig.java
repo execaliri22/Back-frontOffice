@@ -34,17 +34,15 @@ public class ApplicationConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("Admin no encontrado"));
     }
 
-    // --- AQUÍ ESTÁ EL CAMBIO ---
+
     @Bean
-    @Primary // <--- AGREGA ESTA LÍNEA
+    @Primary
     public AuthenticationProvider userAuthenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
-    // ---------------------------
-
     @Bean
     public AuthenticationProvider adminAuthenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
