@@ -40,3 +40,23 @@
   box-shadow: var(--sombra-delicada);
   border-radius: 8px;
 }
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn-checkout {
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  min-width: 200px; /* Para que no salte el tamaño al cambiar texto */
+}
+
+.btn-checkout:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}

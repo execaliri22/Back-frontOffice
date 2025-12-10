@@ -18,7 +18,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -32,17 +31,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults()) // Utiliza el @Bean de corsConfigurationSource
+                .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // -----------------------------------------------------------
                         // 1. ZONA PÚBLICA (WhiteList)
                         // -----------------------------------------------------------
-                        .requestMatchers(toH2Console()).permitAll() // Consola H2
+                        // ELIMINADO: .requestMatchers(toH2Console()).permitAll() ❌
+
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/backoffice/auth/**").permitAll()
 
-                        // Documentación API (Swagger / OpenAPI) - ¡IMPORTANTE AGREGAR ESTO!
+                        // Documentación API (Swagger / OpenAPI)
                         .requestMatchers(
                                 "/v2/api-docs",
                                 "/v3/api-docs",
@@ -56,7 +56,7 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // Recursos estáticos (Imágenes de productos, perfiles, etc.)
+                        // Recursos estáticos
                         .requestMatchers("/uploads/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
 
@@ -67,9 +67,6 @@ public class SecurityConfig {
                         // -----------------------------------------------------------
                         // 2. ZONA ADMIN (Back Office) - Requiere Rol ADMIN
                         // -----------------------------------------------------------
-                        // Nota: hasRole("ADMIN") espera que en la BD el rol sea "ROLE_ADMIN"
-
-                        // Gestión de productos y categorías (Escritura)
                         .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
@@ -81,20 +78,19 @@ public class SecurityConfig {
                         // Endpoints exclusivos de gestión
                         .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
                         .requestMatchers("/api/pedidos/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN") // Gestión de usuarios
+                        .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
 
                         // -----------------------------------------------------------
                         // 3. ZONA USUARIOS (Clientes) - Requiere estar autenticado
                         // -----------------------------------------------------------
-                        // Rutas específicas de cliente
                         .requestMatchers("/api/carrito/**").authenticated()
                         .requestMatchers("/api/favoritos/**").authenticated()
                         .requestMatchers("/api/checkout/**").authenticated()
                         .requestMatchers("/api/perfil/**").authenticated()
-                        .requestMatchers("/api/pedidos/**").authenticated() // Ver sus propios pedidos
+                        .requestMatchers("/api/pedidos/**").authenticated()
 
                         // -----------------------------------------------------------
-                        // 4. RESTO DEL MUNDO (Deny All por defecto si no hay match)
+                        // 4. RESTO DEL MUNDO
                         // -----------------------------------------------------------
                         .anyRequest().authenticated()
                 )
@@ -102,8 +98,7 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-        // Configuración para permitir frames de H2 Console
-        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()));
+        // ELIMINADO: http.headers(...) frameOptions ya no es necesario sin H2 ❌
 
         return http.build();
     }
@@ -111,14 +106,10 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-
-        // Configura aquí tus orígenes permitidos
-        // Sugerencia: Agrega el puerto de tu backoffice si es distinto (ej: 5173 para Vite/React)
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost:5173"));
-
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "X-Requested-With", "Accept"));
-        configuration.setExposedHeaders(List.of("Authorization")); // Útil si devuelves tokens en headers
+        configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

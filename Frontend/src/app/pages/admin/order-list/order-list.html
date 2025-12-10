@@ -1,0 +1,43 @@
+<div class="admin-container">
+  <div class="header-actions">
+    <button routerLink="/admin" class="btn-back">⬅ Volver al Dashboard</button>
+    <h2>🚚 Gestión de Pedidos</h2>
+  </div>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Cliente</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of pedidos">
+        <td>#{{ p.idPedido }}</td>
+        <td>{{ p.fecha | date:'short' }}</td> <td>
+          {{ p.usuario.nombre }} <br>
+          <small>{{ p.usuario.email }}</small>
+        </td>
+        <td class="precio">{{ p.total | currency:'USD' }}</td> <td>
+          <span class="badge" [ngClass]="p.estado">{{ p.estado }}</span>
+        </td>
+        
+        <td>
+          <select [ngModel]="p.estado" (ngModelChange)="cambiarEstado(p, $event)">
+            <option *ngFor="let est of estadosPosibles" [value]="est">
+              {{ est }}
+            </option>
+          </select>
+        </td>
+      </tr>
+
+      <tr *ngIf="pedidos.length === 0">
+        <td colspan="6" class="text-center">No hay pedidos registrados.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

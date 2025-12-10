@@ -1,0 +1,32 @@
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.admin-table th, .admin-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.precio {
+  font-weight: bold;
+  color: #28a745;
+}
+
+/* Badges de Estado */
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: white;
+  font-weight: bold;
+}
+
+.badge.PROCESANDO { background-color: #ffc107; color: #333; }
+.badge.ENVIADO    { background-color: #17a2b8; }
+.badge.ENTREGADO  { background-color: #28a745; }
+.badge.CANCELADO  { background-color: #dc3545; }

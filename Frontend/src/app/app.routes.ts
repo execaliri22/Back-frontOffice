@@ -15,6 +15,7 @@ import { ProductListComponent } from './pages/admin/product-list/product-list';
 import { ProductFormComponent } from './pages/admin/product-form/product-form';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard';
 import { CategoryListComponent } from './pages/admin/category-list/category-list';
+import { OrderListComponent } from './pages/admin/order-list/order-list';
 
 export const routes: Routes = [
   // ==========================================
@@ -57,6 +58,11 @@ export const routes: Routes = [
     component: CategoryListComponent, 
     canActivate: [authGuard] 
   },
+  { 
+  path: 'admin/pedidos', 
+  component: OrderListComponent, 
+  canActivate: [authGuard] 
+},
 
   // ==========================================
   // WILDCARD (Error 404)

@@ -1,34 +1,40 @@
-import { Component } from '@angular/core';
-import { PedidoService } from '../../core/services/pedido.service';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { PedidoService } from '../../core/services/pedido.service';
+import { Pedido } from '../../core/models/models'; // Importamos el modelo
 
 @Component({
   selector: 'app-checkout',
-  standalone: true, 
-  imports: [], 
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent {
 
-  constructor(private pedidoService: PedidoService, private router: Router) {}
+  private pedidoService = inject(PedidoService);
+  private router = inject(Router);
 
-  // (Diagrama: Realizar compra)
-  pagar() {
-    // 1. Simulación de pasarela de pago
-    const tokenSimulado = 'tok_stripe_simulado';
-    
-    // 2. Simulamos ID del pedido (debería venir del carrito/backend)
-    const pedidoIdSimulado = 1; 
+  error: string | null = null;
+  procesando = false;
 
-    this.pedidoService.procesarPago(pedidoIdSimulado, tokenSimulado).subscribe({
-      next: (respuesta) => {
-        alert('¡Pago Exitoso! ' + respuesta);
-        this.router.navigate(['/historial']);
+  // Este método reemplaza tu antigua lógica de "procesarPago"
+  confirmarPago() {
+    this.procesando = true;
+    this.error = null;
+
+    // Usamos el método REAL que creamos en el servicio
+    this.pedidoService.crearPedido().subscribe({
+      next: (pedido: Pedido) => { // Tipamos explícitamente para evitar error TS7006
+        this.procesando = false;
+        alert(`¡Pago procesado con éxito! Pedido #${pedido.idPedido}`);
+        this.router.navigate(['/mis-pedidos']);
       },
-      error: (err) => {
-        // El backend devuelve un texto de error, no un JSON
-        alert('Error en el pago: ' + (err.error || 'Error desconocido')); 
+      error: (err: any) => { // Tipamos el error como any
+        this.procesando = false;
+        console.error(err);
+        this.error = 'Error al procesar el pedido. Intente nuevamente.';
       }
     });
   }

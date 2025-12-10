@@ -8,6 +8,11 @@
   </div>
 
   <div *ngIf="carrito.items && carrito.items.length > 0" class="carrito-lleno">
+    
+    <div *ngIf="error" class="alert-error">
+      ⚠ {{ error }}
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -36,8 +41,18 @@
 
     <div class="carrito-total">
       <h3>Total: {{ calcularTotal(carrito.items) | currency:'$' }}</h3>
-      <a routerLink="/checkout" class="btn btn-primary">Proceder al Pago</a>
+      
+      <button 
+        class="btn btn-primary btn-checkout"
+        (click)="finalizarCompra()"
+        [disabled]="procesandoCompra || !carrito.items?.length">
+        
+        <span *ngIf="!procesandoCompra">💳 Finalizar Compra</span>
+        <span *ngIf="procesandoCompra">⏳ Procesando...</span>
+      
+      </button>
     </div>
+
   </div>
 
 </div>
