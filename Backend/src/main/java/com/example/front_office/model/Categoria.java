@@ -30,7 +30,6 @@ public class Categoria {
     // --- RELACIÓN CON PRODUCTOS ---
     // mappedBy = "categoria" se refiere al nombre del atributo en la clase Producto
     @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference // Es el "Padre" de la relación. Serializa la lista.
-    @Builder.Default // Inicializa la lista vacía para evitar NullPointerException
+    @Builder.Default
     private List<Producto> productos = new ArrayList<>();
 }

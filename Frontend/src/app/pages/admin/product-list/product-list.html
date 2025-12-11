@@ -1,57 +1,70 @@
 <div class="admin-container">
   
   <div class="header-actions">
-    <button routerLink="/admin" class="btn-back">⬅ Volver</button>
+    <button routerLink="/admin" class="btn-back">
+      &lt; // VOLVER AL DASHBOARD
+    </button>
     <h2>📦 Gestión de Inventario</h2>
-    <button routerLink="/admin/productos/nuevo" class="btn-primary">
-      + Nuevo Producto
+    <button routerLink="/admin/productos/nuevo" class="btn btn-primary btn-neon">
+      + NUEVO ITEM
     </button>
   </div>
 
-  <div *ngIf="loading">Cargando inventario...</div>
+  <div *ngIf="loading" class="loading-text">Escaneando base de datos...</div>
 
-  <table class="admin-table" *ngIf="!loading">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Imagen</th>
-        <th>Nombre</th>
-        <th>Categoría</th>
-        <th>Precio</th>
-        <th>Stock</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let prod of productos">
-        <td>{{ prod.idProducto }}</td>
-        <td>
-          <img [src]="prod.urlImagen" alt="img" class="thumb">
-        </td>
-        <td>
-          <strong>{{ prod.nombre }}</strong><br>
-          <small class="text-muted">{{ prod.sku }}</small>
-        </td>
-        <td>{{ prod.categoria?.nombre || 'Sin Cat.' }}</td> 
-        <td>$ {{ prod.precio }}</td>
-        
-        <td [class.low-stock]="prod.stock < 5">
-          {{ prod.stock }} u.
-        </td>
-        
-        <td class="actions">
-          <button [routerLink]="['/admin/productos/editar', prod.idProducto]" class="btn-edit">
-            ✏️
-          </button>
-          <button (click)="borrarProducto(prod.idProducto)" class="btn-delete">
-            🗑️
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive" *ngIf="!loading">
+    <table class="cyber-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Vista Previa</th>
+          <th>Detalles del Producto</th>
+          <th>Categoría</th>
+          <th>Precio</th>
+          <th>Nivel de Stock</th>
+          <th>Comandos</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let prod of productos">
+          <td class="id-col">#{{ prod.idProducto }}</td>
+          <td>
+            <div class="thumb-frame">
+              <img [src]="prod.urlImagen" alt="img" class="thumb">
+            </div>
+          </td>
+          <td>
+            <strong class="prod-name">{{ prod.nombre }}</strong>
+            <div class="prod-sku">SKU: {{ prod.sku }}</div>
+          </td>
+          <td class="cat-col">{{ prod.categoria?.nombre || 'N/A' }}</td> 
+          <td class="price-col">$ {{ prod.precio }}</td>
+          
+          <td>
+            <span class="stock-indicator" 
+                  [class.critical]="prod.stock < 5" 
+                  [class.healthy]="prod.stock >= 5">
+              {{ prod.stock }} u.
+              <span class="status-dot"></span>
+            </span>
+          </td>
+          
+          <td class="actions">
+            <button [routerLink]="['/admin/productos/editar', prod.idProducto]" class="btn-icon btn-edit" title="Modificar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+            <button (click)="borrarProducto(prod.idProducto)" class="btn-icon btn-delete" title="Eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
   <div *ngIf="!loading && productos.length === 0" class="empty-state">
-    No hay productos registrados. ¡Crea el primero!
+    <div class="empty-icon">📂</div>
+    <p>Base de datos vacía. Inicialice el primer producto.</p>
   </div>
+
 </div>

@@ -11,12 +11,12 @@ import { Categoria, Producto } from '../../../core/models/models';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './product-form.html',
-  styleUrls: ['./product-form.css']
+  styleUrls: ['./product-form.css'] // Nota: en Angular 17+ suele ser styleUrl (singular) o styleUrls (plural)
 })
 export class ProductFormComponent implements OnInit {
 
   private fb = inject(FormBuilder);
-  private adminService = inject(AdminService); // Esto ya debería funcionar
+  private adminService = inject(AdminService);
   private categoriaService = inject(CategoriaService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
@@ -28,10 +28,11 @@ export class ProductFormComponent implements OnInit {
 
   constructor() {
     this.form = this.fb.group({
-      nombre: ['', Validators.required],
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
       sku: ['', Validators.required],
-      precio: [0, Validators.required],
-      stock: [0, Validators.required],
+      // Agregamos validación para evitar números negativos
+      precio: [0, [Validators.required, Validators.min(0.01)]], 
+      stock: [0, [Validators.required, Validators.min(0)]],
       urlImagen: [''],
       descripcion: [''],
       ean: [''],
@@ -40,8 +41,10 @@ export class ProductFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Cargamos categorías
     this.categoriaService.getCategorias().subscribe(cats => this.categorias = cats);
 
+    // Detectamos si es edición
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
@@ -53,37 +56,64 @@ export class ProductFormComponent implements OnInit {
   }
 
   cargarDatos() {
-    // Solución al error de tipos: Tipamos explícitamente 'productos' como Producto[]
+    if (!this.idProducto) return;
+
+    // OPTIMIZACIÓN: Si tu backend lo permite, usa un método getById.
+    // Si no tienes ese endpoint, usa tu método anterior de getProductos().find(...)
+    
+    // Opción A (Recomendada - Requiere endpoint en backend):
+    /*
+    this.adminService.getProductoById(this.idProducto).subscribe((prod: Producto) => {
+       this.llenarFormulario(prod);
+    });
+    */
+
+    // Opción B (Tu método actual - Funciona pero descarga todo):
     this.adminService.getProductos().subscribe((productos: Producto[]) => {
       const prod = productos.find((p: Producto) => p.idProducto === this.idProducto);
       if (prod) {
-        this.form.patchValue({
-          nombre: prod.nombre,
-          sku: prod.sku,
-          precio: prod.precio,
-          stock: prod.stock,
-          urlImagen: prod.urlImagen,
-          descripcion: prod.descripcion,
-          ean: prod.ean,
-          idCategoria: prod.categoria?.idCategoria
-        });
+        this.llenarFormulario(prod);
       }
     });
   }
 
+  // Método auxiliar para limpiar el código
+  private llenarFormulario(prod: Producto) {
+    this.form.patchValue({
+      nombre: prod.nombre,
+      sku: prod.sku,
+      precio: prod.precio,
+      stock: prod.stock,
+      urlImagen: prod.urlImagen,
+      descripcion: prod.descripcion,
+      ean: prod.ean,
+      idCategoria: prod.categoria?.idCategoria
+    });
+  }
+
   guardar() {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched(); // Marca los errores en rojo si el usuario intenta guardar
+      return;
+    }
+    
     const data = this.form.value;
 
     if (this.esEdicion && this.idProducto) {
       this.adminService.updateProducto(this.idProducto, data).subscribe({
         next: () => this.router.navigate(['/admin/productos']),
-        error: (e: any) => alert('Error al actualizar')
+        error: (e) => {
+          console.error(e);
+          alert('Error al actualizar: ' + e.message);
+        }
       });
     } else {
       this.adminService.createProducto(data).subscribe({
         next: () => this.router.navigate(['/admin/productos']),
-        error: (e: any) => alert('Error al crear')
+        error: (e) => {
+          console.error(e);
+          alert('Error al crear: ' + e.message);
+        }
       });
     }
   }

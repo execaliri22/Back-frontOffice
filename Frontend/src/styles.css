@@ -1,103 +1,70 @@
-/* Importamos una fuente limpia y moderna */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* FUENTES FUTURISTAS */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@300;400;600&display=swap');
 
 :root {
-  /* Paleta de colores */
-  --color-primario: #3498db;
-  --color-secundario: #f2f1f1;
-  --color-acento: #2ecc71;
-  --color-peligro: #e74c3c;
-  --color-texto-principal: #2c3e50;
-  --color-texto-secundario: #7f8c8d;
+  /* --- PALETA CYBERPUNK --- */
+  --color-fondo: #05050b;         /* Negro profundo */
+  --color-panel: #11111b;         /* Gris oscuro para menús/tarjetas */
+  
+  --color-primario: #00f3ff;      /* Cyan Neón (Tu nuevo color principal) */
+  --color-acento: #bc13fe;        /* Púrpura Neón */
+  --color-peligro: #ff003c;       /* Rojo Neón */
+  
+  --color-texto-principal: #e0e6ed;
+  --color-texto-secundario: #94a3b8;
   --color-blanco: #ffffff;
-  --color-borde: #dee2e6;
-  --fuente-principal: 'Inter', sans-serif;
-  --sombra-suave: 0 4px 15px rgba(0, 0, 0, 0.08);
-  --sombra-boton: 0 2px 5px rgba(0, 0, 0, 0.1);
-  --borde-radio: 8px;
+  
+  --color-borde: rgba(0, 243, 255, 0.2); /* Bordes sutiles en Cyan */
+  
+  /* --- CONFIGURACIÓN ESTRUCTURAL --- */
+  --container-max-width: 1300px;
+  --borde-radio: 4px; /* Bordes más rectos estilo tech */
+  
+  /* --- EFECTOS --- */
+  --sombra-suave: 0 4px 15px rgba(0, 243, 255, 0.05);
+  --sombra-boton: 0 0 10px rgba(0, 243, 255, 0.4);
+  
+  --fuente-titulos: 'Orbitron', sans-serif;
+  --fuente-principal: 'Rajdhani', sans-serif;
 }
 
+/* RESET BÁSICO */
 body {
   font-family: var(--fuente-principal);
-  background-color: var(--color-secundario);
+  background-color: var(--color-fondo);
   color: var(--color-texto-principal);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  line-height: 1.6;
+  font-size: 18px;
+  
+  /* Fondo tecnológico sutil */
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
 }
 
-*, *::before, *::after { box-sizing: inherit; }
-h1, h2, h3, h4, h5, h6 { font-weight: 600; margin-top: 0; margin-bottom: 0.75em; }
-a { text-decoration: none; color: var(--color-primario); transition: color 0.2s ease; }
-a:hover { color: #2980b9; }
-
-/* CLAVE: Contenedor principal para centrar contenido */
-.container {
-  max-width: 1300px; /* Ancho máximo del contenido */
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem; /* Espaciado lateral */
-  padding-right: 1.5rem;
-  width: 100%; /* Asegura que ocupe el espacio si es menor a max-width */
+/* TÍTULOS */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-primario);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* --- Botones --- */
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--borde-radio);
-  cursor: pointer;
-  font-weight: 500;
-  border: none;
-  transition: all 0.2s ease-in-out;
-  text-align: center;
-  font-size: 0.95rem;
-}
+/* BOTONES GLOBALES (Estilo Neón) */
 .btn-primary {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
-  box-shadow: var(--sombra-boton);
+  background-color: transparent;
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  box-shadow: 0 0 5px var(--color-primario) inset;
+  transition: all 0.3s ease;
 }
+
 .btn-primary:hover {
-  background-color: #2980b9;
+  background-color: var(--color-primario);
+  color: #000; /* Texto negro para contraste */
+  box-shadow: 0 0 20px var(--color-primario);
   transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-.btn-primary:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* --- Formularios --- */
-.form-group { margin-bottom: 1.25rem; }
-.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--color-texto-secundario); font-size: 0.9rem; }
-.form-group input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--borde-radio);
-  box-sizing: border-box;
-  font-family: var(--fuente-principal);
-  font-size: 1rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.form-group input:focus {
-  outline: none;
-  border-color: var(--color-primario);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-}
-.error-msg { color: var(--color-peligro); text-align: center; margin-bottom: 1rem; font-size: 0.9rem; font-weight: 500; }
-
-/* --- Tablas --- */
-table {
-  width: 100%; border-collapse: collapse; background: var(--color-blanco);
-  box-shadow: var(--sombra-suave); border-radius: var(--borde-radio);
-  overflow: hidden; margin-bottom: 1.5rem;
-}
-th, td { padding: 1rem 1.25rem; text-align: left; border-bottom: 1px solid var(--color-borde); vertical-align: middle; }
-th { background-color: var(--color-secundario); font-weight: 600; color: var(--color-texto-principal); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
-tbody tr:last-child td { border-bottom: none; }
-tbody tr:hover { background-color: #f8f9fa; }

@@ -1,6 +1,7 @@
 package com.example.front_office.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor   // Obligatorio para JPA
 @AllArgsConstructor  // Obligatorio para @Builder
 @Table(name = "productos")
+
 public class Producto {
 
  @Id
@@ -47,8 +49,8 @@ public class Producto {
  // Cambiamos a LAZY por rendimiento.
  // Usamos @JsonBackReference para que al pedir un producto, NO intente serializar
  // toda la categoría y sus 500 productos de nuevo (evita bucle infinito).
- @ManyToOne(fetch = FetchType.LAZY)
+ @ManyToOne(fetch = FetchType.EAGER)
  @JoinColumn(name = "id_categoria")
- @JsonBackReference // "Hijo" de la relación. NO se muestra en el JSON del producto para evitar bucles.
+ @JsonIgnoreProperties({"productos", "hibernateLazyInitializer", "handler"})
  private Categoria categoria;
 }

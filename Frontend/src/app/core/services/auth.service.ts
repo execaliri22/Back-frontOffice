@@ -8,7 +8,8 @@ interface JwtPayload {
   sub: string;
   nombre?: string;
   fotoPerfilUrl?: string;
-  role?: string; // <-- AÑADIDO: Para saber si es ADMIN o USER
+  role?: string;           // Caso 1: Backend envía "role": "ROLE_ADMIN"
+  authorities?: string[];  // Caso 2: Backend envía "authorities": ["ROLE_ADMIN"]
   exp?: number;
   iat?: number;
 }
@@ -17,8 +18,8 @@ interface JwtPayload {
 export class AuthService implements OnDestroy {
   
   // --- URLs ---
-  private apiUrl = 'http://localhost:8080/auth';                // Clientes
-  private adminApiUrl = 'http://localhost:8080/api/backoffice/auth'; // Admins (NUEVO)
+  private apiUrl = 'http://localhost:8080/auth';               // Clientes
+  private adminApiUrl = 'http://localhost:8080/api/backoffice/auth'; // Admins
   private perfilApiUrl = 'http://localhost:8080/api/perfil';    // Perfil
   
   private readonly TOKEN_KEY = 'authToken';
@@ -32,7 +33,7 @@ export class AuthService implements OnDestroy {
 
   private currentUserToken = signal<string | null>(null);
   
-  // Usuario decodificado
+  // Usuario decodificado (Computado: cambia si cambia el token)
   public currentUser = computed<JwtPayload | null>(() => {
     const token = this.currentUserToken();
     if (token) {
@@ -41,17 +42,26 @@ export class AuthService implements OnDestroy {
     return null;
   });
 
-  // Helpers computados
+  // Helpers computados (Signals)
   public currentUserName = computed<string | null>(() => this.currentUser()?.nombre ?? this.currentUser()?.sub ?? null);
   public currentUserEmail = computed<string | null>(() => this.currentUser()?.sub ?? null);
   public currentUserFotoUrl = computed<string | null>(() => this.currentUser()?.fotoPerfilUrl ?? null);
   
-  // Helper para saber si es Admin (NUEVO)
+  // --- LÓGICA DE ADMIN (MEJORADA) ---
   public isAdmin = computed<boolean>(() => {
-    const role = this.currentUser()?.role; 
-    // Asegúrate de que tu backend mande el claim "role": "ROLE_ADMIN" en el token
-    // O si usas "authorities", ajusta la lógica aquí.
-    return role === 'ROLE_ADMIN'; 
+    const user = this.currentUser();
+    if (!user) return false;
+
+    // 1. Verificar si viene en el campo 'role' (String simple)
+    if (user.role === 'ROLE_ADMIN') return true;
+
+    // 2. Verificar si viene en 'authorities' (Array de strings - Típico de Spring Security)
+    if (user.authorities && Array.isArray(user.authorities)) {
+      // Buscamos si el array contiene el rol de admin
+      return user.authorities.includes('ROLE_ADMIN');
+    }
+
+    return false; 
   });
 
   private destroy$ = new Subject<void>();
@@ -89,7 +99,7 @@ export class AuthService implements OnDestroy {
     );
   }
 
-  // 3. Login Admin (BackOffice) - ¡NUEVO!
+  // 3. Login Admin (BackOffice)
   loginAdmin(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.adminApiUrl}/login`, request).pipe(
       tap(response => this.saveToken(response.token)),
@@ -108,15 +118,16 @@ export class AuthService implements OnDestroy {
   private saveToken(token: string): void {
     if (typeof localStorage === 'undefined') return;
     localStorage.setItem(this.TOKEN_KEY, token);
-    this.updateLoginStatus();
+    this.updateLoginStatus(); // Actualiza los signals
   }
 
   private clearToken(): void {
     if (typeof localStorage === 'undefined') return;
     localStorage.removeItem(this.TOKEN_KEY);
-    this.updateLoginStatus();
+    this.updateLoginStatus(); // Actualiza los signals
   }
 
+  // Actualiza todos los signals leyendo el localStorage
   private updateLoginStatus(): void {
     if (typeof localStorage === 'undefined') return;
     const token = localStorage.getItem(this.TOKEN_KEY);
@@ -129,6 +140,7 @@ export class AuthService implements OnDestroy {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  // Helper simple para usar en condicionales normales (no reactivos)
   isLoggedIn(): boolean {
     return this.loggedInStatus();
   }
@@ -147,7 +159,7 @@ export class AuthService implements OnDestroy {
      }
   }
 
-  // --- MÉTODOS DE PERFIL (Igual que antes) ---
+  // --- MÉTODOS DE PERFIL ---
 
   private refreshUserDataFromToken(newToken: string): void {
       this.saveToken(newToken);

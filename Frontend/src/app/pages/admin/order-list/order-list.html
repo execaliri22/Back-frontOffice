@@ -7,22 +7,28 @@
   <table class="admin-table">
     <thead>
       <tr>
-        <th>ID</th>
+        <th>ID Pedido</th>
         <th>Fecha</th>
         <th>Cliente</th>
         <th>Total</th>
-        <th>Estado</th>
+        <th>Estado Actual</th>
         <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let p of pedidos">
-        <td>#{{ p.idPedido }}</td>
-        <td>{{ p.fecha | date:'short' }}</td> <td>
-          {{ p.usuario.nombre }} <br>
+        <td style="font-family: monospace; color: #d63384;">#{{ p.idPedido }}</td>
+        
+        <td>{{ p.fecha | date:'short' }}</td>
+        
+        <td>
+          <div style="font-weight: bold;">{{ p.usuario.nombre }}</div>
           <small>{{ p.usuario.email }}</small>
         </td>
-        <td class="precio">{{ p.total | currency:'USD' }}</td> <td>
+        
+        <td class="precio">{{ p.total | currency:'USD' }}</td>
+        
+        <td>
           <span class="badge" [ngClass]="p.estado">{{ p.estado }}</span>
         </td>
         
@@ -36,7 +42,9 @@
       </tr>
 
       <tr *ngIf="pedidos.length === 0">
-        <td colspan="6" class="text-center">No hay pedidos registrados.</td>
+        <td colspan="6" class="text-center">
+           ⚠ No se encontraron registros en el sistema.
+        </td>
       </tr>
     </tbody>
   </table>

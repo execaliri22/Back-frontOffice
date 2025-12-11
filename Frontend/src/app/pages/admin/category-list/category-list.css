@@ -1,35 +1,236 @@
-.quick-form {
-  display: flex;
-  gap: 10px;
-  margin: 20px 0;
-  padding: 20px;
-  background: #f8f9fa;
-  border-radius: 8px;
+/* --- CONTENEDOR PRINCIPAL --- */
+.admin-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: rgba(17, 17, 27, 0.95);
+  border: 1px solid rgba(0, 243, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
 }
 
-input {
-  flex: 1;
-  padding: 10px;
-  border: 1px solid #ddd;
+/* Línea de neón superior */
+.admin-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00f3ff, transparent);
+}
+
+.header-actions {
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  color: #00f3ff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 30px;
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+}
+
+/* --- FORMULARIO DE GESTIÓN (LAYOUT ARREGLADO) --- */
+.category-form-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(0, 243, 255, 0.15);
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+}
+
+.inline-form {
+  display: flex;
+  gap: 20px;            /* Espacio sólido entre input y botones */
+  align-items: center;  /* Centrado vertical perfecto */
+  flex-wrap: wrap;      /* IMPORTANTE: Permite que bajen si no hay espacio */
+}
+
+.input-group {
+  flex-grow: 1;         /* Ocupa todo el espacio disponible */
+  min-width: 250px;     /* Ancho mínimo para que no se aplaste */
+}
+
+.cyber-input {
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #050505;
+  border: 1px solid #333;
+  color: #fff;
   border-radius: 4px;
+  font-family: monospace;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-sizing: border-box; /* Evita desbordes */
 }
 
-.category-list {
-  list-style: none;
-  padding: 0;
+.cyber-input:focus {
+  border-color: #00f3ff;
+  outline: none;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
 }
 
-.category-list li {
-  background: white;
-  border-bottom: 1px solid #eee;
-  padding: 15px;
+.form-actions {
   display: flex;
-  justify-content: space-between;
+  gap: 15px;            /* Espacio entre CANCELAR y CREAR */
+  align-items: center;
+  flex-shrink: 0;       /* IMPORTANTE: Evita que los botones se aplasten */
 }
 
-.badge-id {
-  background: #eee;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 0.8rem;
+/* --- BOTONES --- */
+.btn-neon {
+  background: linear-gradient(90deg, #00f3ff, #00c3ff);
+  color: #000;
+  font-weight: 800;
+  border: none;
+  padding: 0 30px;
+  height: 45px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+  white-space: nowrap; /* Evita que el texto baje de línea */
+}
+
+.btn-neon:hover:not(:disabled) {
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+}
+
+.btn-neon:disabled {
+  background: #333;
+  color: #555;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Botón Cancelar (Arreglado) */
+.btn-cancel {
+  background: transparent;
+  border: 1px solid #555;
+  color: #fff !important; /* Fuerza color blanco */
+  padding: 0 20px;
+  height: 45px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.btn-cancel:hover {
+  border-color: #ff4d5a;
+  color: #ff4d5a !important;
+  background-color: rgba(255, 77, 90, 0.1);
+  box-shadow: 0 0 10px rgba(255, 77, 90, 0.3);
+}
+
+/* --- TABLA --- */
+.table-responsive {
+  overflow-x: auto;
+}
+
+.cyber-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.cyber-table th {
+  text-align: left;
+  padding: 15px;
+  color: #00f3ff;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid rgba(0, 243, 255, 0.3);
+}
+
+.cyber-table td {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #ccc;
+  vertical-align: middle;
+}
+
+.cyber-table tr:hover td {
+  background-color: rgba(0, 243, 255, 0.03);
+  color: #fff;
+}
+
+.id-col { font-family: monospace; color: #666; }
+.cat-name { color: #fff; font-size: 1.1rem; }
+.text-right { text-align: right; }
+
+/* Botones Iconos de Tabla */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.btn-icon {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-edit { color: #ffc107; }
+.btn-edit:hover { background-color: rgba(255, 193, 7, 0.1); transform: scale(1.1); }
+.btn-delete { color: #ff003c; }
+.btn-delete:hover { background-color: rgba(255, 0, 60, 0.1); transform: scale(1.1); }
+
+/* --- BOTÓN VOLVER --- */
+.btn-back {
+  background-color: rgba(0, 243, 255, 0.1);
+  border: 1px solid #00f3ff;
+  color: #00f3ff;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s;
+}
+.btn-back:hover {
+  background-color: #00f3ff;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0, 243, 255, 0.6);
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .inline-form {
+    flex-direction: column;
+    align-items: stretch; /* Estira los elementos al ancho total */
+  }
+  
+  .form-actions {
+    flex-direction: column-reverse; /* Pone Cancelar abajo en móvil */
+    width: 100%;
+  }
+
+  .btn-neon, .btn-cancel {
+    width: 100%; /* Botones anchos en móvil */
+  }
 }

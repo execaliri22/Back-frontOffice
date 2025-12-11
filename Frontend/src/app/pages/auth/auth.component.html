@@ -1,52 +1,69 @@
 <div class="auth-container">
   
   <div class="auth-form" *ngIf="esLogin">
-    <h2>Iniciar Sesión</h2>
+    <h2>> INICIAR SESIÓN_</h2>
+    
     <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
       
       <div class="form-group">
-        <label for="login-email">Email</label>
-        <input id="login-email" type="email" formControlName="email">
+        <label for="login-email">Identificador (Email)</label>
+        <input id="login-email" type="email" formControlName="email" placeholder="usuario@net.com">
       </div>
       
       <div class="form-group">
-        <label for="login-password">Contraseña</label>
-        <input id="login-password" type="password" formControlName="password">
+        <label for="login-password">Código de Acceso</label>
+        <input id="login-password" type="password" formControlName="password" placeholder="••••••••">
       </div>
       
-      <p *ngIf="error" class="error-msg">{{ error }}</p>
+      <p *ngIf="error" class="error-msg">ERROR: {{ error }}</p>
 
-      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">Entrar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loginForm.invalid">
+        ACCEDER AL SISTEMA
+      </button>
     </form>
-    <p>¿No tienes cuenta? <a (click)="esLogin = false" style="cursor: pointer;">Regístrate</a></p>
+    
+    <div class="auth-footer">
+      <p>¿No tienes credenciales?</p>
+      <a (click)="esLogin = false">Solicitar Registro</a>
+    </div>
   </div>
 
   <div class="auth-form" *ngIf="!esLogin">
-    <h2>Registrarse</h2>
+    <h2>> NUEVO REGISTRO_</h2>
+    
     <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
       
       <div class="form-group">
-        <label for="reg-nombre">Nombre</label>
-        <input id="reg-nombre" type="text" formControlName="nombre">
-      </div>
-      <div class="form-group">
-        <label for="reg-email">Email</label>
-        <input id="reg-email" type="email" formControlName="email">
-      </div>
-      <div class="form-group">
-        <label for="reg-password">Contraseña</label>
-        <input id="reg-password" type="password" formControlName="password">
-      </div>
-      <div class="form-group">
-        <label for="reg-direccion">Dirección</label>
-        <input id="reg-direccion" type="text" formControlName="direccion">
+        <label for="reg-nombre">Alias / Nombre</label>
+        <input id="reg-nombre" type="text" formControlName="nombre" placeholder="Nombre de Agente">
       </div>
       
-      <p *ngIf="error" class="error-msg">{{ error }}</p>
+      <div class="form-group">
+        <label for="reg-email">Identificador (Email)</label>
+        <input id="reg-email" type="email" formControlName="email" placeholder="usuario@net.com">
+      </div>
+      
+      <div class="form-group">
+        <label for="reg-password">Crear Código</label>
+        <input id="reg-password" type="password" formControlName="password" placeholder="••••••••">
+      </div>
+      
+      <div class="form-group">
+        <label for="reg-direccion">Base de Operaciones (Dirección)</label>
+        <input id="reg-direccion" type="text" formControlName="direccion" placeholder="Calle Falsa 123">
+      </div>
+      
+      <p *ngIf="error" class="error-msg">ERROR: {{ error }}</p>
 
-      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">Crear Cuenta</button>
+      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid">
+        GENERAR CREDENCIALES
+      </button>
     </form>
-    <p>¿Ya tienes cuenta? <a (click)="esLogin = true" style="cursor: pointer;">Inicia Sesión</a></p>
+    
+    <div class="auth-footer">
+      <p>¿Ya tienes acceso?</p>
+      <a (click)="esLogin = true">Iniciar Sesión</a>
+    </div>
   </div>
 
 </div>

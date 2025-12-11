@@ -1,17 +1,206 @@
-/* Usamos los mismos estilos de la tabla del carrito */
-.historial-container table {
+/* --- CONTENEDOR PRINCIPAL --- */
+.historial-layout {
+  padding-top: 3rem;
+  padding-bottom: 4rem;
+  
+  /* Centrado Horizontal */
+  max-width: 1000px; 
+  width: 90%; /* Para que no pegue en los bordes en celular */
+  margin: 0 auto; /* <--- ESTO ES LO QUE CENTRA EL BLOQUE */
+  
+  /* Opcional: Altura mínima para que no se vea pegado arriba */
+  min-height: 60vh; 
+}
+
+h2 {
+  color: var(--color-primario);
+  text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--color-primario);
+  padding-left: 1rem;
+  /* Centrar título también si te gusta más: */
+  /* text-align: center; border-left: none; border-bottom: 2px solid var(--color-primario); padding-bottom: 10px; */
+}
+
+/* --- TABLA CYBERPUNK --- */
+.table-responsive {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--color-borde);
+  margin-bottom: 2rem;
+}
+
+.cyber-table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--color-blanco);
-  box-shadow: var(--sombra-delicada);
-  border-radius: 8px;
+  background-color: var(--color-panel, #11111b);
+}
+
+.cyber-table th, .cyber-table td {
+  padding: 1.2rem;
+  text-align: center; /* Centramos el texto de las celdas */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  vertical-align: middle;
+}
+
+/* Alinear a la izquierda solo la primera columna si quieres */
+/* .cyber-table td:first-child { text-align: left; } */
+
+.cyber-table th {
+  background-color: rgba(0, 243, 255, 0.05);
+  color: var(--color-primario);
+  font-family: var(--fuente-titulos);
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--color-primario);
+}
+
+.cyber-table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Columnas específicas */
+.id-col {
+  font-family: monospace;
+  color: var(--color-texto-secundario);
+}
+
+.monto {
+  font-weight: bold;
+  color: var(--color-texto-principal);
+  font-size: 1.1rem;
+}
+
+.item-count {
+  color: var(--color-texto-secundario);
+  font-style: italic;
+}
+
+/* --- BADGES DE ESTADO --- */
+.cyber-badge {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  border: 1px solid transparent;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+  min-width: 100px; /* Ancho fijo para que se vean parejos */
+  text-align: center;
+}
+
+/* Colores de estado (igual que antes) */
+.cyber-badge.PROCESANDO {
+  color: #f1c40f; border-color: #f1c40f; background-color: rgba(241, 196, 15, 0.1);
+  box-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
+}
+.cyber-badge.ENVIADO {
+  color: var(--color-primario); border-color: var(--color-primario); background-color: rgba(0, 243, 255, 0.1);
+  box-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+}
+.cyber-badge.ENTREGADO {
+  color: #0aff0a; border-color: #0aff0a; background-color: rgba(10, 255, 10, 0.1);
+  box-shadow: 0 0 8px rgba(10, 255, 10, 0.3);
+}
+.cyber-badge.CANCELADO {
+  color: var(--color-peligro); border-color: var(--color-peligro); background-color: rgba(255, 0, 60, 0.1);
+  box-shadow: 0 0 8px rgba(255, 0, 60, 0.3);
+}
+
+/* --- EMPTY STATE (Centrado y Mejorado) --- */
+.empty-state {
+  display: flex;          /* Flexbox activado */
+  flex-direction: column; /* Elementos uno abajo del otro */
+  align-items: center;    /* Centrado horizontal */
+  justify-content: center;/* Centrado vertical dentro de su caja */
+  
+  text-align: center;
+  padding: 5rem 2rem;
+  background-color: var(--color-panel);
+  border: 1px dashed var(--color-borde);
+  border-radius: 12px;
+  margin-top: 2rem;
+  box-shadow: 0 0 30px rgba(0,0,0,0.3); /* Sombra profunda */
+}
+
+.empty-icon {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.5)); /* Brillo rojo al icono */
+  animation: float 3s ease-in-out infinite; /* Pequeña animación de flotar */
+}
+
+.empty-state h3 {
+  color: var(--color-texto-principal);
+  font-family: var(--fuente-titulos);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+  color: var(--color-texto-secundario);
+  margin-bottom: 2.5rem;
+  font-size: 1.1rem;
+}
+
+.loading-text {
+  color: var(--color-primario);
+  font-family: monospace;
+  text-align: center;
+  font-size: 1.2rem;
+  margin-top: 3rem;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink { 50% { opacity: 0.5; } }
+@keyframes float { 
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+/* --- BOTÓN MEJORADO (Estilo Cyberpunk) --- */
+.empty-state .btn-primary {
+  /* 1. Espaciado para que no se vea apretado */
+  display: inline-block;
+  padding: 1rem 2.5rem; /* Alto y Ancho generosos */
+  margin-top: 1.5rem;
+  
+  /* 2. Tipografía Futurista */
+  font-family: var(--fuente-titulos); /* Usa la fuente Orbitron */
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase; /* Todo en mayúsculas */
+  letter-spacing: 3px; /* Separa las letras para estilo cinematográfico */
+  text-decoration: none;
+  
+  /* 3. Colores y Bordes */
+  color: var(--color-primario);
+  background-color: transparent;
+  border: 2px solid var(--color-primario);
+  border-radius: 4px; /* Bordes levemente rectos */
+  
+  /* 4. Efectos */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
   overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2); /* Resplandor suave inicial */
 }
-.historial-container th, .historial-container td {
-  padding: 1rem;
-  text-align: left;
-  border-bottom: var(--borde-delicado);
+
+/* Efecto Hover (Al pasar el mouse) */
+.empty-state .btn-primary:hover {
+  background-color: var(--color-primario);
+  color: #000; /* Texto negro para máximo contraste */
+  box-shadow: 0 0 30px var(--color-primario); /* Resplandor potente */
+  transform: translateY(-5px); /* Se eleva */
+  border-color: var(--color-primario);
 }
-.historial-container th {
-  background-color: var(--color-fondo);
+
+/* Efecto Active (Al hacer clic) */
+.empty-state .btn-primary:active {
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px var(--color-primario);
 }

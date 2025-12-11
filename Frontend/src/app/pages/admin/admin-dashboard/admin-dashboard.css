@@ -1,61 +1,124 @@
+/* --- CONTENEDOR PRINCIPAL --- */
 .dashboard-container {
-  padding: 40px;
+  padding: 40px 20px; /* Un poco de margen lateral por si es móvil */
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* --- HEADER DEL DASHBOARD --- */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
-  border-bottom: 2px solid #eee;
+  margin-bottom: 50px;
+  border-bottom: 1px solid rgba(0, 243, 255, 0.3); /* Línea de neón sutil */
   padding-bottom: 20px;
+  position: relative;
 }
 
+/* Efecto decorativo bajo la línea (opcional) */
+.dashboard-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100px;
+  height: 3px;
+  background-color: #00f3ff;
+  box-shadow: 0 0 10px #00f3ff;
+}
+
+.dashboard-header h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2rem;
+  color: #fff;
+  text-transform: uppercase;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* --- GRID DE TARJETAS --- */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  gap: 30px;
 }
 
+/* --- DISEÑO DE LA TARJETA (Holográfico) --- */
 .card {
-  background: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  background: rgba(17, 17, 27, 0.7); /* Oscuro semitransparente */
+  padding: 40px 30px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
-  border: 1px solid #eee;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(5px);
 }
 
+/* Efecto Hover Potente */
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  border-color: #007bff;
+  transform: translateY(-10px);
+  border-color: #00f3ff; /* Borde Cyan al pasar el mouse */
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.15), inset 0 0 20px rgba(0, 243, 255, 0.05);
+  background: rgba(17, 17, 27, 0.9);
 }
 
+/* Iconos Gigantes */
 .icon {
-  font-size: 3rem;
-  margin-bottom: 15px;
+  font-size: 4rem;
+  margin-bottom: 20px;
+  display: inline-block;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+  transition: transform 0.3s;
 }
 
-h3 {
-  margin: 0 0 10px 0;
-  color: #333;
+.card:hover .icon {
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 0 15px #00f3ff);
 }
 
-p {
-  color: #666;
-  font-size: 0.9rem;
+/* Textos */
+.card h3 {
+  margin: 0 0 15px 0;
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  text-transform: uppercase;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
 }
 
+.card p {
+  color: #aaa;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* --- BOTÓN DE LOGOUT (Estilo Alerta) --- */
 .btn-logout {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
+  background-color: transparent;
+  color: #ff4d4d; /* Rojo neón */
+  border: 1px solid rgba(255, 77, 77, 0.5);
+  padding: 10px 25px;
+  border-radius: 50px;
   cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+}
+
+.btn-logout:hover {
+  background-color: rgba(255, 77, 77, 0.1);
+  border-color: #ff4d4d;
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+  color: #fff;
 }

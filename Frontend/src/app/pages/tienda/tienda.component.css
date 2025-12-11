@@ -1,124 +1,176 @@
-/* --- src/app/pages/tienda/tienda.component.css --- */
+/* =========================================
+   1. BANNER CYBERPUNK (CORREGIDO)
+   ========================================= */
+.banner-full-width {
+  width: 100vw;
+  height: 400px;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
+  margin-bottom: 40px;
+  box-shadow: none; /* Sin sombra para evitar la línea dura */
+}
 
-/* Contenedor principal de los filtros */
-.tienda-filtros {
-  background-color: var(--color-blanco);
-  padding: 2rem;
-  border-radius: var(--borde-radio);
-  /* Sombra más intensa y definida */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.566), 0 2px 6px rgba(0, 0, 0, 0.07);
-  margin-bottom: 3rem;
+.banner-img {
   width: 100%;
-  box-sizing: border-box;
-  border: 1px solid var(--color-borde);
-  /* Opcional: Añadir una transición si planeas cambiar la sombra en hover */
-  /* transition: box-shadow 0.3s ease; */
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  /* Degradado suave desde el 50% para mejor fusión */
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
 
-/* Opcional: Si quieres que la sombra se intensifique al pasar el ratón */
-/*
-.tienda-filtros:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px); // Ligero efecto de elevación
-}
-*/
-
-.filtros-wrapper {
-  display: flex;
-  gap: 3rem;
-  align-items: flex-start;
-  flex-wrap: wrap;
+.banner-texto {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 90%;
+  z-index: 2;
 }
 
-.filtro-seccion {
-  flex: 1;
-  min-width: 280px;
-}
-
-/* Título de cada sección de filtro */
-.filtro-titulo {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-texto-principal);
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid var(--color-borde);
+.banner-texto h1 {
+  font-size: 3.5rem;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  color: #fff;
+  text-shadow: 0 0 15px #00f3ff;
 }
 
-/* Input de búsqueda */
-.filtro-buscar {
-  width: 100%;
-  padding: 0.9rem 1.2rem;
-  border: 1px solid var(--color-borde);
-  border-radius: 6px;
-  font-size: 0.95rem;
-  box-sizing: border-box;
-  background-color: #f8f9fa;
-  transition: all 0.2s ease;
-}
-.filtro-buscar::placeholder {
-  color: var(--color-texto-secundario);
-  opacity: 0.7;
-}
-.filtro-buscar:focus {
-  outline: none;
-  border-color: var(--color-primario);
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-  background-color: var(--color-blanco);
-}
-
-/* Navegación de categorías */
-.filtro-categorias ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-}
-.filtro-categorias li a {
+.banner-texto p {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 8px 24px;
+  border-radius: 50px;
   display: inline-block;
-  padding: 0.6rem 1.3rem;
-  color: var(--color-texto-secundario);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
+}
+
+/* =========================================
+   2. LAYOUT PRINCIPAL (ALINEACIÓN FIX)
+   ========================================= */
+.tienda-layout {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px 20px;
+  /* CRUCIAL: Alinea el inicio del sidebar con el inicio de los productos */
+  align-items: flex-start; 
+}
+
+/* =========================================
+   3. SIDEBAR (FILTROS Y BUSCADOR)
+   ========================================= */
+.tienda-filtros {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: #11111b; 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: sticky;
+  top: 20px; 
+}
+
+.filtro-seccion { margin-bottom: 30px; }
+
+.filtro-titulo {
+  font-family: var(--fuente-titulos, sans-serif);
+  color: var(--color-primario, #00f3ff);
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* --- Buscador (Código unificado y corregido) --- */
+.search-container { position: relative; width: 100%; }
+
+.filtro-buscar {
+  width: 100%; /* Ocupa todo el contenedor */
+  box-sizing: border-box; /* El padding no deforma el input */
+  padding: 12px 15px 12px 45px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50px;
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.filtro-buscar:focus {
+  border-color: var(--color-primario, #00f3ff);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: #888;
+  pointer-events: none;
+}
+
+/* --- Menú Categorías --- */
+.filtro-categorias ul { list-style: none; padding: 0; margin: 0; }
+.filtro-categorias li { margin-bottom: 8px; }
+
+.filtro-categorias a {
+  display: block;
+  padding: 10px 15px;
+  color: #ccc;
+  text-decoration: none;
   border-radius: 6px;
-  border: 1px solid transparent;
-  transition: all 0.2s ease;
-  background-color: var(--color-secundario);
-}
-.filtro-categorias li a:hover {
-  background-color: #e2e6ea;
-  color: var(--color-texto-principal);
-  transform: translateY(-1px);
-}
-.filtro-categorias li a.activo { /* Botón de categoría activa */
-  color: var(--color-blanco);
-  background-color: var(--color-primario);
-  border-color: var(--color-primario);
-  font-weight: 600;
-  box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+  transition: all 0.2s;
+  cursor: pointer;
+  font-size: 0.95rem;
 }
 
-/* Media Query para pantallas pequeñas */
+.filtro-categorias a:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  transform: translateX(5px);
+}
+
+.filtro-categorias a.activo {
+  background-color: var(--color-primario, #00f3ff);
+  color: #000;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+}
+
+/* =========================================
+   4. CONTENIDO (PRODUCTOS)
+   ========================================= */
+.tienda-contenido {
+  flex-grow: 1;
+  /* Eliminamos márgenes del contenedor */
+  margin-top: 0 !important; 
+  padding-top: 0 !important;
+}
+
+/* REGLA DE ORO: Esto asegura que el primer elemento dentro de la columna derecha
+   (sea un H2, un Grid o un Div) no tenga margen superior que lo empuje hacia abajo. */
+.tienda-contenido > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* =========================================
+   5. RESPONSIVE
+   ========================================= */
 @media (max-width: 768px) {
-  .filtros-wrapper {
-     gap: 2rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .filtros-wrapper {
-    flex-direction: column;
-    gap: 1.8rem;
-  }
-  .filtro-seccion {
-    min-width: 100%;
-  }
-  .tienda-filtros {
-    padding: 1.5rem;
-  }
+  .tienda-layout { flex-direction: column; }
+  .tienda-filtros { width: 100%; position: static; margin-bottom: 20px; }
+  .banner-full-width { height: 250px; }
+  .banner-texto h1 { font-size: 2rem; }
 }

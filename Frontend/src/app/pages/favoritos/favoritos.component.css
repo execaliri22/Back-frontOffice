@@ -1,39 +1,93 @@
-h2 {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: var(--color-texto-principal);
+/* --- LAYOUT PRINCIPAL --- */
+.favoritos-layout {
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Reutiliza los estilos de product-list si son adecuados */
+h2 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-acento, #bc13fe); /* Usamos Púrpura para Favoritos */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 2.5rem;
+  text-shadow: 0 0 10px rgba(188, 19, 254, 0.5);
+  border-left: 4px solid var(--color-acento, #bc13fe);
+  padding-left: 15px;
+}
+
+/* --- GRILLA DE PRODUCTOS --- */
 .product-grid {
   display: grid;
+  /* Grilla responsiva automática: Tarjetas de mín 280px */
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
+  gap: 2.5rem;
   padding: 1rem 0;
 }
 
-/* Estilos para el mensaje de "vacío" */
+/* --- ESTADO VACÍO (Panel Oscuro) --- */
 .favoritos-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 3rem 1rem;
-  background-color: var(--color-blanco);
-  border-radius: var(--borde-radio);
-  box-shadow: var(--sombra-suave);
-  margin-top: 2rem;
+  
+  padding: 5rem 2rem;
+  background-color: var(--color-panel, #11111b);
+  border-radius: 12px;
   border: 1px dashed var(--color-borde);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+  opacity: 0.8;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.5)); /* Brillo rojo al corazón roto */
+  animation: float 3s ease-in-out infinite;
+}
+
+.favoritos-vacio h3 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-texto-principal);
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
 }
 
 .favoritos-vacio p {
-  margin-bottom: 1.5rem;
   color: var(--color-texto-secundario);
   font-size: 1.1rem;
+  margin-bottom: 2.5rem;
 }
 
-/* Estilo para mensaje de carga (similar a product-list) */
+/* Botón Grande para Empty State */
+.btn-large {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  min-width: 220px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* --- MENSAJE DE CARGA --- */
 .loading-message {
   text-align: center;
   padding: 3rem 1rem;
-  font-size: 1.1rem;
-  color: var(--color-texto-secundario);
-  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--color-primario);
+  font-family: monospace;
+  animation: blink 1s infinite;
+}
+
+/* Animaciones */
+@keyframes blink { 
+  50% { opacity: 0.5; } 
+}
+
+@keyframes float { 
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }

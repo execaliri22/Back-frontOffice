@@ -1,38 +1,60 @@
-<aside class="tienda-filtros">
-  <div class="filtros-wrapper">
-    <div class="filtro-seccion">
-      <h4 class="filtro-titulo">Buscar</h4>
-      <input type="text" placeholder="Buscar producto..." class="filtro-buscar">
-    </div>
-    <div class="filtro-seccion">
-      <h4 class="filtro-titulo">Categorías</h4>
-      @if (categorias$ | async; as categorias) {
-        <nav class="filtro-categorias">
-         <ul>
-            <li>
-              <a (click)="seleccionarCategoria(null)"
-                 [class.activo]="categoriaSeleccionadaId() === null">
-                Todas
-              </a>
-            </li>
-            @for (cat of categorias; track cat.idCategoria) {
+<div class="banner-full-width">
+  <img [src]="bannerUrl" alt="Banner Gamer" class="banner-img">
+  <div class="banner-texto">
+  </div>
+</div>
+
+<div class="tienda-layout">
+
+  <aside class="tienda-filtros">
+    <div class="filtros-wrapper">
+      
+      <div class="filtro-seccion search-section">
+        <h4 class="filtro-titulo">Buscar</h4>
+        <div class="search-container">
+          <input type="text" placeholder="¿Qué buscas 🤖?" class="filtro-buscar">
+          <span class="search-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="filtro-seccion">
+        <h4 class="filtro-titulo">Categorías</h4>
+        
+        @if (categorias$ | async; as categorias) {
+          <nav class="filtro-categorias">
+            <ul>
               <li>
-                <a (click)="seleccionarCategoria(cat.idCategoria)"
-                   [class.activo]="categoriaSeleccionadaId() === cat.idCategoria">
-                  {{ cat.nombre }}
+                <a (click)="seleccionarCategoria(null)"
+                   [class.activo]="categoriaSeleccionadaId() === null">
+                  Todas
                 </a>
               </li>
-            }
-          </ul>
-        </nav>
-      } @else if (errorCategorias) {
-         <p class="error-msg">{{ errorCategorias }}</p>
-      } @else {
-        <p>Cargando categorías...</p>
-      }
+              @for (cat of categorias; track cat.idCategoria) {
+                <li>
+                  <a (click)="seleccionarCategoria(cat.idCategoria)"
+                     [class.activo]="categoriaSeleccionadaId() === cat.idCategoria">
+                    {{ cat.nombre }}
+                  </a>
+                </li>
+              }
+            </ul>
+          </nav>
+        } @else if (errorCategorias) {
+           <p class="error-msg">{{ errorCategorias }}</p>
+        } @else {
+          <p class="loading-text">Cargando categorías...</p>
+        }
+      </div>
     </div>
-  </div>
-</aside>
-<section>
-  <app-product-list [productos]="productos$ | async"></app-product-list>
-</section>
+  </aside>
+
+  <section class="tienda-contenido">
+    <app-product-list [productos]="productos$ | async"></app-product-list>
+  </section>
+
+</div>

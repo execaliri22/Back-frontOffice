@@ -1,15 +1,16 @@
-<h2>Mi Perfil</h2>
+<h2>Perfil de Usuario</h2>
 
 <div class="perfil-container">
 
   <div class="foto-section card">
-    <h3>Foto de Perfil</h3>
+    <h3>Identificación</h3>
+    
     <div class="foto-display">
       @if (objectUrl()) {
-        <img [src]="objectUrl()!" alt="Vista previa" class="profile-pic preview" width="150" height="150">
+        <img [src]="objectUrl()!" alt="Vista previa" class="profile-pic preview">
       }
       @else if (authService.currentUserFotoUrl()) {
-        <img [ngSrc]="authService.currentUserFotoUrl()!" alt="Foto de perfil" class="profile-pic" width="150" height="150" priority>
+        <img [src]="authService.currentUserFotoUrl()!" alt="Foto de perfil" class="profile-pic">
       }
       @else {
         <div class="profile-pic placeholder">
@@ -22,68 +23,80 @@
 
     <div class="foto-actions">
       <button (click)="fileInput.click()" class="btn btn-secondary" [disabled]="subiendoFoto() || eliminandoFoto()">
-        {{ subiendoFoto() ? 'Subiendo...' : 'Cambiar Foto' }}
+        {{ subiendoFoto() ? 'Procesando...' : 'Escanear Nueva Foto' }}
       </button>
-      @if (authService.currentUserFotoUrl() && !objectUrl()) { <button (click)="eliminarFoto()" class="btn btn-danger" [disabled]="subiendoFoto() || eliminandoFoto()">
-          {{ eliminandoFoto() ? 'Eliminando...' : 'Eliminar Foto' }}
+      
+      @if (authService.currentUserFotoUrl() && !objectUrl()) { 
+        <button (click)="eliminarFoto()" class="btn btn-danger" [disabled]="subiendoFoto() || eliminandoFoto()">
+          {{ eliminandoFoto() ? 'Eliminando...' : 'Borrar Registro' }}
         </button>
       }
     </div>
+    
     @if (errorFoto()) { <p class="error-msg">{{ errorFoto() }}</p> }
   </div>
 
   <div class="datos-section card">
-    <h3>Datos Personales</h3>
+    <h3>Credenciales</h3>
+    
     <form [formGroup]="nombreForm" (ngSubmit)="actualizarNombre()">
       <div class="form-group">
-        <label for="nombre">Nombre</label>
-        <input id="nombre" type="text" formControlName="nombre">
+        <label for="nombre">Nombre de Agente</label>
+        <input id="nombre" type="text" formControlName="nombre" placeholder="Ingrese su nombre...">
+        
         @if (nombreForm.get('nombre')?.invalid && nombreForm.get('nombre')?.touched) {
-          <small class="text-danger">El nombre es requerido.</small>
+          <small class="text-danger">Identificación requerida.</small>
         }
       </div>
+      
       <button type="submit" class="btn btn-primary" [disabled]="nombreForm.invalid || nombreForm.pristine || guardandoNombre()">
-        {{ guardandoNombre() ? 'Guardando...' : 'Guardar Nombre' }}
+        {{ guardandoNombre() ? 'Actualizando...' : 'Actualizar Datos' }}
       </button>
+      
       @if (errorNombre()) { <p class="error-msg">{{ errorNombre() }}</p> }
     </form>
 
     <hr class="separator">
 
-    <h3>Cambiar Contraseña</h3>
+    <h3>Seguridad de Acceso</h3>
+    
     <form [formGroup]="contraForm" (ngSubmit)="cambiarContrasena()">
        <div class="form-group">
-         <label for="actual">Contraseña Actual</label>
-         <input id="actual" type="password" formControlName="actual">
+         <label for="actual">Código de Acceso Actual</label>
+         <input id="actual" type="password" formControlName="actual" placeholder="••••••">
          @if (contraForm.get('actual')?.invalid && contraForm.get('actual')?.touched) {
-          <small class="text-danger">La contraseña actual es requerida.</small>
+          <small class="text-danger">Acceso denegado: Código requerido.</small>
         }
        </div>
+       
        <div class="form-group">
-         <label for="nueva">Nueva Contraseña</label>
-         <input id="nueva" type="password" formControlName="nueva">
+         <label for="nueva">Nuevo Código</label>
+         <input id="nueva" type="password" formControlName="nueva" placeholder="••••••">
          @if (contraForm.get('nueva')?.invalid && contraForm.get('nueva')?.touched) {
            @if (contraForm.get('nueva')?.errors?.['required']) {
-             <small class="text-danger">La nueva contraseña es requerida.</small>
+             <small class="text-danger">Nuevo código requerido.</small>
            }
            @if (contraForm.get('nueva')?.errors?.['minlength']) {
-             <small class="text-danger">Debe tener al menos 6 caracteres.</small>
+             <small class="text-danger">Seguridad débil: Mínimo 6 caracteres.</small>
            }
          }
        </div>
+       
        <div class="form-group">
-         <label for="confirmar">Confirmar Nueva Contraseña</label>
-         <input id="confirmar" type="password" formControlName="confirmar">
+         <label for="confirmar">Confirmar Código</label>
+         <input id="confirmar" type="password" formControlName="confirmar" placeholder="••••••">
          @if (contraForm.get('confirmar')?.invalid && contraForm.get('confirmar')?.touched) {
-          <small class="text-danger">Confirma la nueva contraseña.</small>
+          <small class="text-danger">Confirme el código.</small>
          }
          @if (contraForm.errors?.['noCoinciden'] && contraForm.get('confirmar')?.touched) {
-           <small class="text-danger">Las nuevas contraseñas no coinciden.</small>
+           <small class="text-danger">Error: Los códigos no coinciden.</small>
          }
        </div>
+       
        <button type="submit" class="btn btn-primary" [disabled]="contraForm.invalid || contraForm.pristine || guardandoContra()">
-        {{ guardandoContra() ? 'Guardando...' : 'Cambiar Contraseña' }}
+        {{ guardandoContra() ? 'Cifrando...' : 'Actualizar Seguridad' }}
        </button>
+       
        @if (errorContra()) { <p class="error-msg">{{ errorContra() }}</p> }
     </form>
   </div>
@@ -91,6 +104,6 @@
 
 @if (mensajeExito()) {
   <div class="success-msg global-message">
-      {{ mensajeExito() }}
+      SYSTEM: {{ mensajeExito() }}
   </div>
 }

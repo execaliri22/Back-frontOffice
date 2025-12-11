@@ -1,17 +1,64 @@
 <div class="admin-container">
-  <button routerLink="/admin" class="btn-back">⬅ Volver al Dashboard</button>
 
-  <h2>🏷️ Gestión de Categorías</h2>
-
-  <div class="quick-form">
-    <input type="text" [(ngModel)]="nuevaCategoriaNombre" placeholder="Nueva Categoría (ej: Muebles)">
-    <button (click)="crear()" class="btn-primary">Crear</button>
+  <div class="header-actions">
+    <button routerLink="/admin" class="btn-back">
+      &lt; VOLVER AL DASHBOARD
+    </button>
   </div>
 
-  <ul class="category-list">
-    <li *ngFor="let cat of categorias">
-      <span>{{ cat.nombre }}</span>
-      <span class="badge-id">ID: {{ cat.idCategoria }}</span>
-    </li>
-  </ul>
+  <h2 class="section-title">🏷️ Gestión de Categorías</h2>
+
+  <div class="category-form-card">
+    <form [formGroup]="form" (ngSubmit)="guardar()" class="inline-form">
+      
+      <div class="input-group">
+        <input type="text" formControlName="nombre" placeholder="Nombre de la categoría..." class="cyber-input">
+      </div>
+
+      <div class="form-actions">
+        <button *ngIf="categoriaEnEdicion" type="button" (click)="cancelarEdicion()" class="btn-cancel">
+          CANCELAR
+        </button>
+
+        <button type="submit" [disabled]="form.invalid" class="btn btn-primary btn-neon">
+          {{ categoriaEnEdicion ? 'ACTUALIZAR' : 'CREAR' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="table-responsive mt-4">
+    <table class="cyber-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th class="text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cat of categorias">
+          <td class="id-col">#{{ cat.idCategoria }}</td>
+          <td>
+            <strong class="cat-name">{{ cat.nombre }}</strong>
+          </td>
+          <td class="actions">
+            <button (click)="editar(cat)" class="btn-icon btn-edit" title="Editar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+            </button>
+            
+            <button (click)="eliminar(cat.idCategoria)" class="btn-icon btn-delete" title="Eliminar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+            </button>
+          </td>
+        </tr>
+        
+        <tr *ngIf="categorias.length === 0">
+          <td colspan="3" class="text-center p-4">No hay categorías registradas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
 </div>

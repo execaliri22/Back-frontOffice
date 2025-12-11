@@ -1,35 +1,39 @@
-<div class="container">
-  <h2>📦 Mis Compras</h2>
+<div class="container historial-layout">
+  <h2>📦 Registro de Transacciones</h2>
 
-  <div *ngIf="loading">Cargando historial...</div>
+  <div *ngIf="loading" class="loading-text">Accediendo a la base de datos...</div>
 
   <div *ngIf="!loading && pedidos.length === 0" class="empty-state">
-    <p>Aún no has realizado ninguna compra.</p>
-    <a routerLink="/tienda" class="btn btn-primary">Ir a la Tienda</a>
+    <div class="empty-icon">🚫</div>
+    <h3>Sin registros encontrados</h3>
+    <p>Tu historial de adquisiciones está vacío.</p>
+    <a routerLink="/tienda" class="btn btn-primary">Iniciar Nueva Compra</a>
   </div>
 
-  <table class="table" *ngIf="pedidos.length > 0">
-    <thead>
-      <tr>
-        <th>N° Pedido</th>
-        <th>Fecha</th>
-        <th>Total</th>
-        <th>Estado</th>
-        <th>Detalles</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let p of pedidos">
-        <td>#{{ p.idPedido }}</td>
-        <td>{{ p.fecha | date:'short' }}</td>
-        <td>{{ p.total | currency:'USD' }}</td>
-        <td>
-          <span class="badge" [ngClass]="p.estado">{{ p.estado }}</span>
-        </td>
-        <td>
-          <small>{{ p.items?.length || 0 }} productos</small>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive" *ngIf="pedidos.length > 0">
+    <table class="cyber-table">
+      <thead>
+        <tr>
+          <th>ID Transacción</th>
+          <th>Fecha</th>
+          <th>Monto Total</th>
+          <th>Estado</th>
+          <th>Items</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of pedidos">
+          <td class="id-col">#{{ p.idPedido }}</td>
+          <td>{{ p.fecha | date:'short' }}</td>
+          <td class="monto">{{ p.total | currency:'USD' }}</td>
+          <td>
+            <span class="cyber-badge" [ngClass]="p.estado">{{ p.estado }}</span>
+          </td>
+          <td>
+            <small class="item-count">{{ p.items?.length || 0 }} productos</small>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

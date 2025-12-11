@@ -1,69 +1,65 @@
-import { Component, inject, signal, computed } from '@angular/core'; // Añadir computed
-import { Router, RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive
-  ],
+  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  // Inyectar servicios
-  public authService = inject(AuthService); // Hacerlo público para usar isLoggedIn() en la plantilla
+export class AppComponent implements OnInit { // Implementamos OnInit
+  
+  // Inyecciones
+  public authService = inject(AuthService);
   private router = inject(Router);
 
-  // Signal para la visibilidad del menú
-  menuVisible = signal(false);
+  // Estado del menú (Signal)
+  menuVisible = signal<boolean>(false);
+  
+  // Bandera para saber si estamos en el panel de admin
+  esAdminPanel: boolean = false;
 
-  // *** USA LOS SIGNALS COMPUTADOS DEL SERVICIO ***
-  // No necesitas redeclararlos aquí si AuthService es público y los usas directamente en la plantilla
-  // Si prefieres tenerlos en el componente (por claridad o si AuthService fuera privado):
-  // userName = computed(() => this.authService.currentUserName() || 'Usuario'); // Con fallback
-  // userEmail = computed(() => this.authService.currentUserEmail() || '');
-  // userInitials = computed(() => { ... lógica de iniciales basada en userName() ... });
+  ngOnInit() {
+    // 1. Verificar la ruta actual al cargar la app
+    this.verificarRuta();
 
-  constructor() {
-    // Opcional: Cerrar menú al cambiar de ruta
-    this.router.events.subscribe(() => {
-      this.menuVisible.set(false);
+    // 2. Suscribirse a los cambios de navegación
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.verificarRuta();
+      this.menuVisible.set(false); // Cerramos el menú al navegar
     });
   }
 
-  toggleMenu(): void {
-    this.menuVisible.update(visible => !visible);
+  verificarRuta() {
+    // Si la URL contiene '/admin', activamos la bandera
+    this.esAdminPanel = this.router.url.includes('/admin');
   }
 
-  logout(): void {
+  // Acción de alternar menú
+  toggleMenu() {
+    this.menuVisible.update(value => !value);
+  }
+
+  // Cerrar sesión
+  logout() {
     this.authService.logout();
-    this.menuVisible.set(false); // Cierra menú
-    this.router.navigate(['/auth']); // Redirige a login tras logout
+    this.menuVisible.set(false);
+    this.router.navigate(['/auth']);
   }
 
-  // *** ¡YA NO NECESITAS LOS MÉTODOS PLACEHOLDER GETTER! ***
-  // getUserName(): string { ... } --> ELIMINAR
-  // getUserEmail(): string { ... } --> ELIMINAR
-  // getUserInitials(): string { ... } --> ELIMINAR (o modificar para usar el signal userName)
-
-  // Ejemplo de cómo recalcular iniciales si decides mantenerlas en el componente:
   getUserInitials(): string {
-     const name = this.authService.currentUserName(); // Accede al signal del servicio
-     if (!name) return '??';
-     const parts = name.trim().split(' ').filter(part => part.length > 0);
-     if (parts.length >= 2) {
-       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase(); // Primera letra del nombre y apellido
-     } else if (parts.length === 1 && name.length >= 2) {
-       return name.substring(0, 2).toUpperCase();
-     } else if (parts.length === 1 && name.length === 1) {
-       return name.toUpperCase();
-     }
-     return '??'; // Fallback
-   }
+    const name = this.authService.currentUserName();
+    if (!name) return 'US';
+    
+    const parts = name.split(' ');
+    if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+    
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
 }

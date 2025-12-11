@@ -1,366 +1,163 @@
-/* Estructura Principal */
+/* --- ESTRUCTURA PRINCIPAL --- */
 :host {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: var(--color-fondo); /* Asegura fondo si el contenido es corto */
+  background-color: var(--color-fondo);
 }
 
+/* --- HEADER / NAVEGACIÓN --- */
 .header-nav {
-  background-color: rgba(233, 233, 233, 0.907);
-  /* Sombra más suave y extendida */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.377), 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 1rem 0; /* Mantenemos padding vertical */
+  background-color: rgba(17, 17, 27, 0.95); /* Fondo oscuro */
+  border-bottom: 1px solid var(--color-borde);
+  box-shadow: 0 4px 20px rgba(0, 243, 255, 0.1); /* Sombra Cyan */
+  padding: 0.8rem 0;
   position: sticky;
   top: 0;
   z-index: 1000;
-  border-bottom: 1px solid var(--color-borde);
-  /* Transición para cualquier cambio futuro */
-  transition: background-color 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
-/* Contenedor de Navegación */
 .nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* Aplica las propiedades del .container global */
-  max-width: var(--container-max-width, 1300px); /* Usa variable si la defines, sino default */
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Contenido Principal */
-.main-content {
-  padding-top: 3rem; /* Más espacio arriba */
-  padding-bottom: 3rem; /* Más espacio abajo */
-  flex-grow: 1;
-  /* Aplica las propiedades del .container global */
-  max-width: var(--container-max-width, 1300px);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Footer */
-.footer {
-  padding: 2.5rem 0; /* Más padding vertical */
-  background-color: #505050; /* Un gris ligeramente más oscuro que el fondo base */
-  border-top: 1px solid var(--color-borde);
-  color: var(--color-texto-secundario);
-  font-size: 0.9rem;
-  margin-top: auto;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
   width: 100%;
 }
-.footer p {
-  margin: 0;
-  color: white;
-}
 
-.footer .container {
-  text-align: center;
-  /* Aplica las propiedades del .container global */
-  max-width: var(--container-max-width, 1300px);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* --- Navegación --- */
-
-.nav-brand {
-  font-size: 1.6rem; /* Ligeramente más pequeño para balance */
-  font-weight: 700;
-  color: var(--color-texto-principal);
-  letter-spacing: -0.5px;
+/* Logo Animado */
+.nav-brand-logo {
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  transition: color 0.2s ease;
-}
-.nav-brand:hover {
-  color: var(--color-primario);
 }
 
+.logo-animado {
+  height: 45px;
+  width: auto;
+  filter: drop-shadow(0 0 2px var(--color-primario));
+  animation: giroCyberpunk 10s infinite ease-in-out;
+}
+
+@keyframes giroCyberpunk {
+  0%, 85% { transform: rotateY(0deg); }
+  90% { filter: drop-shadow(0 0 15px var(--color-primario)); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Enlaces del Nav */
 .header-nav nav {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Un poco más de espacio entre ítems */
+  gap: 1rem;
 }
 
-/* Enlaces base de navegación */
 .header-nav nav a {
-  padding: 0.5rem 1rem; /* Ajuste de padding */
+  padding: 0.5rem 1rem;
   font-weight: 500;
   color: var(--color-texto-secundario);
   text-decoration: none;
-  border-radius: 6px; /* Bordes un poco menos redondeados */
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
-  font-size: 0.95rem;
-  position: relative; /* Para posibles pseudo-elementos */
-  white-space: nowrap;
+  border-radius: 4px;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
-/* Efecto hover sutil */
-.header-nav nav a:not(.nav-cta):not(.nav-brand):hover {
-  background-color: rgba(0, 0, 0, 0.03); /* Fondo muy sutil */
-  color: var(--color-texto-principal);
-}
-
-/* Enlace activo */
-.header-nav nav a.active:not(.nav-cta) {
+.header-nav nav a:not(.nav-cta):hover {
   color: var(--color-primario);
-  font-weight: 600;
-  background-color: rgba(52, 152, 219, 0.08); /* Fondo con color primario muy transparente */
+  background-color: rgba(0, 243, 255, 0.05);
+  text-shadow: 0 0 5px var(--color-primario);
 }
 
-/* Efecto al presionar un enlace */
-.header-nav nav a:active {
-  transform: translateY(1px);
+.header-nav nav a.active {
+  color: var(--color-primario);
+  border-bottom: 2px solid var(--color-primario);
 }
 
-
-/* Botón CTA (Login/Logout) */
+/* Botón CTA (Login) */
 .nav-cta {
-  background-color: var(--color-primario);
-  color: var(--color-blanco) !important;
-  font-weight: 500; /* Mismo peso que otros enlaces */
-  box-shadow: var(--sombra-boton);
-  /* Hereda padding, border-radius, font-size */
+  border: 1px solid var(--color-primario);
+  color: var(--color-primario) !important;
+  background: transparent;
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
 }
+
 .nav-cta:hover {
-  background-color: #2980b9; /* Tono más oscuro */
-  color: var(--color-blanco) !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px); /* Efecto elevación */
-}
-.nav-cta:active {
-  transform: translateY(0px); /* Vuelve a posición normal al presionar */
-  box-shadow: var(--sombra-boton);
+  background-color: var(--color-primario);
+  color: #000 !important;
+  box-shadow: 0 0 15px var(--color-primario);
 }
 
 /* Carrito */
 .nav-carrito {
-  /* Ajusta este valor al tamaño deseado */
-  /* Prueba con valores como 1.5rem, 1.8rem, 24px, 28px, etc. */
-  font-size: 60px; /* <-- CAMBIA ESTE VALOR (ej. 1.8rem o 28px) */
-
-  padding: 0.4rem 0.6rem; /* Padding ajustado para icono */
-  line-height: 1;
-  display: flex; /* Ayuda a centrar el icono si es un SVG */
-  align-items: center;
-  justify-content: center;
-  margin-left: 0.5rem;
+  font-size: 1.5rem;
+  color: var(--color-texto-principal);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: transform 0.2s;
+}
+.nav-carrito:hover {
+  color: var(--color-acento);
+  transform: scale(1.1);
 }
 
-/* ... (el resto de las reglas .nav-carrito .carrito-icon, etc., pueden quedar igual) ... */
-
-.nav-carrito .carrito-icon {
-  display: block;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Transición con "rebote" */
-}
-.nav-carrito:hover .carrito-icon {
-  transform: scale(1.15); /* Escala más al pasar el ratón */
-}
-.nav-carrito:active .carrito-icon {
-    transform: scale(1.00); /* Encoge un poco al presionar */
-}
-
-/* --- Estilos para el Menú de Perfil --- */
-
+/* --- PERFIL DE USUARIO (CORREGIDO) --- */
 .profile-section {
-  position: relative; /* Necesario para posicionar el menú de forma absoluta */
+  position: relative; /* ¡IMPORTANTE! Mantiene el menú en su lugar */
   display: flex;
   align-items: center;
+  margin-left: 1rem;
 }
 
 .profile-trigger {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
-  border: none;
+  background: transparent;
+  border: 2px solid var(--color-primario);
+  color: var(--color-primario);
   border-radius: 50%;
-  width: 40px; /* Ajusta el tamaño según necesites */
-  height: 40px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+  width: 45px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 0.5rem; /* Espacio antes del carrito */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0;
+  font-weight: bold;
+  transition: all 0.3s;
 }
 
 .profile-trigger:hover {
+  box-shadow: 0 0 10px var(--color-primario);
   transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.profile-menu {
-  position: absolute;
-  top: calc(100% + 10px); /* Posición debajo del botón + espacio */
-  right: 0;
-  background-color: var(--color-blanco);
-  border-radius: var(--borde-radio);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  border: 1px solid var(--color-borde);
-  width: 250px; /* Ajusta el ancho según necesites */
-  z-index: 1010; /* Asegura que esté por encima de otros elementos */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-10px);
-  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-  overflow: hidden; /* Asegura que el contenido respete el borde redondeado */
-}
-
-/* Clase que se añade cuando el menú está visible */
-.profile-menu.show {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
-
-/* Cabecera dentro del menú desplegable */
-.profile-menu-header {
-  padding: 1rem 1.25rem;
-  text-align: center;
-  border-bottom: 1px solid var(--color-borde);
-  background-color: #f8f9fa; /* Fondo claro para la cabecera */
-}
-
-/* Avatar dentro de la cabecera del menú */
-.profile-menu-avatar {
-   display: inline-block;
-   background-color: var(--color-primario); /* Mismo color que el botón */
-   color: var(--color-blanco);
-   border-radius: 50%;
-   width: 50px;
-   height: 50px;
-   line-height: 50px; /* Centra verticalmente las iniciales */
-   font-size: 1.2rem;
-   font-weight: 600;
-   margin-bottom: 0.75rem;
-}
-
-.profile-menu-header strong {
-  display: block;
-  font-size: 1rem;
-  color: var(--color-texto-principal);
-  margin-bottom: 0.25rem;
-  word-wrap: break-word; /* Para nombres largos */
-}
-
-.profile-menu-header small {
-  display: block;
-  font-size: 0.85rem;
-  color: var(--color-texto-secundario);
-  word-wrap: break-word; /* Para correos largos */
-}
-
-
-/* Lista de opciones del menú */
-.profile-menu ul {
-  list-style: none;
-  padding: 0.5rem 0; /* Padding arriba/abajo para la lista */
-  margin: 0;
-}
-
-.profile-menu li a {
-  display: flex; /* Usar flex para alinear icono y texto */
-  align-items: center;
-  gap: 0.75rem; /* Espacio entre icono y texto */
-  padding: 0.75rem 1.25rem; /* Padding para los items del menú */
-  color: var(--color-texto-principal);
-  text-decoration: none;
-  font-size: 0.9rem;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  white-space: nowrap; /* Evita que el texto se parta en varias líneas */
-  overflow: hidden;
-  text-overflow: ellipsis; /* Añade puntos suspensivos si el texto es muy largo */
-}
-
-.profile-menu li a:hover {
-  background-color: var(--color-secundario);
-  color: var(--color-primario);
-}
-
-/* Separador horizontal */
-.profile-menu li hr {
-  border: none;
-  border-top: 1px solid var(--color-borde);
-  margin: 0.5rem 0;
-}
-
-/* Ajuste opcional del espacio en la barra de navegación si es necesario */
-.header-nav nav {
-  gap: 0.5rem; /* Reduce un poco el espacio si los elementos quedan muy juntos */
-}
-
-
-.profile-section {
-  position: relative; /* Necesario para posicionar el menú de forma absoluta */
-  display: flex;
-  align-items: center;
-}
-
-.profile-trigger {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 0.5rem;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  overflow: hidden; /* Para contener la imagen */
-  padding: 0; /* Asegura que no haya padding extra */
-}
-
-/* NUEVO: Estilo para la imagen dentro del botón trigger */
 .profile-trigger-img {
-  
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Asegura que la imagen cubra el círculo */
-  display: block;
-  
+  object-fit: cover;
 }
 
-
-.profile-trigger:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-}
-
+/* MENÚ DESPLEGABLE */
 .profile-menu {
-  position: absolute;
-  top: calc(100% + 10px); /* Posición debajo del botón + espacio */
+  position: absolute; /* Esto lo saca del flujo normal para que flote */
+  top: 120%; /* Debajo del botón */
   right: 0;
-  background-color: var(--color-blanco);
-  border-radius: var(--borde-radio);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-  border: 1px solid var(--color-borde);
   width: 250px;
+  background-color: #11111b; /* Fondo oscuro */
+  border: 1px solid var(--color-borde);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
   z-index: 1010;
+  
+  /* Animación de entrada */
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-  overflow: hidden;
+  transition: all 0.2s ease;
 }
 
 .profile-menu.show {
@@ -370,92 +167,94 @@
 }
 
 .profile-menu-header {
-  padding: 1rem 1.25rem;
+  padding: 1.5rem;
   text-align: center;
   border-bottom: 1px solid var(--color-borde);
-  background-color: #f8f9fa;
+  background-color: rgba(255,255,255,0.02);
 }
 
-/* Modificado para avatar o imagen */
-.profile-menu-avatar, .profile-menu-img {
-   display: inline-block;
-   border-radius: 50%;
-   width: 50px;
-   height: 50px;
-   margin-bottom: 0.75rem;
+.profile-menu-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-primario);
+  margin-bottom: 10px;
 }
 
 .profile-menu-avatar {
-   background-color: var(--color-primario);
-   color: var(--color-blanco);
-   line-height: 50px;
-   font-size: 1.2rem;
-   font-weight: 600;
-   text-align: center; /* Centra las iniciales */
-}
-
-/* NUEVO: Estilo para la imagen dentro del menú */
-.profile-menu-img {
-    object-fit: cover;
-    border: 2px solid var(--color-blanco); /* Opcional: borde blanco */
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-
-
-    display: inline-block;
-   border-radius: 50%;
-   width: 150px;  /* <-- Aumenta este valor */
-   height: 150px; /* <-- Aumenta este valor */
-   margin-bottom: 0.75rem;
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  background-color: var(--color-primario);
+  color: #000;
+  border-radius: 50%;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
 }
 
 .profile-menu-header strong {
   display: block;
-  font-size: 1rem;
-  color: var(--color-texto-principal);
-  margin-bottom: 0.25rem;
-  word-wrap: break-word;
+  color: var(--color-primario);
+  font-family: var(--fuente-titulos);
 }
 
 .profile-menu-header small {
-  display: block;
-  font-size: 0.85rem;
   color: var(--color-texto-secundario);
-  word-wrap: break-word;
+  font-size: 0.85rem;
 }
-
 
 .profile-menu ul {
   list-style: none;
-  padding: 0.5rem 0;
+  padding: 0;
   margin: 0;
 }
 
 .profile-menu li a {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.25rem;
+  display: block;
+  padding: 12px 20px;
   color: var(--color-texto-principal);
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  transition: background 0.2s;
+  border-left: 3px solid transparent;
 }
 
 .profile-menu li a:hover {
-  background-color: #e9ecef; /* Un gris un poco más oscuro que --color-secundario */
+  background-color: rgba(0, 243, 255, 0.1);
   color: var(--color-primario);
+  border-left-color: var(--color-primario);
 }
 
 .profile-menu li hr {
   border: none;
   border-top: 1px solid var(--color-borde);
-  margin: 0.5rem 0;
+  margin: 0;
+  opacity: 0.5;
 }
 
-/* Ajuste opcional del espacio en la barra de navegación si es necesario */
-.header-nav nav {
-  gap: 0.5rem;
+/* Footer */
+.footer {
+  background-color: #020205;
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--color-texto-secundario);
+  border-top: 1px solid var(--color-borde);
+  margin-top: auto;
+}
+.badge-admin-header {
+  background-color: var(--color-primario); /* Tu color cian */
+  color: #000;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  margin-left: 10px; /* Separación del logo */
+}
+.nav-brand-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }

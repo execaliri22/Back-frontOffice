@@ -1,20 +1,26 @@
-<h2>Mi Lista de Deseos ❤️</h2>
+<div class="container favoritos-layout">
+  
+  <h2>💾 Módulos Favoritos</h2>
 
-@if (favoritos$ | async; as favoritos) {
+  @if (favoritos$ | async; as favoritos) {
 
-  @if (favoritos.length === 0) {
-    <div class="favoritos-vacio">
-      <p>Aún no has añadido ningún producto a tu lista de deseos.</p>
-      <a routerLink="/tienda" class="btn btn-primary">Explorar Tienda</a>
-    </div>
+    @if (favoritos.length === 0) {
+      <div class="favoritos-vacio">
+        <div class="empty-icon">💔</div>
+        <h3>Sin Datos Guardados</h3>
+        <p>Tu lista de deseos está vacía. No se han marcado objetivos.</p>
+        <a routerLink="/tienda" class="btn btn-primary btn-large">Explorar Catálogo</a>
+      </div>
+    } @else {
+      <div class="product-grid">
+        @for (producto of favoritos; track producto.idProducto) {
+          <app-product-card [producto]="producto"></app-product-card>
+        }
+      </div>
+    }
+
   } @else {
-    <div class="product-grid">
-      @for (producto of favoritos; track producto.idProducto) {
-        <app-product-card [producto]="producto"></app-product-card>
-      }
-    </div>
+    <p class="loading-message">Accediendo a memoria...</p>
   }
 
-} @else {
-  <p class="loading-message">Cargando favoritos...</p>
-}
+</div>
