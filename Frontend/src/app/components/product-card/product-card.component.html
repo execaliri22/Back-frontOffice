@@ -1,34 +1,47 @@
 <div class="card" *ngIf="producto">
 
+  @if (mostrarToast()) {
+    <div class="toast-notification">
+      {{ mensajeToast() }}
+    </div>
+  }
+
   <button
     class="btn-favorito"
     [class.es-favorito]="esFavorito()"
     (click)="toggleFavorito()"
-    [disabled]="procesandoFavorito()" title="{{ esFavorito() ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
-    ❤️
+    [disabled]="procesandoFavorito()" 
+    title="{{ esFavorito() ? 'Quitar de favoritos' : 'Añadir a favoritos' }}">
+    ★
   </button>
 
-  <span *ngIf="producto.stock === 0" class="card-stock card-stock-out">Agotado</span>
-  <span *ngIf="producto.stock > 0 && producto.stock < 10" class="card-stock card-stock-low">¡Últimos!</span>
+  <span *ngIf="producto.stock === 0" class="card-stock card-stock-out">SIN STOCK</span>
+  <span *ngIf="producto.stock > 0 && producto.stock < 10" class="card-stock card-stock-low">⚠ ÚLTIMOS</span>
+
   <div class="card-imagen-container">
     <img [src]="producto.urlImagen" [alt]="producto.nombre" class="card-imagen">
+    
+    <img [src]="producto.urlImagen" aria-hidden="true" class="holograma">
+    
+    <div class="neon-overlay"></div>
   </div>
 
   <div class="card-cuerpo">
-    <h5 class="card-titulo">{{ producto.nombre }}</h5>
+    <h5 class="card-titulo" title="{{ producto.nombre }}">{{ producto.nombre }}</h5>
+    
     <p class="card-precio">{{ producto.precio | currency:'$' }}</p>
 
     <p class="stock-info">
-      Stock:
       <span [class.stock-ok]="producto.stock > 0" [class.stock-agotado]="producto.stock === 0">
-        {{ producto.stock > 0 ? 'Disponible' : 'Agotado' }}
+        {{ producto.stock > 0 ? 'EN STOCK' : 'SIN STOCK' }}
       </span>
-      ({{ producto.stock }} unidades)
+      <span class="stock-qty">[{{ producto.stock }}]</span>
     </p>
 
     <button (click)="agregarAlCarrito()" class="btn-agregar" [disabled]="producto.stock === 0 || agregando()">
-      {{ agregando() ? 'Agregando...' : (producto.stock === 0 ? 'Agotado' : 'Añadir al Carrito') }}
+      {{ agregando() ? '...' : (producto.stock === 0 ? 'NO DISPONIBLE' : 'AGREGAR') }}
     </button>
-     <p *ngIf="errorAgregar" class="error-agregar-msg">{{ errorAgregar }}</p>
+    
+    <p *ngIf="errorAgregar" class="error-msg">{{ errorAgregar }}</p>
   </div>
 </div>

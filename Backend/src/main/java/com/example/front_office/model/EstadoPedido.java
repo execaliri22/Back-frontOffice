@@ -6,5 +6,6 @@ public enum EstadoPedido {
     RECHAZADO,  // Nuevo: Pago fallido
     EN_CAMINO,
     ENTREGADO,
-    INCIDENCIA
+    INCIDENCIA,
+    CANCELADO
 }

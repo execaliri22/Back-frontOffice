@@ -3,13 +3,12 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, tap, Subject, catchError, throwError } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../models/models';
 
-// Interface para el payload del JWT
 interface JwtPayload {
   sub: string;
   nombre?: string;
   fotoPerfilUrl?: string;
-  role?: string;           // Caso 1: Backend envía "role": "ROLE_ADMIN"
-  authorities?: string[];  // Caso 2: Backend envía "authorities": ["ROLE_ADMIN"]
+  role?: string;
+  authorities?: string[];
   exp?: number;
   iat?: number;
 }
@@ -33,7 +32,7 @@ export class AuthService implements OnDestroy {
 
   private currentUserToken = signal<string | null>(null);
   
-  // Usuario decodificado (Computado: cambia si cambia el token)
+  // Usuario decodificado
   public currentUser = computed<JwtPayload | null>(() => {
     const token = this.currentUserToken();
     if (token) {
@@ -42,25 +41,19 @@ export class AuthService implements OnDestroy {
     return null;
   });
 
-  // Helpers computados (Signals)
+  // Helpers computados
   public currentUserName = computed<string | null>(() => this.currentUser()?.nombre ?? this.currentUser()?.sub ?? null);
   public currentUserEmail = computed<string | null>(() => this.currentUser()?.sub ?? null);
   public currentUserFotoUrl = computed<string | null>(() => this.currentUser()?.fotoPerfilUrl ?? null);
   
-  // --- LÓGICA DE ADMIN (MEJORADA) ---
+  // --- LÓGICA DE ADMIN ---
   public isAdmin = computed<boolean>(() => {
     const user = this.currentUser();
     if (!user) return false;
-
-    // 1. Verificar si viene en el campo 'role' (String simple)
     if (user.role === 'ROLE_ADMIN') return true;
-
-    // 2. Verificar si viene en 'authorities' (Array de strings - Típico de Spring Security)
     if (user.authorities && Array.isArray(user.authorities)) {
-      // Buscamos si el array contiene el rol de admin
       return user.authorities.includes('ROLE_ADMIN');
     }
-
     return false; 
   });
 
@@ -83,27 +76,24 @@ export class AuthService implements OnDestroy {
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
 
-  // 1. Registro Cliente
   register(request: RegisterRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
       tap(response => this.saveToken(response.token)),
-      catchError(err => this.handleError(err, 'registro'))
+      catchError(err => this.handleError(err, 'REGISTRO'))
     );
   }
 
-  // 2. Login Cliente (Tienda)
   login(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
       tap(response => this.saveToken(response.token)),
-      catchError(err => this.handleError(err, 'login cliente'))
+      catchError(err => this.handleError(err, 'LOGIN CLIENTE'))
     );
   }
 
-  // 3. Login Admin (BackOffice)
   loginAdmin(request: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.adminApiUrl}/login`, request).pipe(
       tap(response => this.saveToken(response.token)),
-      catchError(err => this.handleError(err, 'login admin'))
+      catchError(err => this.handleError(err, 'LOGIN ADMIN'))
     );
   }
 
@@ -118,16 +108,15 @@ export class AuthService implements OnDestroy {
   private saveToken(token: string): void {
     if (typeof localStorage === 'undefined') return;
     localStorage.setItem(this.TOKEN_KEY, token);
-    this.updateLoginStatus(); // Actualiza los signals
+    this.updateLoginStatus();
   }
 
   private clearToken(): void {
     if (typeof localStorage === 'undefined') return;
     localStorage.removeItem(this.TOKEN_KEY);
-    this.updateLoginStatus(); // Actualiza los signals
+    this.updateLoginStatus();
   }
 
-  // Actualiza todos los signals leyendo el localStorage
   private updateLoginStatus(): void {
     if (typeof localStorage === 'undefined') return;
     const token = localStorage.getItem(this.TOKEN_KEY);
@@ -140,7 +129,6 @@ export class AuthService implements OnDestroy {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  // Helper simple para usar en condicionales normales (no reactivos)
   isLoggedIn(): boolean {
     return this.loggedInStatus();
   }
@@ -168,13 +156,13 @@ export class AuthService implements OnDestroy {
   actualizarNombre(nuevoNombre: string): Observable<AuthResponse> {
     return this.http.put<AuthResponse>(`${this.perfilApiUrl}/nombre`, { nombre: nuevoNombre }).pipe(
        tap(response => this.refreshUserDataFromToken(response.token)),
-       catchError(err => this.handleError(err, 'actualizar nombre'))
+       catchError(err => this.handleError(err, 'ACTUALIZAR NOMBRE'))
     );
   }
 
   cambiarContrasena(actual: string, nueva: string): Observable<string> {
      return this.http.put(`${this.perfilApiUrl}/contrasena`, { actual, nueva }, { responseType: 'text' }).pipe(
-        catchError(err => this.handleError(err, 'cambiar contraseña'))
+        catchError(err => this.handleError(err, 'CAMBIAR CONTRASEÑA'))
      );
   }
 
@@ -183,35 +171,54 @@ export class AuthService implements OnDestroy {
      formData.append('file', archivo, archivo.name);
      return this.http.post<AuthResponse>(`${this.perfilApiUrl}/foto`, formData).pipe(
         tap(response => this.refreshUserDataFromToken(response.token)),
-        catchError(err => this.handleError(err, 'subir foto'))
+        catchError(err => this.handleError(err, 'SUBIR FOTO'))
      );
   }
 
   eliminarFotoPerfil(): Observable<AuthResponse> {
      return this.http.delete<AuthResponse>(`${this.perfilApiUrl}/foto`).pipe(
         tap(response => this.refreshUserDataFromToken(response.token)),
-        catchError(err => this.handleError(err, 'eliminar foto'))
+        catchError(err => this.handleError(err, 'ELIMINAR FOTO'))
      );
   }
 
-  // --- MANEJO DE ERRORES ---
+  // --- MANEJO DE ERRORES (MODIFICADO PARA DEBUG) ---
 
   private handleError(error: HttpErrorResponse, context: string): Observable<never> {
-    console.error(`Error en ${context}:`, error);
+    // 🔍 DEBUG: Esto imprimirá el error real en la consola del navegador
+    console.group(`🚨 ERROR EN AUTH-SERVICE: ${context}`);
+    console.log(`URL: ${error.url}`);
+    console.log(`Status: ${error.status} ${error.statusText}`);
+    console.log('Respuesta del Backend (Body):', error.error);
+    console.groupEnd();
+
     let userMessage = 'Ocurrió un error inesperado.';
 
     if (error.status === 0) {
-        userMessage = 'Error de conexión con el servidor.';
-    } else if (error.status === 401 || error.status === 403) {
-      userMessage = 'Credenciales incorrectas o sesión expirada.';
+        userMessage = 'Error de conexión. Verifica si el backend está encendido.';
+    
+    } else if (error.status === 401) {
+      // 401: Unauthorized -> Credenciales mal o usuario no encontrado
+      userMessage = 'Credenciales incorrectas. Revisa tu correo y contraseña.';
+    
+    } else if (error.status === 403) {
+      // 403: Forbidden -> Spring Security bloqueó la petición
+      userMessage = 'Acceso denegado (403). Posible error de configuración CORS o SecurityFilterChain.';
+    
+    } else if (error.status === 404) {
+      userMessage = `No se encontró la dirección: ${error.url}`;
+    
     } else if (error.status === 400) {
+      // Errores de validación (Bad Request)
         if (typeof error.error === 'string') userMessage = error.error;
         else if (error.error?.message) userMessage = error.error.message;
-        else userMessage = 'Datos inválidos.';
+        else userMessage = 'Datos inválidos. Revisa el formulario.';
+    
     } else if (error.status >= 500) {
-      userMessage = 'Error interno del servidor.';
+      userMessage = 'Error interno del servidor. Revisa los logs de Java.';
     }
 
+    // Devolvemos un error con el mensaje procesado para que el componente lo muestre
     return throwError(() => new Error(userMessage));
   }
 

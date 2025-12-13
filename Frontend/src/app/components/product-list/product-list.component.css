@@ -1,36 +1,98 @@
-/* --- src/app/components/product-list/product-list.component.css --- */
-
+/* --- GRID PRINCIPAL --- */
 .product-grid {
   display: grid;
-  /* Columnas responsivas: se ajustan automáticamente llenando el espacio, 
-     con un mínimo de 280px y máximo de 1fr (fracción del espacio disponible) */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem; /* Aumentamos un poco el espacio entre tarjetas */
-  padding: 1rem 0; /* Pequeño padding vertical si es necesario */
+  /* Mantiene tu lógica responsive pero ajusta el mínimo para las nuevas cards */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+  gap: 2rem;
+  padding: 2rem 0;
+  animation: slideUpFade 0.6s ease-out;
 }
 
-/* Estilo para el mensaje de carga */
-/* Buscamos el párrafo dentro del contenedor que usa la plantilla #loading */
-:host ::ng-deep .loading-message p, /* Para aplicarlo al <p> dentro de ng-template */
-:host p.loading-message /* O si decides ponerle una clase al <p> directamente */ {
-  text-align: center; /* Centra el texto */
-  padding: 3rem 1rem; /* Espaciado generoso */
-  font-size: 1.1rem; /* Tamaño de fuente ligeramente mayor */
-  color: var(--color-texto-secundario); /* Color de texto suave */
-  font-style: italic; /* Estilo cursiva */
-  min-height: 200px; /* Asegura un espacio mínimo mientras carga */
-  display: flex; /* Para centrar verticalmente si es necesario */
+/* Animación de entrada para la grilla */
+@keyframes slideUpFade {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- CONTENEDOR DE MENSAJES DEL SISTEMA --- */
+.system-message {
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 300px; /* Altura generosa */
   width: 100%;
+  text-align: center;
+  background-color: rgba(10, 10, 15, 0.6); /* Fondo oscuro semitransparente */
+  border: 1px dashed rgba(0, 243, 255, 0.3); /* Borde punteado tech */
+  border-radius: 8px;
+  margin-top: 2rem;
+  font-family: 'Orbitron', monospace; /* Fuente tech */
+  color: #00f3ff; /* Cian por defecto */
 }
 
-/* Si quieres añadir una animación sutil al cargar (opcional) */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* --- ESTADO DE CARGA (Loading) --- */
+.loading-container p {
+  margin-top: 1.5rem;
+  letter-spacing: 2px;
+  font-size: 1rem;
 }
 
-.product-grid {
-  animation: fadeIn 0.5s ease-in-out; /* Aplica fade-in cuando aparecen los productos */
+/* Spinner Cyberpunk (Anillo cortado giratorio) */
+.cyber-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(0, 243, 255, 0.1);
+  border-top: 3px solid #00f3ff; /* Parte brillante */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Texto parpadeante estilo terminal */
+.blink-text {
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* --- ESTADO VACÍO (Empty) --- */
+.empty-container {
+  border-color: rgba(255, 0, 255, 0.3); /* Borde magenta para alertas */
+  color: #ff00ff; /* Texto magenta */
+}
+
+.icon-warning {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+}
+
+.empty-container p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.empty-container small {
+  font-family: monospace;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* Responsive: Ajustes para móviles */
+@media (max-width: 576px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); /* 1 col en móvil */
+    gap: 1.5rem;
+  }
 }

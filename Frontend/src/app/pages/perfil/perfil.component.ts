@@ -1,61 +1,88 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { CommonModule, NgOptimizedImage } from '@angular/common'; // NgOptimizedImage añadido
+import { CommonModule, NgOptimizedImage, DatePipe, CurrencyPipe } from '@angular/common'; // Añadidos Pipes
+import { HttpClient } from '@angular/common/http'; // Añadido HttpClient
 
 // Validador personalizado para contraseñas
 function passwordsMatchValidator(control: AbstractControl): ValidationErrors | null {
   const nueva = control.get('nueva');
   const confirmar = control.get('confirmar');
-  // Solo valida si ambos campos tienen valor
   return nueva && confirmar && nueva.value && confirmar.value && nueva.value !== confirmar.value ? { noCoinciden: true } : null;
 }
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgOptimizedImage], // NgOptimizedImage añadido
+  imports: [CommonModule, ReactiveFormsModule, NgOptimizedImage, DatePipe, CurrencyPipe], // Añadidos DatePipe y CurrencyPipe
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush // Añadir OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PerfilComponent implements OnInit {
-  // Inyección de dependencias
+  // --- INYECCIÓN DE DEPENDENCIAS ---
   authService = inject(AuthService);
   private fb = inject(FormBuilder);
+  private http = inject(HttpClient); // Inyectamos HttpClient para los pedidos
 
-  // Formularios reactivos
+  // --- VARIABLES DE PEDIDOS ---
+  private baseUrl = 'http://localhost:8080/api'; // URL del Backend
+  public pedidos = signal<any[]>([]); // Signal para la lista de pedidos
+  public cargandoPedidos = signal(true);
+
+  // --- VARIABLES DE PERFIL ---
   nombreForm!: FormGroup;
   contraForm!: FormGroup;
 
-  // Signals para manejar estados de la UI
+  // Signals para estados de UI
   guardandoNombre = signal(false);
   guardandoContra = signal(false);
   subiendoFoto = signal(false);
-  eliminandoFoto = signal(false); // Signal para eliminar foto
+  eliminandoFoto = signal(false);
+  
   errorNombre = signal<string | null>(null);
   errorContra = signal<string | null>(null);
   errorFoto = signal<string | null>(null);
   mensajeExito = signal<string | null>(null);
 
   selectedFile: File | null = null;
-  objectUrl = signal<string | null>(null); // Signal para la URL de vista previa
+  objectUrl = signal<string | null>(null);
 
   ngOnInit(): void {
-    // Inicializar formulario de nombre con el valor actual del signal
+    // 1. Inicializar Formularios
     this.nombreForm = this.fb.group({
       nombre: [this.authService.currentUserName() || '', Validators.required]
     });
 
-    // Inicializar formulario de contraseña
     this.contraForm = this.fb.group({
       actual: ['', Validators.required],
       nueva: ['', [Validators.required, Validators.minLength(6)]],
       confirmar: ['', Validators.required]
-    }, { validators: passwordsMatchValidator }); // Aplica validador al grupo
+    }, { validators: passwordsMatchValidator });
+
+    // 2. Cargar Pedidos
+    this.cargarPedidos();
   }
 
-  // Obtiene iniciales para el placeholder
+  // --- LÓGICA DE PEDIDOS (NUEVO) ---
+  cargarPedidos(): void {
+    this.cargandoPedidos.set(true);
+    this.http.get<any[]>(`${this.baseUrl}/pedidos/mis-pedidos`).subscribe({
+      next: (data) => {
+        // Ordenamos del más nuevo al más viejo
+        const ordenados = data.sort((a, b) => b.idPedido - a.idPedido);
+        this.pedidos.set(ordenados);
+        this.cargandoPedidos.set(false);
+      },
+      error: (err) => {
+        console.error('Error cargando pedidos', err);
+        this.cargandoPedidos.set(false);
+      }
+    });
+  }
+
+  // --- LÓGICA DE PERFIL (TU CÓDIGO EXISTENTE) ---
+
   getUserInitials(): string {
     const name = this.authService.currentUserName();
     if (!name) return '??';
@@ -66,68 +93,56 @@ export class PerfilComponent implements OnInit {
     return '??';
   }
 
-  // Maneja la selección de archivo y muestra vista previa
   onFileSelected(event: Event): void {
      const input = event.target as HTMLInputElement;
      if (input.files && input.files[0]) {
        this.selectedFile = input.files[0];
-       // Limpiar URL anterior si existe
-       if (this.objectUrl()) {
-         URL.revokeObjectURL(this.objectUrl()!);
-       }
-       // Crear y asignar nueva URL para vista previa
+       if (this.objectUrl()) URL.revokeObjectURL(this.objectUrl()!);
        this.objectUrl.set(URL.createObjectURL(this.selectedFile));
-       this.subirFoto(); // Llama a subir inmediatamente
-       input.value = ''; // Limpiar el input para permitir seleccionar el mismo archivo de nuevo
+       this.subirFoto(); 
+       input.value = ''; 
      } else {
          this.selectedFile = null;
          this.objectUrl.set(null);
      }
   }
 
-  // Sube la foto seleccionada al backend
    subirFoto(): void {
      if (!this.selectedFile) return;
-
      this.subiendoFoto.set(true);
      this.errorFoto.set(null);
      this.mensajeExito.set(null);
 
      this.authService.subirFotoPerfil(this.selectedFile).subscribe({
-       next: (response) => { // El backend devuelve AuthResponse con el nuevo token
+       next: (response) => {
          this.mensajeExito.set('Foto de perfil actualizada.');
          this.selectedFile = null;
-         this.objectUrl.set(null); // Limpia la vista previa
-         // AuthService ya refrescó los datos al recibir el nuevo token
+         this.objectUrl.set(null);
        },
-       error: (err: Error) => { // Captura el error procesado por handleError
-           this.errorFoto.set(err.message || 'Error desconocido al subir la foto.');
-           this.objectUrl.set(null); // Limpia vista previa en error también
+       error: (err: Error) => {
+           this.errorFoto.set(err.message || 'Error al subir la foto.');
+           this.objectUrl.set(null);
        },
        complete: () => this.subiendoFoto.set(false)
      });
    }
 
-   // Elimina la foto de perfil
    eliminarFoto(): void {
       if (!confirm('¿Estás seguro de que quieres eliminar tu foto de perfil?')) return;
-
       this.eliminandoFoto.set(true);
       this.errorFoto.set(null);
       this.mensajeExito.set(null);
 
       this.authService.eliminarFotoPerfil().subscribe({
-         next: (response) => { // El backend devuelve AuthResponse con el nuevo token
+         next: (response) => {
             this.mensajeExito.set('Foto de perfil eliminada.');
-            this.objectUrl.set(null); // Limpia la vista previa si existía
-             // AuthService ya refrescó los datos
+            this.objectUrl.set(null);
          },
-         error: (err: Error) => this.errorFoto.set(err.message || 'Error desconocido al eliminar la foto.'),
+         error: (err: Error) => this.errorFoto.set(err.message || 'Error al eliminar foto.'),
          complete: () => this.eliminandoFoto.set(false)
       });
    }
 
-  // Actualiza el nombre del usuario
   actualizarNombre(): void {
     if (this.nombreForm.invalid || this.guardandoNombre()) return;
     this.guardandoNombre.set(true);
@@ -136,18 +151,16 @@ export class PerfilComponent implements OnInit {
 
     const nuevoNombre = this.nombreForm.value.nombre.trim();
     this.authService.actualizarNombre(nuevoNombre).subscribe({
-      next: (response) => { // El backend devuelve AuthResponse
+      next: (response) => {
          this.mensajeExito.set('Nombre actualizado correctamente.');
-         // AuthService ya refrescó los datos
-         this.nombreForm.reset({ nombre: nuevoNombre }); // Actualiza valor del form sin ensuciarlo
-         this.nombreForm.markAsPristine(); // Marcar como no modificado
+         this.nombreForm.reset({ nombre: nuevoNombre });
+         this.nombreForm.markAsPristine();
       },
-      error: (err: Error) => this.errorNombre.set(err.message || 'Error desconocido al actualizar el nombre.'),
+      error: (err: Error) => this.errorNombre.set(err.message || 'Error al actualizar nombre.'),
       complete: () => this.guardandoNombre.set(false)
     });
   }
 
-  // Cambia la contraseña del usuario
   cambiarContrasena(): void {
     if (this.contraForm.invalid || this.guardandoContra()) return;
     this.guardandoContra.set(true);
@@ -158,11 +171,11 @@ export class PerfilComponent implements OnInit {
     this.authService.cambiarContrasena(actual, nueva).subscribe({
       next: () => {
          this.mensajeExito.set('Contraseña cambiada correctamente.');
-         this.contraForm.reset(); // Limpia el formulario
-         this.contraForm.markAsPristine(); // Marcar como no modificado
-         this.contraForm.markAsUntouched(); // Marcar como no tocado
+         this.contraForm.reset();
+         this.contraForm.markAsPristine();
+         this.contraForm.markAsUntouched();
       },
-      error: (err: Error) => this.errorContra.set(err.message || 'Error desconocido al cambiar la contraseña.'),
+      error: (err: Error) => this.errorContra.set(err.message || 'Error al cambiar contraseña.'),
       complete: () => this.guardandoContra.set(false)
     });
   }

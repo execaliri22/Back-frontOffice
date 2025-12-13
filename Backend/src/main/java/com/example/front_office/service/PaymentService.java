@@ -1,13 +1,9 @@
 package com.example.front_office.service;
 
-
-
+import com.example.front_office.model.ItemPedido;
+import com.example.front_office.model.Pedido;
 import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.client.preference.*;
 import com.mercadopago.resources.preference.Preference;
 import org.springframework.stereotype.Service;
 
@@ -18,41 +14,42 @@ import java.util.List;
 @Service
 public class PaymentService {
 
-    public String crearPreferencia() {
+    public String crearPreferencia(Pedido pedido) {
+        // Tu Access Token de Vendedor de Prueba
         MercadoPagoConfig.setAccessToken("APP_USR-5074996650738682-121308-b5298230a446a3f5704ff5c654ad7a45-3060739144");
 
         try {
-            // 1. Ítem
-            PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                    .title("Compra en Feel Store")
-                    .quantity(1)
-                    .unitPrice(new BigDecimal("100.00"))
-                    .currencyId("ARS")
-                    .build();
-
+            // 1. Crear lista de ítems basada en el pedido real
             List<PreferenceItemRequest> items = new ArrayList<>();
-            items.add(itemRequest);
 
-            // 2. URL (Creamos el objeto)
+            for (ItemPedido itemP : pedido.getItems()) {
+                PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
+                        .title(itemP.getProducto().getNombre())
+                        .quantity(itemP.getCantidad())
+                        .unitPrice(itemP.getProducto().getPrecio()) // Precio real de la BD
+                        .currencyId("ARS")
+                        .build();
+                items.add(itemRequest);
+            }
+
+            // 2. URLs de retorno apuntando a tu Angular LOCAL (Puerto 4200)
             PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
                     .success("http://localhost:4200/pago/exitoso")
                     .pending("http://localhost:4200/pago/pendiente")
                     .failure("http://localhost:4200/pago/fallo")
                     .build();
 
-            // 3. Preferencia (¡AQUÍ ES DONDE SUELE FALTAR LA LÍNEA!)
+            // 3. Crear la preferencia con ID de pedido y auto-retorno
             PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                     .items(items)
                     .backUrls(backUrls)
-                    // .autoReturn("approved") // Desactívalo si te da problemas por ahora
+                    //.autoReturn("approved") // Vuelve automático si es exitoso
+                    .externalReference(String.valueOf(pedido.getIdPedido())) // ID del pedido para identificarlo al volver
                     .build();
 
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
 
-            // CLAVE: Para probar en el entorno "real", muchos usan getInitPoint().
-            // Sin embargo, getSandboxInitPoint() sigue existiendo para forzar la vista de pruebas.
-            // Si quieres la experiencia "real" con credenciales ficticias, usa init_point.
             return preference.getInitPoint();
 
         } catch (Exception e) {

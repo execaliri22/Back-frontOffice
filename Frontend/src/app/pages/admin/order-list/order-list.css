@@ -1,6 +1,6 @@
-/* --- CONTENEDOR GENERAL (Mismo estilo que categorías) --- */
+/* --- CONTENEDOR GENERAL --- */
 .admin-container {
-  max-width: 1000px; /* Un poco más ancho para la tabla */
+  max-width: 1100px;
   margin: 40px auto;
   padding: 30px;
   background-color: rgba(17, 17, 27, 0.95);
@@ -28,7 +28,7 @@
 /* --- TABLA CYBERPUNK --- */
 .admin-table {
   width: 100%;
-  border-collapse: separate; /* Permite bordes redondeados en filas si se quiere */
+  border-collapse: separate;
   border-spacing: 0;
   margin-top: 20px;
   background: transparent;
@@ -53,13 +53,12 @@
   transition: background 0.3s;
 }
 
-/* Efecto Hover en filas (Scanline effect) */
+/* Efecto Hover en filas */
 .admin-table tbody tr:hover td {
   background-color: rgba(0, 243, 255, 0.05);
   color: #fff;
 }
 
-/* Datos específicos */
 .admin-table td small {
   color: #888;
   font-style: italic;
@@ -69,11 +68,11 @@
   font-family: monospace;
   font-size: 1.1rem;
   font-weight: bold;
-  color: #00ff9d !important; /* Verde Matrix */
+  color: #00ff9d !important;
   text-shadow: 0 0 5px rgba(0, 255, 157, 0.3);
 }
 
-/* --- BADGES DE ESTADO (Estilo Neón/Glass) --- */
+/* --- BADGES DE ESTADO --- */
 .badge {
   padding: 6px 12px;
   border-radius: 4px;
@@ -83,15 +82,22 @@
   letter-spacing: 0.5px;
   border: 1px solid transparent;
   display: inline-block;
-  min-width: 80px;
+  min-width: 90px;
   text-align: center;
 }
 
-/* Colores específicos para cada estado */
 .badge.PROCESANDO { 
   background-color: rgba(255, 193, 7, 0.15); 
   color: #ffc107; 
   border-color: rgba(255, 193, 7, 0.3);
+}
+
+/* 🔥 ESTE FALTABA: Estado PAGADO (Verde Neón/Éxito) */
+.badge.PAGADO { 
+  background-color: rgba(0, 255, 157, 0.15); 
+  color: #00ff9d; 
+  border-color: rgba(0, 255, 157, 0.3);
+  box-shadow: 0 0 5px rgba(0, 255, 157, 0.2);
 }
 
 .badge.ENVIADO { 
@@ -112,7 +118,7 @@
   border-color: rgba(220, 53, 69, 0.3);
 }
 
-/* --- SELECTOR DE ESTADO (Estilo Consola) --- */
+/* --- SELECTOR --- */
 select {
   background-color: #050505;
   color: #fff;
@@ -130,57 +136,31 @@ select:hover, select:focus {
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
 }
 
-/* Botón Volver (Reutilizable) */
+/* --- BOTÓN VOLVER --- */
 .btn-back {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ccc;
-  padding: 8px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.btn-back:hover {
-  border-color: #00f3ff;
+  background-color: rgba(0, 243, 255, 0.1);
+  border: 1px solid #00f3ff;
   color: #00f3ff;
-}
-
-/* Mensaje vacío */
-.text-center { text-align: center; padding: 40px; color: #666; font-style: italic; }
-/* --- BOTÓN VOLVER (Estilo Cyberpunk Unificado) --- */
-.btn-back {
-  background-color: rgba(0, 243, 255, 0.1); /* Fondo sutil cian */
-  border: 1px solid #00f3ff;                 /* Borde neón */
-  color: #00f3ff;                            /* Texto neón */
-  
   padding: 10px 20px;
-  border-radius: 4px;                        /* Bordes más rectos (tech) */
+  border-radius: 4px;
   cursor: pointer;
-  
-  font-family: 'Orbitron', sans-serif;       /* Fuente tecnológica */
+  font-family: 'Orbitron', sans-serif;
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
-  
   display: inline-flex;
   align-items: center;
-  gap: 8px;                                  /* Espacio entre texto e icono */
-  
+  gap: 8px;
   transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.1); /* Brillo suave inicial */
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
 }
 
 .btn-back:hover {
-  background-color: #00f3ff;                 /* Relleno sólido al pasar mouse */
-  color: #000;                               /* Texto negro para contraste */
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); /* Brillo intenso */
-  transform: translateY(-2px);               /* Efecto de elevación */
+  background-color: #00f3ff;
+  color: #000;
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+  transform: translateY(-2px);
 }
 
-/* Ajuste por si usas un icono SVG dentro del botón */
-.btn-back svg {
-  stroke: currentColor;
-  width: 18px;
-  height: 18px;
-}
+.text-center { text-align: center; padding: 40px; color: #666; font-style: italic; }

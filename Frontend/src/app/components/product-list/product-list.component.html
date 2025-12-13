@@ -1,15 +1,24 @@
-<!-- Revisa si hay productos y si el array tiene elementos -->
 @if (productos && productos.length > 0) {
+  
   <div class="product-grid">
-    <!-- Itera sobre el array 'productos' -->
     @for (producto of productos; track producto.idProducto) {
       <app-product-card [producto]="producto"></app-product-card>
     }
   </div>
+
 } @else if (productos === null) {
-  <!-- Muestra mensaje de carga si productos es null -->
-  <p class="loading-message">Cargando productos...</p>
+  
+  <div class="system-message loading-container">
+    <div class="cyber-spinner"></div>
+    <p class="blink-text">ACCEDIENDO AL SERVIDOR DE INVENTARIO...</p>
+  </div>
+
 } @else {
-  <!-- Muestra mensaje si no hay productos (array vacío) -->
-  <p class="loading-message">No se encontraron productos para esta categoría.</p>
+  
+  <div class="system-message empty-container">
+    <div class="icon-warning">⚠</div>
+    <p>NO SE DETECTARON ITEMS EN ESTE SECTOR.</p>
+    <small>INTENTE OTRA BÚSQUEDA O CONFIGURACIÓN.</small>
+  </div>
+
 }

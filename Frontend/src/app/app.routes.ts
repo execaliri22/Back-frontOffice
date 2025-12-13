@@ -68,25 +68,16 @@ export const routes: Routes = [
   // ==========================================
   // ZONA PAGOS (Mercado Pago Retorno)
   // ==========================================
-  { 
-    path: 'pago/exitoso', 
+ 
+  { path: 'pago/exitoso', 
     component: PaymentResultComponent, 
-    canActivate: [authGuard], 
-    data: { estado: 'exitoso' } 
-  },
-  { 
-    path: 'pago/pendiente', 
+    data: { estado: 'exitoso' } },
+  { path: 'pago/pendiente', 
     component: PaymentResultComponent, 
-    canActivate: [authGuard], 
-    data: { estado: 'pendiente' } 
-  },
-  { 
-    path: 'pago/fallo', 
+    data: { estado: 'pendiente' } },
+  { path: 'pago/fallo', 
     component: PaymentResultComponent, 
-    canActivate: [authGuard], 
-    data: { estado: 'fallo' } 
-  },
-
+    data: { estado: 'fallo' } },
   // ==========================================
   // ZONA ADMIN / BACKOFFICE (Protegida)
   // ==========================================

@@ -116,4 +116,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        // Saltarse el filtro si la ruta es pública de autenticación
+        return path.startsWith("/auth/") ||
+                path.startsWith("/api/backoffice/auth/");
+    }
 }

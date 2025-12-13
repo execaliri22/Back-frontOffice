@@ -1,63 +1,87 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-payment-result',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './payment-result.html',
+  templateUrl: './payment-result.html', // Asegúrate de tener tu HTML
   styleUrls: ['./payment-result.css']
 })
 export class PaymentResultComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
-  public estado: string = ''; // 'exitoso', 'pendiente', 'fallo'
+  // Apuntamos al Backend LOCAL
+  private baseUrl = 'http://localhost:8080/api';
+
+  public estado: string = '';
   public paymentId: string | null = null;
+  public externalReference: string | null = null; // ID del Pedido
   
   // Variables para la vista
-  public titulo: string = '';
-  public mensaje: string = '';
-  public icono: string = ''; // Usaremos emojis o clases css
+  public titulo: string = 'Procesando...';
+  public mensaje: string = 'Estamos confirmando tu pago con el servidor.';
+  public icono: string = '⏳';
+  public cargando: boolean = true;
 
   ngOnInit(): void {
-    // 1. Obtener el estado definido en las rutas (app.routes.ts)
-    this.route.data.subscribe(data => {
-      this.estado = data['estado'] || 'desconocido';
-      this.configurarVista();
-    });
-
-    // 2. Obtener el ID de pago que manda Mercado Pago en la URL (?payment_id=...)
+    // Leemos los parámetros de Mercado Pago
     this.route.queryParams.subscribe(params => {
-      this.paymentId = params['payment_id'] || params['collection_id'] || null;
+      const status = params['collection_status']; // approved, rejected...
+      this.paymentId = params['payment_id'];
+      this.externalReference = params['external_reference'];
+
+      this.estado = status;
+
+      if (this.estado === 'approved' && this.externalReference) {
+        this.confirmarPagoBackend();
+      } else {
+        this.configurarVistaManual(this.estado);
+      }
     });
   }
 
-  private configurarVista() {
-    switch (this.estado) {
-      case 'exitoso':
-        this.titulo = '¡Pago Aprobado!';
-        this.mensaje = 'Tu compra ha sido procesada correctamente. Te hemos enviado un correo con los detalles.';
-        this.icono = '🎉';
-        break;
-      
-      case 'pendiente':
-        this.titulo = 'Pago Pendiente';
-        this.mensaje = 'Estamos esperando la confirmación del pago. No te preocupes, te avisaremos en cuanto se acredite.';
-        this.icono = '⏳';
-        break;
-      
-      case 'fallo':
-        this.titulo = 'Pago Rechazado';
-        this.mensaje = 'Hubo un problema con tu tarjeta o medio de pago. Por favor, intenta nuevamente.';
-        this.icono = '❌';
-        break;
+  confirmarPagoBackend() {
+    const url = `${this.baseUrl}/pedidos/${this.externalReference}/confirmar-pago`;
 
-      default:
-        this.titulo = 'Estado Desconocido';
-        this.mensaje = 'No pudimos determinar el estado de tu pago.';
-        this.icono = '❓';
-    }
+    this.http.put(url, { paymentId: this.paymentId }).subscribe({
+      next: () => {
+        this.titulo = '¡Pago Aprobado!';
+        this.mensaje = `Pedido #${this.externalReference} confirmado.`;
+        this.icono = '🎉';
+        this.cargando = false;
+        
+        // Redirigir a "Mis Pedidos" después de 3 segundos
+        setTimeout(() => {
+           this.router.navigate(['/perfil']); 
+        }, 3000);
+      },
+      error: (err) => {
+        console.error(err);
+        this.titulo = 'Error de confirmación';
+        this.mensaje = 'El pago entró, pero hubo un error al actualizar el pedido.';
+        this.icono = '⚠️';
+        this.cargando = false;
+      }
+    });
+  }
+
+  private configurarVistaManual(estado: string) {
+      this.cargando = false;
+      if (estado === 'failure') {
+          this.titulo = 'Pago Rechazado';
+          this.icono = '❌';
+      } else if (estado === 'pending') {
+          this.titulo = 'Pago Pendiente';
+          this.icono = '⏱️';
+      } else {
+          this.titulo = 'Estado Desconocido';
+          this.icono = '❓';
+      }
   }
 }

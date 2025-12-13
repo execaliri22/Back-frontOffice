@@ -1,331 +1,180 @@
-
+/* --- 1. CONFIGURACIÓN DE LA TARJETA --- */
 .card {
-
-  background-color:rgba(103, 106, 142, 0.353);
-
+  background-color: #1a1b26;
+  border: 1px solid #2f3e46;
   border-radius: 12px;
-
-  box-shadow: var(--sombra-fuerte);
-
-  overflow: hidden;
-
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+  /* IMPORTANTE: Debe ser visible para que el holograma pueda "flotar" fuera */
+  overflow: visible; 
   display: flex;
-
   flex-direction: column;
-
+  height: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
-
+  z-index: 1; /* Nivel base */
 }
 
 .card:hover {
-
   transform: translateY(-5px);
-
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-
+  box-shadow: 0 10px 20px rgba(0, 255, 255, 0.1);
+  border-color: #00e5ff;
+  z-index: 10; /* Sube la tarjeta entera al pasar el mouse */
 }
 
-.card-stock-low, .card-stock-out {
-
-  position: absolute;
-
-  top: 10px;
-
-  right: 10px;
-
-  background-color: #ffc107;
-
-  color: #333;
-
-  padding: 0.25rem 0.5rem;
-
-  border-radius: 4px;
-
-  font-size: 0.8rem;
-
-  font-weight: 500;
-
-  z-index: 2;
-
-}
-
-.card-stock-out {
-
-  background-color: #dc3545;
-
-  color: white;
-
-}
+/* --- 2. CONTENEDOR DE IMÁGENES --- */
 .card-imagen-container {
   width: 100%;
-  aspect-ratio: 1 / 1; /* Mantiene contenedor cuadrado */
-  overflow: hidden;
-  background-color:white; /* Fondo gris claro */
-  border-bottom: 1px solid var(--color-borde);
-  display: flex; /* Para centrar imagen con contain */
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem; /* Pequeño padding alrededor de la imagen */
+  height: 200px; /* Altura fija */
+  position: relative;
+  /* IMPORTANTE: Visible para permitir el efecto holograma */
+  overflow: visible; 
+  background-color: #000;
+  border-radius: 12px 12px 0 0; /* Redondeamos solo arriba */
 }
 
+/* Imagen Normal (Fondo) */
 .card-imagen {
-  max-width: 100%; /* Asegura que no exceda el contenedor */
-  max-height: 100%; /* Asegura que no exceda el contenedor */
-  /* object-fit: contain; <-- No es necesario con max-width/height */
-  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Llena el espacio */
+  object-position: center;
+  transition: opacity 0.3s ease;
+  border-radius: 12px 12px 0 0;
 }
 
+/* --- EFECTO HOLOGRAMA (La imagen completa que flota) --- */
+.holograma {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5); /* Empieza pequeña y oculta */
+  
+  /* Ajustes para mostrar la imagen entera */
+  width: auto;
+  max-width: 140%; /* Puede ser más ancha que la tarjeta */
+  height: auto;
+  max-height: 280px; 
+  
+  opacity: 0;
+  pointer-events: none; /* No interfiere con clicks */
+  z-index: 100; /* Por encima de todo */
+  
+  border: 1px solid rgba(0, 243, 255, 0.6);
+  box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
+  background: rgba(10, 15, 30, 0.95);
+  border-radius: 8px;
+  
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote */
+}
 
+/* Hover: Aparece el holograma y se oscurece la normal */
+.card-imagen-container:hover .holograma {
+  opacity: 1;
+  transform: translate(-50%, -20%) scale(1); /* Sube y crece */
+}
 
+.card-imagen-container:hover .card-imagen {
+  opacity: 0.3;
+}
 
-
+/* --- 3. CUERPO DE LA TARJETA --- */
 .card-cuerpo {
-
-  padding: 1.5rem;
-
-  text-align: center;
-
-  flex-grow: 1;
-
+  padding: 15px;
   display: flex;
-
   flex-direction: column;
-
-  justify-content: space-between;
-
+  flex-grow: 1;
+  gap: 10px;
+  background-color: #1a1b26; /* Fondo explícito por si acaso */
+  border-radius: 0 0 12px 12px; /* Redondeamos abajo */
 }
 
 .card-titulo {
-
+  margin: 0;
+  color: #fff;
   font-size: 1.1rem;
-
-  font-weight: 500;
-
-  margin: 0 0 0.5rem 0;
-
-  color: var(--color-texto);
-
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-precio {
-
-  font-size: 1.25rem;
-
-  font-weight: 600;
-
-  color: var(--color-primario);
-
-  margin: 0 0 1rem 0;
-
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00e5ff;
+  margin: 0;
 }
 
+/* Botón agregar */
 .btn-agregar {
-
-  background-color: var(--color-primario);
-
-  color: var(--color-blanco);
-
-  border: none;
-
-  padding: 0.75rem 1rem;
-
-  border-radius: 6px;
-
+  background: transparent;
+  border: 1px solid #00e5ff;
+  color: #00e5ff;
+  padding: 8px;
+  border-radius: 4px;
   cursor: pointer;
-
-  font-weight: 500;
-
-  transition: background-color 0.3s ease;
-
+  margin-top: auto;
+  transition: all 0.3s;
 }
 
-.btn-agregar:hover {
-
-  background-color: #0056b3;
-
+.btn-agregar:hover:not(:disabled) {
+  background: #00e5ff;
+  color: #000;
+  box-shadow: 0 0 10px #00e5ff;
 }
 
 .btn-agregar:disabled {
-
-  background-color: var(--color-secundario);
-
+  border-color: #555;
+  color: #555;
   cursor: not-allowed;
-
 }
 
-/* --- Añade o modifica estos estilos en product-card.component.css --- */
-
-.card {
-  position: relative; /* Necesario para posicionar elementos absolutos dentro */
-  background-color:rgba(103, 106, 142, 0.353);
-  border-radius: 12px;
-  box-shadow: var(--sombra-fuerte);
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-}
-
-/* Botón de Favoritos */
+/* Badges y Toast */
 .btn-favorito {
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
-  border: 1px solid var(--color-borde);
+  z-index: 50; /* Por encima de la imagen normal pero bajo el holograma */
+  background: rgba(0,0,0,0.6);
+  border: none;
+  color: #fff;
   border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  padding: 0; /* Sin padding extra */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
-  font-size: 1.2rem; /* Tamaño del icono corazón */
-  color: #aaa; /* Color corazón por defecto (gris) */
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
-  z-index: 3; /* Encima de la etiqueta de stock */
+  transition: transform 0.2s;
 }
 
-.btn-favorito:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-  transform: scale(1.1);
-}
+.btn-favorito:hover { transform: scale(1.1); }
+.es-favorito { color: gold; }
 
-/* Estilo cuando es favorito */
-.btn-favorito.es-favorito {
-  color: #e74c3c; /* Color rojo para favorito */
-}
-
-/* Etiquetas de Stock (ajustadas) */
 .card-stock {
   position: absolute;
   top: 10px;
-  left: 10px; /* Cambiado a la izquierda */
-  padding: 0.25rem 0.6rem;
+  left: 10px;
+  z-index: 50;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #fff;
+}
+.card-stock-out { background-color: #ff3333; }
+.card-stock-low { background-color: #ffaa00; color: #000; }
+
+.toast-notification {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 229, 255, 0.9);
+  color: #000;
+  padding: 5px 10px;
   border-radius: 4px;
   font-size: 0.8rem;
-  font-weight: 600; /* Un poco más fuerte */
-  z-index: 2; /* Debajo del botón favorito si se superponen */
-  color: var(--color-blanco); /* Texto blanco por defecto */
+  font-weight: bold;
+  z-index: 200;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  animation: fadeIn 0.3s ease;
 }
 
-.card-stock-low {
-  background-color: #ff9800; /* Naranja para últimos */
-}
-
-.card-stock-out {
-  background-color: #e74c3c; /* Rojo para agotado */
-}
-
-/* Opcional: Estilo para "En Stock" */
-.card-stock-in {
-  background-color: #2ecc71; /* Verde para en stock */
-}
-
-/* Contenedor de Imagen (sin cambios) */
-.card-imagen-container {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background-color:white;
-  border-bottom: 1px solid var(--color-borde);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem;
-}
-
-.card-imagen {
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
-}
-
-/* Cuerpo de la Tarjeta (sin cambios grandes) */
-.card-cuerpo {
-  padding: 1rem 1.25rem; /* Ajuste ligero de padding */
-  text-align: center;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.card-titulo {
-  font-size: 1.05rem; /* Ajuste ligero */
-  font-weight: 500;
-  margin: 0 0 0.5rem 0;
-  color: var(--color-texto);
-  /* Limitar a 2 líneas y añadir puntos suspensivos */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 2.5em; /* Asegura espacio para 2 líneas aprox */
-}
-
-.card-precio {
-  font-size: 1.2rem; /* Ajuste ligero */
-  font-weight: 600;
-  color: var(--color-primario);
-  margin: 0 0 0.75rem 0; /* Un poco menos de margen */
-}
-
-/* Estilos para el párrafo de información de stock (si lo usas) */
-.stock-info {
-  font-size: 0.85rem;
-  color:black;
-  margin: 0 0 0.75rem 0;
-}
-.stock-info .stock-ok {
-  color: #27ae60; /* Verde */
-  font-weight: 500;
-}
-.stock-info .stock-agotado {
-  color: #e74c3c; /* Rojo */
-  font-weight: 500;
-}
-
-/* Botón Agregar (sin cambios grandes) */
-.btn-agregar {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-  width: 100%; /* Ocupa todo el ancho */
-}
-
-.btn-agregar:hover:not(:disabled) {
-  background-color: #2980b9; /* Oscurecer en hover si no está deshabilitado */
-}
-
-.btn-agregar:disabled {
-  background-color: #bdc3c7; /* Gris claro para deshabilitado */
-  cursor: not-allowed;
-}
-
-/* Mensaje de error al agregar */
-.error-agregar-msg {
-  color: var(--color-peligro);
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  min-height: 1em; /* Para evitar saltos de layout */
-}
-
-
-
-
-
+@keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -10px); } to { opacity: 1; transform: translate(-50%, 0); } }

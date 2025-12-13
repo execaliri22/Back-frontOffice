@@ -1,6 +1,7 @@
 package com.example.front_office.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -22,9 +23,9 @@ public class Pedido {
     private EstadoPedido estado;
     
     @SuppressWarnings("rawtypes")
-    @ManyToOne(fetch = FetchType.LAZY) // Considera LAZY fetching
+    @ManyToOne(fetch = FetchType.EAGER) // Traer al usuario SIEMPRE
     @JoinColumn(name = "id_usuario")
-    @JsonBackReference("usuario-pedidos") // <-- Lado "inverso", no se serializa desde Usuario
+    @JsonIgnoreProperties("pedidos") // Muestra al usuario, pero ignora su lista "pedidos" para no hacer bucle
     private Usuario usuario;
 
 
