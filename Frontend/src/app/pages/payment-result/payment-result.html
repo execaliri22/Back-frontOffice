@@ -1,0 +1,26 @@
+<div class="payment-container">
+  <div class="payment-card" [ngClass]="estado">
+    <div class="icon-circle">
+      {{ icono }}
+    </div>
+    <h1>{{ titulo }}</h1>
+    <p class="mensaje">{{ mensaje }}</p>
+
+    <div *ngIf="paymentId && estado === 'exitoso'" class="ticket-info">
+      <span>Comprobante de operación:</span>
+      <strong>#{{ paymentId }}</strong>
+    </div>
+
+    <div class="actions">
+      <a *ngIf="estado === 'fallo'" routerLink="/checkout" class="btn btn-primary">
+        Intentar nuevamente
+      </a>
+      <a *ngIf="estado !== 'fallo'" routerLink="/historial" class="btn btn-primary">
+        Ver mis Pedidos
+      </a>
+      <a routerLink="/tienda" class="btn btn-outline">
+        Volver a la Tienda
+      </a>
+    </div>
+  </div>
+</div>

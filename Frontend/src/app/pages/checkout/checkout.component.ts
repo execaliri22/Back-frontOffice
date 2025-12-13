@@ -1,40 +1,35 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { PedidoService } from '../../core/services/pedido.service';
-import { Pedido } from '../../core/models/models'; // Importamos el modelo
+import { Component } from '@angular/core';
+import { PaymentService } from '../../core/services/payment.service'; // Ajusta la ruta a tu servicio
 
 @Component({
   selector: 'app-checkout',
-  standalone: true,
-  imports: [CommonModule],
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent {
-
-  private pedidoService = inject(PedidoService);
-  private router = inject(Router);
-
-  error: string | null = null;
   procesando = false;
+  error: string | null = null;
 
-  // Este método reemplaza tu antigua lógica de "procesarPago"
+  constructor(private paymentService: PaymentService) {}
+
   confirmarPago() {
     this.procesando = true;
     this.error = null;
 
-    // Usamos el método REAL que creamos en el servicio
-    this.pedidoService.crearPedido().subscribe({
-      next: (pedido: Pedido) => { // Tipamos explícitamente para evitar error TS7006
-        this.procesando = false;
-        alert(`¡Pago procesado con éxito! Pedido #${pedido.idPedido}`);
-        this.router.navigate(['/mis-pedidos']);
+    this.paymentService.crearPreferencia().subscribe({
+      next: (res: any) => {
+        if (res.url) {
+          // AQUÍ OCURRE LA MAGIA: Redirigimos al usuario a Mercado Pago
+          window.location.href = res.url; 
+        } else {
+          this.error = 'No se recibió el link de pago.';
+          this.procesando = false;
+        }
       },
-      error: (err: any) => { // Tipamos el error como any
-        this.procesando = false;
+      error: (err) => {
         console.error(err);
-        this.error = 'Error al procesar el pedido. Intente nuevamente.';
+        this.error = 'Hubo un error al conectar con el servidor de pagos.';
+        this.procesando = false;
       }
     });
   }

@@ -23,3 +23,107 @@
 .btn-primary {
   width: 100%;
 }
+/* Contenedor centrado y oscuro/claro según tu tema */
+.checkout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #f8f9fa; /* Fondo gris claro */
+  min-height: 80vh;
+}
+
+/* La tarjeta blanca */
+.card-pago {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+h2 {
+  color: #009ee3; /* Azul Mercado Pago */
+  margin-bottom: 20px;
+}
+
+p {
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.info-pago {
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+}
+
+/* Contenedor centrado y oscuro/claro según tu tema */
+.checkout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #f8f9fa; /* Fondo gris claro */
+  min-height: 80vh;
+}
+
+/* La tarjeta blanca */
+.card-pago {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+}
+
+h2 {
+  color: #009ee3; /* Azul Mercado Pago */
+  margin-bottom: 20px;
+}
+
+p {
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.info-pago {
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+}
+
+/* EL BOTÓN QUE TE FALTA */
+.btn-mercado-pago {
+  background-color: #009ee3;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s;
+}
+
+.btn-mercado-pago:hover {
+  background-color: #007eb5;
+}
+
+.btn-mercado-pago:disabled {
+  background-color: #ccc;
+  cursor: wait;
+}

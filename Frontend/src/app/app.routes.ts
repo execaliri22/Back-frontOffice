@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
-import { noAdminGuard } from './core/guards/no-admin.guard'; // <--- 1. IMPORTAR EL GUARD
+import { noAdminGuard } from './core/guards/no-admin.guard';
 
 // --- IMPORTACIONES CLIENTE ---
 import { TiendaComponent } from './pages/tienda/tienda.component';
@@ -12,11 +12,15 @@ import { FavoritosComponent } from './pages/favoritos/favoritos.component';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 
 // --- IMPORTACIONES ADMIN ---
-import { ProductListComponent } from './pages/admin/product-list/product-list';
+// NOTA: He agregado '.component' al final de las rutas para evitar error "Module not found"
+import { ProductListComponent } from './pages/admin/product-list/product-list'; 
 import { ProductFormComponent } from './pages/admin/product-form/product-form';
 import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-dashboard';
 import { CategoryListComponent } from './pages/admin/category-list/category-list';
 import { OrderListComponent } from './pages/admin/order-list/order-list';
+
+// --- IMPORTACIÓN PAGO ---
+import { PaymentResultComponent } from './pages/payment-result/payment-result'; 
 
 export const routes: Routes = [
   // ==========================================
@@ -27,7 +31,7 @@ export const routes: Routes = [
   { 
     path: 'tienda', 
     component: TiendaComponent,
-    canActivate: [noAdminGuard] // <--- 2. EL ADMIN NO ENTRA AQUÍ
+    canActivate: [noAdminGuard] 
   },
   
   { path: 'auth', component: AuthComponent },
@@ -38,10 +42,10 @@ export const routes: Routes = [
   { 
     path: 'carrito', 
     component: CarritoComponent, 
-    canActivate: [authGuard, noAdminGuard] // <--- 3. Logueado Y NO Admin
+    canActivate: [authGuard, noAdminGuard] 
   },
   { 
-    path: 'checkout', 
+    path: 'checkout',
     component: CheckoutComponent, 
     canActivate: [authGuard, noAdminGuard] 
   },
@@ -62,12 +66,33 @@ export const routes: Routes = [
   },
 
   // ==========================================
+  // ZONA PAGOS (Mercado Pago Retorno)
+  // ==========================================
+  { 
+    path: 'pago/exitoso', 
+    component: PaymentResultComponent, 
+    canActivate: [authGuard], 
+    data: { estado: 'exitoso' } 
+  },
+  { 
+    path: 'pago/pendiente', 
+    component: PaymentResultComponent, 
+    canActivate: [authGuard], 
+    data: { estado: 'pendiente' } 
+  },
+  { 
+    path: 'pago/fallo', 
+    component: PaymentResultComponent, 
+    canActivate: [authGuard], 
+    data: { estado: 'fallo' } 
+  },
+
+  // ==========================================
   // ZONA ADMIN / BACKOFFICE (Protegida)
   // ==========================================
-  // Nota: Aquí idealmente usarías un 'adminGuard', pero por ahora el authGuard verifica login.
-  // Si un usuario normal intenta entrar aquí, deberías crear un guard inverso (adminGuard).
-  
-  { path: 'admin', component: AdminDashboardComponent, canActivate: [authGuard] },
+  { path: 'admin', 
+    component: AdminDashboardComponent, 
+    canActivate: [authGuard] },
   
   { 
     path: 'admin/productos', 

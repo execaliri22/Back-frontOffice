@@ -1,13 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Para *ngIf, *ngFor, | async, | currency
-import { RouterLink, Router } from '@angular/router';   // Importamos Router
+import { CommonModule } from '@angular/common'; 
+import { RouterLink } from '@angular/router';   
 import { Observable } from 'rxjs';
 
-// Servicios y Modelos
 import { CarritoService } from '../../core/services/carrito.service';
-import { PedidoService } from '../../core/services/pedido.service'; 
-// Importamos los modelos necesarios, incluyendo Pedido
-import { Carrito, ItemCarrito, Pedido } from '../../core/models/models';
+import { Carrito, ItemCarrito } from '../../core/models/models';
 
 @Component({
   selector: 'app-carrito',
@@ -23,19 +20,19 @@ export class CarritoComponent implements OnInit {
 
   // --- INYECCIONES ---
   private carritoService = inject(CarritoService);
-  private pedidoService = inject(PedidoService);
-  private router = inject(Router);
+  // Eliminado: PedidoService (ya no se usa aquí)
+  // Eliminado: Router (usamos routerLink en el HTML)
 
   // --- PROPIEDADES ---
   public carrito$: Observable<Carrito | null> = this.carritoService.carrito$;
   public error: string | null = null;
-  public procesandoCompra = false; // Para deshabilitar el botón mientras carga
+  // Eliminado: procesandoCompra (ya no hay espera asíncrona aquí)
 
   ngOnInit(): void {
     // El servicio se encarga de la carga inicial
   }
 
-  // --- MÉTODOS EXISTENTES (Eliminar / Actualizar) ---
+  // --- MÉTODOS ---
 
   eliminarItem(itemId: number): void {
      this.error = null; 
@@ -69,33 +66,5 @@ export class CarritoComponent implements OnInit {
   calcularTotal(items: ItemCarrito[] | undefined | null): number {
     if (!items) return 0;
     return items.reduce((total, item) => total + item.subtotal, 0);
-  }
-
-  // --- NUEVO MÉTODO: FINALIZAR COMPRA (CHECKOUT) ---
-  
-  finalizarCompra() {
-    if(!confirm('¿Estás seguro de confirmar tu compra?')) return;
-
-    this.procesandoCompra = true; // Activa loading (bloquea botón)
-    this.error = null;
-
-    this.pedidoService.crearPedido().subscribe({
-      // 👇 AQUÍ ESTÁ EL CAMBIO IMPORTANTE: Agregamos ": Pedido"
-      next: (pedido: Pedido) => {
-        this.procesandoCompra = false;
-        
-        // 1. Avisar al usuario
-        alert(`¡Compra Exitosa! Pedido #${pedido.idPedido} generado.`);
-
-        // 2. Redirigir a "Mis Pedidos"
-        this.router.navigate(['/mis-pedidos']);
-      },
-      error: (e) => {
-        this.procesandoCompra = false;
-        console.error('Error en checkout:', e);
-        // Muestra el mensaje que venga del backend (ej: "Sin stock") o uno genérico
-        this.error = e.error || 'Ocurrió un error al procesar tu compra. Intenta nuevamente.';
-      }
-    });
   }
 }

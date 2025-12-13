@@ -41,7 +41,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/backoffice/auth/**").permitAll()
-
+                        .requestMatchers("/api/pagos/crear_preferencia").permitAll()
                         // Documentación API (Swagger / OpenAPI)
                         .requestMatchers(
                                 "/v2/api-docs",

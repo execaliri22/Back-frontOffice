@@ -1,33 +1,29 @@
 <div class="checkout-container">
-  <h2>Finalizar Compra</h2>
-  <p>Estás a un paso de generar tu pedido.</p>
-
-  <div *ngIf="error" class="alert-error">
-    {{ error }}
-  </div>
   
-  <div class="form-group">
-    <label>Tarjeta</label>
-    <input type="text" placeholder="**** **** **** 4242" class="form-control">
-  </div>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Fecha Exp.</label>
-      <input type="text" placeholder="MM/YY" class="form-control">
-    </div>
-    <div class="form-group">
-      <label>CVC</label>
-      <input type="text" placeholder="123" class="form-control">
-    </div>
-  </div>
+  <div class="card-pago">
+    <h2>Finalizar Compra</h2>
+    <p>Estás a un paso de generar tu pedido.</p>
 
-  <button 
-    (click)="confirmarPago()" 
-    [disabled]="procesando" 
-    class="btn btn-primary btn-block">
+    <div *ngIf="error" class="alert-error">
+      {{ error }}
+    </div>
+
+    <div class="info-pago">
+      <p>El pago se procesará de forma segura a través de <strong>Mercado Pago</strong>.</p>
+      <p>Al hacer clic, serás redirigido para completar la transacción.</p>
+    </div>
     
-    <span *ngIf="!procesando">Confirmar y Pagar</span>
-    <span *ngIf="procesando">Procesando...</span>
+    <br>
 
-  </button>
+    <button 
+      (click)="confirmarPago()" 
+      [disabled]="procesando" 
+      class="btn-mercado-pago">
+      
+      <span *ngIf="!procesando">Pagar con Mercado Pago ➔</span>
+      <span *ngIf="procesando">Redirigiendo... ⏳</span>
+
+    </button>
+  </div>
+
 </div>

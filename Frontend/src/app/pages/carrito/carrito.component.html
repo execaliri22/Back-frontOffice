@@ -65,15 +65,14 @@
           <span class="total-amount">{{ calcularTotal(carrito.items) | currency:'USD' }}</span>
         </div>
         
-        <button 
+        <a 
+          routerLink="/checkout" 
           class="btn-checkout"
-          (click)="finalizarCompra()"
-          [disabled]="procesandoCompra || !carrito.items?.length">
+          [class.disabled]="!carrito.items?.length">
           
-          <span *ngIf="!procesandoCompra">INICIAR TRANSACCIÓN 💳</span>
-          <span *ngIf="procesandoCompra">PROCESANDO DATOS... ⏳</span>
+          <span>IR AL CHECKOUT ➡️</span>
         
-        </button>
+        </a>
       </div>
 
     </div>
