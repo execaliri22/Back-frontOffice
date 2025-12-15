@@ -1,7 +1,7 @@
 package com.example.front_office.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +17,9 @@ import java.util.Set;
 
 @Entity
 @Data
-@Builder             // <-- Permite crear objetos así: Usuario.builder().email(...).build()
-@NoArgsConstructor   // <-- OBLIGATORIO para JPA/Hibernate
-@AllArgsConstructor  // <-- Necesario para que funcione @Builder
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "usuarios")
 public class Usuario implements UserDetails {
 
@@ -36,8 +36,12 @@ public class Usuario implements UserDetails {
     private String contrasenaHash;
 
     private String direccion;
-
     private String fotoPerfilUrl;
+
+    // --- NUEVOS CAMPOS PARA VERIFICACIÓN ---
+    private String verificationToken;
+    private boolean enabled = false; // Por defecto false
+    // ---------------------------------------
 
     // Relaciones
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -56,38 +60,26 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // ¡CRÍTICO! Nunca devuelvas null.
-        // Como esta entidad es SOLO para clientes, le asignamos el rol fijo.
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
-    public String getPassword() {
-        return this.contrasenaHash;
-    }
+    public String getPassword() { return this.contrasenaHash; }
 
     @Override
-    public String getUsername() {
-        return this.email;
-    }
+    public String getUsername() { return this.email; }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled; // AHORA DEVUELVE EL VALOR REAL DE LA DB
     }
 }

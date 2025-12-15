@@ -44,13 +44,12 @@ export class AuthComponent {
     this.error = null;
     const request: LoginRequest = this.loginForm.value;
 
-    // 1. CASO ADMIN: Usamos loginAdmin y vamos al Dashboard
+    // 1. CASO ADMIN
     if (request.email === 'admin@admin.com') {
-      
       this.authService.loginAdmin(request).subscribe({
         next: () => {
           console.log('Login Admin Exitoso');
-          this.router.navigate(['/admin']); // <--- Redirige al Dashboard
+          this.router.navigate(['/admin']);
         },
         error: (err) => {
           console.error(err);
@@ -59,16 +58,17 @@ export class AuthComponent {
       });
 
     } else {
-      // 2. CASO CLIENTE: Usamos login (normal) y vamos a la Tienda
-      // ¡Aquí estaba el error! Antes llamabas a loginAdmin también aquí.
+      // 2. CASO CLIENTE
       this.authService.login(request).subscribe({
         next: () => {
           console.log('Login Cliente Exitoso');
-          this.router.navigate(['/tienda']); // <--- Redirige a la Tienda
+          this.router.navigate(['/tienda']);
         },
         error: (err) => {
           console.error(err);
-          this.error = 'Email o contraseña incorrectos.';
+          // Intentamos leer el mensaje del backend si existe
+          const msg = err.error?.message || 'Email o contraseña incorrectos.';
+          this.error = msg;
         }
       });
     }
@@ -79,9 +79,34 @@ export class AuthComponent {
     this.error = null;
     const request: RegisterRequest = this.registerForm.value;
     
+    // IMPORTANTE: Asegúrate de que en AuthService.register uses { responseType: 'text' }
     this.authService.register(request).subscribe({
-      next: () => this.router.navigate(['/tienda']),
-      error: (err) => this.error = 'Error al registrar. ¿El email ya existe?'
+      next: (mensaje) => {
+        // 1. Mostrar alerta con el mensaje que viene del backend ("Revisa tu correo...")
+        alert('¡Registro exitoso! ' + mensaje);
+
+        // 2. Cambiar a la vista de Login automáticamente
+        this.esLogin = true; 
+        
+        // Opcional: Rellenar el email en el login para facilitar
+        this.loginForm.patchValue({ email: request.email });
+      },
+      error: (err) => {
+        console.error('Error completo:', err);
+        
+        // Lógica para extraer el mensaje de error correctamente
+        // Si el backend envía un JSON { message: "..." }, lo sacamos de err.error.message
+        // Si envía un string directo, lo sacamos de err.error
+        const mensajeError = err.error?.message || err.error || 'Ocurrió un error desconocido';
+        
+        alert('Error al registrar: ' + mensajeError);
+      }
     });
+  }
+  
+  // Método auxiliar para alternar entre formularios desde el HTML
+  toggleForm() {
+    this.esLogin = !this.esLogin;
+    this.error = null;
   }
 }

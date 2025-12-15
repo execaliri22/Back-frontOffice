@@ -83,10 +83,13 @@ export class AuthService implements OnDestroy {
 
   // --- MÉTODOS DE AUTENTICACIÓN ---
 
-  // 1. Registro Cliente
-  register(request: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request).pipe(
-      tap(response => this.saveToken(response.token)),
+ register(request: RegisterRequest): Observable<string> {
+    // Nota el tercer argumento: { responseType: 'text' }
+    return this.http.post(`${this.apiUrl}/register`, request, { responseType: 'text' }).pipe(
+      
+      // YA NO guardamos el token aquí, porque el usuario debe verificar email primero.
+      // tap(response => this.saveToken(response.token)), <--- ELIMINADO
+      
       catchError(err => this.handleError(err, 'registro'))
     );
   }
@@ -112,7 +115,10 @@ export class AuthService implements OnDestroy {
     this.logoutEvent.emit();
     console.log('Usuario deslogueado.');
   }
-
+  verifyAccount(token: string): Observable<string> {
+    // Importante: responseType: 'text' porque el backend devuelve un String plano
+    return this.http.get(`${this.apiUrl}/verify?token=${token}`, { responseType: 'text' });
+  }
   // --- MANEJO DE TOKENS ---
 
   private saveToken(token: string): void {

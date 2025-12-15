@@ -21,6 +21,7 @@ import { OrderListComponent } from './pages/admin/order-list/order-list';
 
 // --- IMPORTACIÓN PAGO ---
 import { PaymentResultComponent } from './pages/payment-result/payment-result'; 
+import { VerifyComponent } from './pages/auth/verify/verify';
 
 export const routes: Routes = [
   // ==========================================
@@ -119,7 +120,7 @@ export const routes: Routes = [
     component: OrderListComponent, 
     canActivate: [authGuard] 
   },
-
+  { path: 'verify', component: VerifyComponent },
   // ==========================================
   // WILDCARD (Error 404)
   // ==========================================
