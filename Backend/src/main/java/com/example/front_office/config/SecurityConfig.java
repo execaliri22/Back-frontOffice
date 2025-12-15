@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,7 +25,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final AuthenticationProvider authenticationProvider;
+    // ELIMINADO: private final AuthenticationProvider authenticationProvider; (Causaba ambigüedad)
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,12 +36,11 @@ public class SecurityConfig {
                         // -----------------------------------------------------------
                         // 1. ZONA PÚBLICA (WhiteList)
                         // -----------------------------------------------------------
-                        // ELIMINADO: .requestMatchers(toH2Console()).permitAll() ❌
-
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/backoffice/auth/**").permitAll()
                         .requestMatchers("/api/pagos/crear_preferencia").permitAll()
-                        // Documentación API (Swagger / OpenAPI)
+
+                        // Documentación API
                         .requestMatchers(
                                 "/v2/api-docs",
                                 "/v3/api-docs",
@@ -65,7 +63,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
 
                         // -----------------------------------------------------------
-                        // 2. ZONA ADMIN (Back Office) - Requiere Rol ADMIN
+                        // 2. ZONA ADMIN (Back Office)
                         // -----------------------------------------------------------
                         .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
@@ -75,13 +73,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/categorias/**").hasRole("ADMIN")
 
-                        // Endpoints exclusivos de gestión
                         .requestMatchers("/api/backoffice/**").hasRole("ADMIN")
                         .requestMatchers("/api/pedidos/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
 
                         // -----------------------------------------------------------
-                        // 3. ZONA USUARIOS (Clientes) - Requiere estar autenticado
+                        // 3. ZONA USUARIOS (Clientes)
                         // -----------------------------------------------------------
                         .requestMatchers("/api/carrito/**").authenticated()
                         .requestMatchers("/api/favoritos/**").authenticated()
@@ -95,10 +92,8 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
+                // ELIMINADO: .authenticationProvider(...) ya no se necesita aquí
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // ELIMINADO: http.headers(...) frameOptions ya no es necesario sin H2 ❌
 
         return http.build();
     }
