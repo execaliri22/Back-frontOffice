@@ -35,7 +35,7 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @GetMapping
+    @GetMapping("/activos")
     public List<Producto> listarActivos() {
         // Usa el filtro para la tienda
         return productoRepository.findByActivoTrue();
