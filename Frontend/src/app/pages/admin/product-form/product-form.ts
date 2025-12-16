@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 import { AdminService } from '../../../core/services/admin.service';
 import { CategoriaService } from '../../../core/services/categoria.service';
 import { Categoria, Producto } from '../../../core/models/models';
@@ -9,7 +9,7 @@ import { Categoria, Producto } from '../../../core/models/models';
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterModule],
   templateUrl: './product-form.html',
   styleUrls: ['./product-form.css'] // Nota: en Angular 17+ suele ser styleUrl (singular) o styleUrls (plural)
 })
@@ -90,7 +90,11 @@ export class ProductFormComponent implements OnInit {
       idCategoria: prod.categoria?.idCategoria
     });
   }
-
+  cancelar() {
+    console.log('Navegando de vuelta a la lista de productos...');
+    // Forzamos la navegación programática
+    this.router.navigate(['/admin/productos']);
+  }
   guardar() {
     if (this.form.invalid) {
       this.form.markAllAsTouched(); // Marca los errores en rojo si el usuario intenta guardar
