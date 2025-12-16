@@ -226,4 +226,18 @@ export class AuthService implements OnDestroy {
       this.updateLoginStatus();
     }
   }
+  // 1. Solicitar el correo de recuperación
+  forgotPassword(email: string): Observable<string> {
+    return this.http.post(`${this.apiUrl}/forgot-password`, { email }, { responseType: 'text' });
+  }
+
+  // 2. Enviar la nueva contraseña con el token
+  resetPassword(token: string, password: string): Observable<string> {
+    // El token va en la URL (query param) y la password en el body
+    return this.http.post(`${this.apiUrl}/reset-password?token=${token}`, { password }, { responseType: 'text' });
+  }
+ getCurrentUser(): any {
+    // Si currentUser es un Signal, lo ejecutamos para obtener el valor
+    return this.currentUser(); 
+  }
 }

@@ -50,7 +50,17 @@ public class PedidoService {
 
         return pedidoRepository.save(pedido);
     }
+    @Transactional
+    public void confirmarPedidoExitoso(Integer pedidoId) {
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + pedidoId));
 
-    // IMPORTANTE: Asegúrate de tener los métodos que agregamos antes
-    // para que el controlador funcione (obtenerTodos, actualizarEstado, etc.)
+        // Actualizamos al estado que pediste
+        pedido.setEstado(EstadoPedido.PROCESANDO);
+
+        // Opcional: Si no descontaste stock al crear el pedido, hazlo aquí
+        // inventarioService.actualizarStock(pedido);
+
+        pedidoRepository.save(pedido);
+    }
 }

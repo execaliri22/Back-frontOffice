@@ -1,18 +1,16 @@
-import { Injectable, inject, OnDestroy, effect } from '@angular/core'; // Importar effect
+import { Injectable, inject, OnDestroy, effect } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, BehaviorSubject, throwError, tap, catchError, Subject, takeUntil, map } from 'rxjs'; // Quitar takeUntil si ya no se usa con pipe
+import { Observable, BehaviorSubject, throwError, tap, catchError, Subject, map } from 'rxjs';
 import { Carrito, ItemCarrito } from '../models/models';
 import { AuthService } from './auth.service';
 
-// Interfaces AddItemRequest y UpdateQuantityRequest sin cambios...
 interface AddItemRequest {
   idProducto: number;
   cantidad: number;
 }
 interface UpdateQuantityRequest {
-    cantidad: number;
+   cantidad: number;
 }
-
 
 @Injectable({ providedIn: 'root' })
 export class CarritoService implements OnDestroy {
@@ -21,24 +19,33 @@ export class CarritoService implements OnDestroy {
   private authService = inject(AuthService);
 
   private carritoSubject = new BehaviorSubject<Carrito | null>(null);
+  
+  // 1. Observable del Carrito (Objeto completo)
   public carrito$ = this.carritoSubject.asObservable();
 
-  private destroy$ = new Subject<void>(); // Se puede quitar si ya no usas takeUntil
+  // 2. Observable del Total (FALTABA ESTO)
+public total$ = this.carrito$.pipe(
+    map(carrito => {
+      if (!carrito || !carrito.items) return 0;
+      // Calcula el total sumando (precio * cantidad) de cada item
+      return carrito.items.reduce((acc, item) => acc + (item.producto.precio * item.cantidad), 0);
+    })
+  );
+
+  private destroy$ = new Subject<void>();
 
   constructor() {
-    // *** CORRECCIÓN: Usar effect para reaccionar al signal ***
+    // Reaccionar al estado de login
     effect(() => {
-      const loggedIn = this.authService.isLoggedIn(); // Lee el valor actual del signal
+      const loggedIn = this.authService.isLoggedIn();
       console.log('Login status changed in CartService effect:', loggedIn);
       if (loggedIn) {
-        this.cargarCarritoInicial(); // Carga el carrito si el usuario inicia sesión
+        this.cargarCarritoInicial();
       } else {
-        this.limpiarCarritoLocal(); // Limpia el carrito si el usuario cierra sesión
+        this.limpiarCarritoLocal();
       }
     });
-    // *** FIN CORRECCIÓN ***
 
-    // Carga inicial si ya está logueado al recargar (esto está bien)
     if (this.authService.isLoggedIn()) {
        this.cargarCarritoInicial();
     }
@@ -49,7 +56,7 @@ export class CarritoService implements OnDestroy {
     this.destroy$.complete();
   }
 
-  // --- Métodos Públicos (sin cambios en su lógica interna) ---
+  // --- Métodos Públicos ---
 
   public cargarCarritoInicial(): void {
     if (!this.authService.isLoggedIn()) {
@@ -96,7 +103,7 @@ export class CarritoService implements OnDestroy {
            this.cargarCarritoInicial();
         }
       }),
-      map(response => response.body), // Ajustado para sintaxis correcta de map
+      map(response => response.body),
       catchError(err => this.handleError(err, 'actualizarCantidad'))
     );
   }

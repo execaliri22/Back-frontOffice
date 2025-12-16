@@ -84,4 +84,33 @@ public class AuthService {
 
         return "Cuenta verificada con éxito. Ya puedes iniciar sesión.";
     }
+    public String forgotPassword(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("El correo no está registrado."));
+
+        // Generamos un token nuevo
+        String token = UUID.randomUUID().toString();
+        usuario.setVerificationToken(token); // Usamos este campo temporalmente
+        usuarioRepository.save(usuario);
+
+        // Enviamos el email
+        emailService.enviarRecuperacion(usuario.getEmail(), usuario.getNombre(), token);
+
+        return "Se ha enviado un enlace de recuperación a tu correo.";
+    }
+
+    // 2. GUARDAR NUEVA CONTRASEÑA
+    public String resetPassword(String token, String newPassword) {
+        Usuario usuario = usuarioRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new RuntimeException("El enlace es inválido o ha expirado."));
+
+        // Actualizamos la contraseña
+        usuario.setContrasenaHash(passwordEncoder.encode(newPassword));
+
+        // Borramos el token para que no se pueda usar dos veces
+        usuario.setVerificationToken(null);
+        usuarioRepository.save(usuario);
+
+        return "Contraseña actualizada correctamente. Ya puedes iniciar sesión.";
+    }
 }

@@ -1,28 +1,32 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core'; // Añadir Input y ChangeDetectionStrategy
-// Quitar OnInit y Observable si ya no se usan para cargar aquí
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Producto } from '../../core/models/models';
-// Quitar ProductoService si ya no se usa aquí
-
-// Importaciones Standalone
-import { CommonModule } from '@angular/common'; // Para @if, @for
-import { ProductCardComponent } from '../product-card/product-card.component';
+import { ProductCardComponent } from "../product-card/product-card.component";
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    ProductCardComponent
-  ],
+  imports: [CommonModule, ProductCardComponent],
   templateUrl: './product-list.component.html',
-  styleUrls: ['./product-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush // Añadir OnPush
+  styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent { // Quitar OnInit si ya no se usa
+export class ProductListComponent {
+  @Input() productos: Producto[] = [];
+  
+  // Variables para la notificación (Toast)
+  mostrarNotificacion = false;
+  mensajeNotificacion = '';
+  timeoutId: any;
 
-  // Input para recibir los productos del padre (TiendaComponent)
-  @Input() productos: Producto[] | null = null; // Acepta array o null
+  // Este método es llamado por el hijo (ProductCard) a través del evento (notificar)
+  mostrarMensaje(mensaje: string) {
+    this.mensajeNotificacion = mensaje;
+    this.mostrarNotificacion = true;
 
-  // Ya no necesita cargar productos aquí, los recibe del @Input
-  constructor() {} // Constructor vacío si no hay inyecciones
+    if (this.timeoutId) clearTimeout(this.timeoutId);
+
+    this.timeoutId = setTimeout(() => {
+      this.mostrarNotificacion = false;
+    }, 3000);
+  }
 }

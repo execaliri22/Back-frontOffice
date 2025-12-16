@@ -1,10 +1,10 @@
-import { Component, Input, inject, signal, computed, OnInit } from '@angular/core'; // Importar OnInit
+import { Component, Input, Output, EventEmitter, inject, signal, computed, OnInit } from '@angular/core';
 import { Producto } from '../../core/models/models';
 import { CarritoService } from '../../core/services/carrito.service';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
-import { FavoritoService } from '../../core/services/favorito.service'; // <-- IMPORTAR FavoritoService
+import { FavoritoService } from '../../core/services/favorito.service';
 
 @Component({
   selector: 'app-product-card',
@@ -12,29 +12,27 @@ import { FavoritoService } from '../../core/services/favorito.service'; // <-- I
   imports: [ CommonModule ],
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.css']
-  // changeDetection: ChangeDetectionStrategy.OnPush // Puedes añadir OnPush si quieres optimizar
 })
-export class ProductCardComponent implements OnInit { // Implementar OnInit
-  @Input({ required: true }) producto!: Producto; // Usar Input requerido
+export class ProductCardComponent implements OnInit {
+  @Input({ required: true }) producto!: Producto;
+  
+  // NUEVO: Evento para avisar al padre que muestre la notificación
+  @Output() notificar = new EventEmitter<string>(); 
 
   private carritoService = inject(CarritoService);
   private authService = inject(AuthService);
   private router = inject(Router);
-  private favoritoService = inject(FavoritoService); // <-- Inyectar FavoritoService
+  private favoritoService = inject(FavoritoService);
 
   public agregando = signal(false);
   public errorAgregar: string | null = null;
-  public procesandoFavorito = signal(false); // Signal para feedback visual de favoritos
+  public procesandoFavorito = signal(false);
 
-  // Signal computado para saber si es favorito (lee del servicio)
   public esFavorito = computed(() =>
     this.producto ? this.favoritoService.esFavorito(this.producto.idProducto) : false
   );
 
-  ngOnInit(): void {
-      // Puedes inicializar algo aquí si fuera necesario al recibir el Input producto
-      // console.log('ProductCard init:', this.producto?.nombre);
-  }
+  ngOnInit(): void {}
 
   agregarAlCarrito(): void {
     if (!this.authService.isLoggedIn()) {
@@ -45,22 +43,20 @@ export class ProductCardComponent implements OnInit { // Implementar OnInit
 
     this.agregando.set(true);
     this.errorAgregar = null;
-    console.log(`Agregando: ${this.producto.nombre}`);
 
     this.carritoService.agregarItem(this.producto.idProducto, 1).subscribe({
-      next: (_carritoActualizado) => {
-        console.log(`${this.producto.nombre} añadido al carrito.`);
+      next: () => {
         this.agregando.set(false);
+        // EMITIMOS EL MENSAJE AL PADRE
+        this.notificar.emit(`🛒 ${this.producto.nombre} añadido al carrito`);
       },
       error: (err) => {
-        console.error('Error al añadir producto:', err);
         this.errorAgregar = err.message || 'Error al añadir el producto.';
         this.agregando.set(false);
       }
     });
   }
 
-  // Método ACTUALIZADO para manejar el clic en el botón de favoritos
   toggleFavorito(): void {
     if (!this.authService.isLoggedIn()) {
       alert('Debes iniciar sesión para gestionar tus favoritos.');
@@ -68,10 +64,9 @@ export class ProductCardComponent implements OnInit { // Implementar OnInit
       return;
     }
 
-    this.procesandoFavorito.set(true); // Indica que se está procesando
+    this.procesandoFavorito.set(true);
     const currentlyFavorite = this.esFavorito();
     const productId = this.producto.idProducto;
-    const action = currentlyFavorite ? 'eliminar' : 'agregar';
 
     const request$ = currentlyFavorite
       ? this.favoritoService.eliminarFavorito(productId)
@@ -79,15 +74,14 @@ export class ProductCardComponent implements OnInit { // Implementar OnInit
 
     request$.subscribe({
       next: () => {
-        console.log(`Producto ${productId} ${currentlyFavorite ? 'eliminado de' : 'agregado a'} favoritos.`);
         this.procesandoFavorito.set(false);
-        // El signal 'esFavorito' se actualizará automáticamente porque lee del servicio
+        // EMITIMOS EL MENSAJE AL PADRE
+        const emoji = currentlyFavorite ? '💔' : '⭐';
+        const actionText = currentlyFavorite ? 'eliminado de' : 'agregado a';
+        this.notificar.emit(`${emoji} ${this.producto.nombre} ${actionText} favoritos`);
       },
       error: (err) => {
-        console.error(`Error al ${action} favorito:`, err);
-        alert(`Error al ${action} favorito: ${err.message || 'Error desconocido'}`);
-        // No necesitamos revertir el estado aquí, ya que 'esFavorito' lee directamente del servicio,
-        // y el servicio no se actualizó debido al error.
+        console.error('Error favoritos:', err);
         this.procesandoFavorito.set(false);
       }
     });

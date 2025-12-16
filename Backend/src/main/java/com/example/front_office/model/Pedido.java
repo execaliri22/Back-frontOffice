@@ -1,6 +1,7 @@
 package com.example.front_office.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -20,15 +21,14 @@ public class Pedido {
     private BigDecimal total;
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
-    
-    @SuppressWarnings("rawtypes")
-    @ManyToOne(fetch = FetchType.LAZY) // Considera LAZY fetching
-    @JoinColumn(name = "id_usuario")
-    @JsonBackReference("usuario-pedidos") // <-- Lado "inverso", no se serializa desde Usuario
-    private Usuario usuario;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_usuario")
+    @JsonIgnoreProperties("pedidos") // <-- Esto permite ver el Usuario sin ciclos.
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER) // EAGER puede ser necesario
     @JsonManagedReference("pedido-items") // <-- Lado "principal", se serializa
     private List<ItemPedido> items;
+
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { LoginRequest, RegisterRequest } from '../../core/models/models';
 import { CommonModule } from '@angular/common';
@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule
   ],
   templateUrl: './auth.component.html',
   styleUrls: ['./auth.component.css']

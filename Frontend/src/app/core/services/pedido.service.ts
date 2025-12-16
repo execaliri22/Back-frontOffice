@@ -11,7 +11,7 @@ export class PedidoService {
   private http = inject(HttpClient);
   
   // URL base de tus pedidos en el Backend
-  private apiUrl = 'http://localhost:8080/api/pedidos';
+private apiUrl = 'http://localhost:8080/api/pedidos';
 
   constructor() { }
 

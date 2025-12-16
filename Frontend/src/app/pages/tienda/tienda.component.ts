@@ -1,16 +1,18 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core'; // <--- Importamos computed
 import { catchError, Observable, of } from 'rxjs';
 import { Categoria, Producto } from '../../core/models/models';
 import { CategoriaService } from '../../core/services/categoria.service';
 import { ProductoService } from '../../core/services/producto.service';
 import { CommonModule } from '@angular/common';
 import { ProductListComponent } from '../../components/product-list/product-list.component';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-tienda',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ProductListComponent
   ],
   templateUrl: './tienda.component.html',
@@ -23,11 +25,33 @@ export class TiendaComponent implements OnInit {
   private categoriaService = inject(CategoriaService);
   private productoService = inject(ProductoService);
 
+  // Categorías (Se mantiene igual con Observable para el AsyncPipe)
   public categorias$: Observable<Categoria[]> | undefined;
   public errorCategorias: string | null = null;
-
   categoriaSeleccionadaId = signal<number | null>(null);
-  public productos$: Observable<Producto[]> | undefined;
+
+  // --- LÓGICA DE FILTRADO ---
+  
+  // 1. Signal para el texto del buscador
+  terminoBusqueda = signal<string>(''); 
+
+  // 2. Signal para guardar los productos "crudos" que vienen de la API
+  private productosOriginales = signal<Producto[]>([]);
+
+  // 3. Signal COMPUTADO: Se recalcula solo si cambia 'productosOriginales' o 'terminoBusqueda'
+  productosFiltrados = computed(() => {
+    const productos = this.productosOriginales();
+    const texto = this.terminoBusqueda().toLowerCase().trim();
+
+    if (!texto) {
+      return productos; // Si no hay texto, devuelve todo
+    }
+
+    return productos.filter(p => 
+      p.nombre.toLowerCase().includes(texto) || 
+      (p.descripcion && p.descripcion.toLowerCase().includes(texto))
+    );
+  });
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -48,6 +72,10 @@ export class TiendaComponent implements OnInit {
   seleccionarCategoria(idCategoria: number | null): void {
     console.log('Categoría seleccionada:', idCategoria);
     this.categoriaSeleccionadaId.set(idCategoria);
+    
+    // Al cambiar categoría, limpiamos el buscador para evitar confusiones (opcional)
+    this.terminoBusqueda.set(''); 
+    
     this.cargarProductos();
   }
 
@@ -59,11 +87,15 @@ export class TiendaComponent implements OnInit {
           ? this.productoService.getProductos()
           : this.productoService.getProductosPorCategoria(idCat);
 
-      this.productos$ = productosObservable.pipe(
-          catchError(err => {
-              console.error(`Error al cargar productos para categoría ${idCat}:`, err);
-              return of([]);
-          })
-      );
+      // Nos suscribimos manualmente para guardar los datos en el Signal
+      productosObservable.subscribe({
+        next: (data) => {
+          this.productosOriginales.set(data);
+        },
+        error: (err) => {
+          console.error(`Error al cargar productos para categoría ${idCat}:`, err);
+          this.productosOriginales.set([]);
+        }
+      });
   }
 }

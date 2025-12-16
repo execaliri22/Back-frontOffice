@@ -30,4 +30,27 @@ public class EmailService {
             throw new RuntimeException("Error al enviar el correo", e);
         }
     }
+    public void enviarRecuperacion(String to, String nombre, String token) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            // Ajusta el puerto si tu Angular corre en otro lado (ej: 4200)
+            String link = "http://localhost:4200/reset-password?token=" + token;
+
+            String html = "<h1>Hola " + nombre + "</h1>"
+                    + "<p>Has solicitado restablecer tu contraseña.</p>"
+                    + "<p>Haz clic en el siguiente enlace para crear una nueva:</p>"
+                    + "<a href='" + link + "'>RESTABLECER CONTRASEÑA</a>"
+                    + "<p>Si no fuiste tú, ignora este mensaje.</p>";
+
+            helper.setTo(to);
+            helper.setSubject("Recuperación de Contraseña - FEEL");
+            helper.setText(html, true);
+
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Error al enviar correo de recuperación", e);
+        }
+    }
 }

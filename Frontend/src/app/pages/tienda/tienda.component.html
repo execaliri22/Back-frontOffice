@@ -12,7 +12,13 @@
       <div class="filtro-seccion search-section">
         <h4 class="filtro-titulo">Buscar</h4>
         <div class="search-container">
-          <input type="text" placeholder="¿Qué buscas 🤖?" class="filtro-buscar">
+          <input 
+            type="text" 
+            placeholder="¿Qué buscas 🤖?" 
+            class="filtro-buscar"
+            [ngModel]="terminoBusqueda()"
+            (ngModelChange)="terminoBusqueda.set($event)">
+            
           <span class="search-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -54,7 +60,13 @@
   </aside>
 
   <section class="tienda-contenido">
-    <app-product-list [productos]="productos$ | async"></app-product-list>
+    <app-product-list [productos]="productosFiltrados()"></app-product-list>
+    
+    @if (productosFiltrados().length === 0) {
+      <div class="no-results">
+        <p>No se encontraron productos 😢</p>
+      </div>
+    }
   </section>
 
 </div>

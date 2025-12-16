@@ -1,331 +1,133 @@
-
-.card {
-
-  background-color:rgba(103, 106, 142, 0.353);
-
-  border-radius: 12px;
-
-  box-shadow: var(--sombra-fuerte);
-
-  overflow: hidden;
-
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+/* === 1. CONTENEDOR PRINCIPAL === */
+.product-card {
   display: flex;
-
   flex-direction: column;
-
+  background-color: #0f0f0f;
+  border: 1px solid #333;
+  border-radius: 16px;
+  overflow: hidden; /* IMPORTANTE: Corta bordes */
   position: relative;
-
-}
-
-.card:hover {
-
-  transform: translateY(-5px);
-
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-
-}
-
-.card-stock-low, .card-stock-out {
-
-  position: absolute;
-
-  top: 10px;
-
-  right: 10px;
-
-  background-color: #ffc107;
-
-  color: #333;
-
-  padding: 0.25rem 0.5rem;
-
-  border-radius: 4px;
-
-  font-size: 0.8rem;
-
-  font-weight: 500;
-
-  z-index: 2;
-
-}
-
-.card-stock-out {
-
-  background-color: #dc3545;
-
-  color: white;
-
-}
-.card-imagen-container {
+  transition: transform 0.3s ease, border-color 0.3s ease;
   width: 100%;
-  aspect-ratio: 1 / 1; /* Mantiene contenedor cuadrado */
-  overflow: hidden;
-  background-color:white; /* Fondo gris claro */
-  border-bottom: 1px solid var(--color-borde);
-  display: flex; /* Para centrar imagen con contain */
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem; /* Pequeño padding alrededor de la imagen */
+  height: 100%;
 }
 
-.card-imagen {
-  max-width: 100%; /* Asegura que no exceda el contenedor */
-  max-height: 100%; /* Asegura que no exceda el contenedor */
-  /* object-fit: contain; <-- No es necesario con max-width/height */
-  display: block;
-}
-
-
-
-
-
-.card-cuerpo {
-
-  padding: 1.5rem;
-
-  text-align: center;
-
-  flex-grow: 1;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: space-between;
-
-}
-
-.card-titulo {
-
-  font-size: 1.1rem;
-
-  font-weight: 500;
-
-  margin: 0 0 0.5rem 0;
-
-  color: var(--color-texto);
-
-}
-
-.card-precio {
-
-  font-size: 1.25rem;
-
-  font-weight: 600;
-
-  color: var(--color-primario);
-
-  margin: 0 0 1rem 0;
-
-}
-
-.btn-agregar {
-
-  background-color: var(--color-primario);
-
-  color: var(--color-blanco);
-
-  border: none;
-
-  padding: 0.75rem 1rem;
-
-  border-radius: 6px;
-
-  cursor: pointer;
-
-  font-weight: 500;
-
-  transition: background-color 0.3s ease;
-
-}
-
-.btn-agregar:hover {
-
-  background-color: #0056b3;
-
-}
-
-.btn-agregar:disabled {
-
-  background-color: var(--color-secundario);
-
-  cursor: not-allowed;
-
-}
-
-/* --- Añade o modifica estos estilos en product-card.component.css --- */
-
-.card {
-  position: relative; /* Necesario para posicionar elementos absolutos dentro */
-  background-color:rgba(103, 106, 142, 0.353);
-  border-radius: 12px;
-  box-shadow: var(--sombra-fuerte);
-  overflow: hidden;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.card:hover {
+.product-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border-color: #00ffff;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  z-index: 10;
 }
 
-/* Botón de Favoritos */
-.btn-favorito {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
-  border: 1px solid var(--color-borde);
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  padding: 0; /* Sin padding extra */
+/* === 2. ZONA DE IMAGEN (LA JAULA) === */
+.image-section {
+  width: 100%;
+  height: 250px; /* ALTURA FIJA OBLIGATORIA */
+  background-color: #ffffff;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-size: 1.2rem; /* Tamaño del icono corazón */
-  color: #aaa; /* Color corazón por defecto (gris) */
-  transition: background-color 0.2s ease, color 0.2s ease, transform 0.1s ease;
-  z-index: 3; /* Encima de la etiqueta de stock */
+  overflow: hidden;
+  border-bottom: 1px solid #333;
 }
 
-.btn-favorito:hover {
-  background-color: rgba(255, 255, 255, 0.9);
+/* LA IMAGEN (EL PRISIONERO) */
+.product-img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;  /* CRÍTICO: Evita el iPhone gigante */
+  max-height: 100%; /* CRÍTICO: Evita el iPhone gigante */
+  object-fit: contain; /* Se ajusta sin estirarse */
+  padding: 20px;
+  z-index: 1;
+  transition: transform 0.4s ease;
+}
+
+.image-section:hover .product-img {
   transform: scale(1.1);
 }
 
-/* Estilo cuando es favorito */
-.btn-favorito.es-favorito {
-  color: #e74c3c; /* Color rojo para favorito */
+/* Holograma */
+.hologram-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(180deg, rgba(0,255,255,0) 0%, rgba(0,255,255,0.1) 50%, rgba(0,255,255,0) 100%);
+  opacity: 0; transition: opacity 0.3s ease; pointer-events: none; z-index: 2;
 }
+.image-section:hover .hologram-overlay { opacity: 1; }
 
-/* Etiquetas de Stock (ajustadas) */
-.card-stock {
-  position: absolute;
-  top: 10px;
-  left: 10px; /* Cambiado a la izquierda */
-  padding: 0.25rem 0.6rem;
-  border-radius: 4px;
-  font-size: 0.8rem;
-  font-weight: 600; /* Un poco más fuerte */
-  z-index: 2; /* Debajo del botón favorito si se superponen */
-  color: var(--color-blanco); /* Texto blanco por defecto */
+/* === 3. ELEMENTOS FLOTANTES === */
+.badges-container { position: absolute; top: 10px; left: 10px; z-index: 20; display: flex; flex-direction: column; gap: 5px; }
+.badge { font-size: 0.7rem; font-weight: bold; padding: 4px 8px; border-radius: 4px; color: #fff; text-transform: uppercase; background: #000; }
+.badge-out { background-color: #ff3333; } .badge-low { background-color: #ffaa00; color: #000; }
+
+.btn-favorito {
+  position: absolute; top: 10px; right: 10px; width: 35px; height: 35px;
+  border-radius: 50%; background-color: rgba(255, 255, 255, 0.9); border: 1px solid #ddd;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20;
+  transition: all 0.2s; padding: 0;
 }
+.btn-favorito:hover { transform: scale(1.1); border-color: #00ffff; }
+.btn-favorito .heart-icon { font-size: 1.2rem; filter: grayscale(100%); line-height: 1; }
+.btn-favorito.es-favorito .heart-icon { filter: grayscale(0%); }
 
-.card-stock-low {
-  background-color: #ff9800; /* Naranja para últimos */
-}
-
-.card-stock-out {
-  background-color: #e74c3c; /* Rojo para agotado */
-}
-
-/* Opcional: Estilo para "En Stock" */
-.card-stock-in {
-  background-color: #2ecc71; /* Verde para en stock */
-}
-
-/* Contenedor de Imagen (sin cambios) */
-.card-imagen-container {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  background-color:white;
-  border-bottom: 1px solid var(--color-borde);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem;
-}
-
-.card-imagen {
-  max-width: 100%;
-  max-height: 100%;
-  display: block;
-}
-
-/* Cuerpo de la Tarjeta (sin cambios grandes) */
-.card-cuerpo {
-  padding: 1rem 1.25rem; /* Ajuste ligero de padding */
-  text-align: center;
-  flex-grow: 1;
+/* === 4. ZONA DE INFO === */
+.info-section {
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  flex-grow: 1;
+  background-color: #0f0f0f;
+  z-index: 5;
+  min-height: 160px;
 }
 
-.card-titulo {
-  font-size: 1.05rem; /* Ajuste ligero */
-  font-weight: 500;
-  margin: 0 0 0.5rem 0;
-  color: var(--color-texto);
-  /* Limitar a 2 líneas y añadir puntos suspensivos */
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 2.5em; /* Asegura espacio para 2 líneas aprox */
-}
+.product-title { font-size: 1rem; font-weight: 700; text-transform: uppercase; color: #fff; margin: 0 0 5px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.product-price { font-size: 1.3rem; font-weight: bold; color: #00ffff; margin: 0; }
+.stock-text { font-size: 0.75rem; color: #666; margin-top: auto; margin-bottom: 10px; }
+.text-ok { color: #00ff00; } .text-error { color: #ff3333; }
+.error-msg { color: #ff3333; font-size: 0.75rem; text-align: center; margin-top: 5px; }
 
-.card-precio {
-  font-size: 1.2rem; /* Ajuste ligero */
-  font-weight: 600;
-  color: var(--color-primario);
-  margin: 0 0 0.75rem 0; /* Un poco menos de margen */
-}
+/* === 5. ANIMACIÓN (Descripción vs Botón) === */
 
-/* Estilos para el párrafo de información de stock (si lo usas) */
-.stock-info {
+/* Descripción */
+.product-description {
   font-size: 0.85rem;
-  color:black;
-  margin: 0 0 0.75rem 0;
-}
-.stock-info .stock-ok {
-  color: #27ae60; /* Verde */
-  font-weight: 500;
-}
-.stock-info .stock-agotado {
-  color: #e74c3c; /* Rojo */
-  font-weight: 500;
-}
-
-/* Botón Agregar (sin cambios grandes) */
-.btn-agregar {
-  background-color: var(--color-primario);
-  color: var(--color-blanco);
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-  width: 100%; /* Ocupa todo el ancho */
+  color: #aaa;
+  margin: 10px 0;
+  line-height: 1.4;
+  
+  /* SIN line-clamp. Solo max-height */
+  display: block;
+  max-height: 3.6em; /* Altura inicial */
+  overflow: hidden;
+  
+  transition: max-height 0.4s ease-in-out, color 0.3s ease;
 }
 
-.btn-agregar:hover:not(:disabled) {
-  background-color: #2980b9; /* Oscurecer en hover si no está deshabilitado */
+/* Botón */
+.btn-add {
+  width: 100%; padding: 10px; background-color: transparent; border: 1px solid #00ffff;
+  color: #00ffff; font-weight: bold; text-transform: uppercase; border-radius: 6px; cursor: pointer;
+  
+  max-height: 50px; opacity: 1; overflow: hidden;
+  
+  transition: all 0.4s ease-in-out;
+}
+.btn-add:hover:not(:disabled) { background-color: #00ffff; color: #000; box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); }
+.btn-add:disabled { border-color: #444; color: #555; cursor: not-allowed; }
+
+/* === 6. TRIGGERS (La magia) === */
+
+/* Cuando pasas el mouse por la imagen... */
+
+/* A) El botón desaparece */
+.product-card:has(.image-section:hover) .btn-add {
+  max-height: 0; opacity: 0; padding: 0; margin: 0; border: none;
 }
 
-.btn-agregar:disabled {
-  background-color: #bdc3c7; /* Gris claro para deshabilitado */
-  cursor: not-allowed;
+/* B) La descripción se expande */
+.product-card:has(.image-section:hover) .product-description {
+  max-height: 200px; /* Se abre */
+  color: #fff;
 }
-
-/* Mensaje de error al agregar */
-.error-agregar-msg {
-  color: var(--color-peligro);
-  font-size: 0.8rem;
-  margin-top: 0.5rem;
-  min-height: 1em; /* Para evitar saltos de layout */
-}
-
-
-
-
-

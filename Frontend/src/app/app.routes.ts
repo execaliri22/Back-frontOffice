@@ -22,6 +22,8 @@ import { OrderListComponent } from './pages/admin/order-list/order-list';
 // --- IMPORTACIÓN PAGO ---
 import { PaymentResultComponent } from './pages/payment-result/payment-result'; 
 import { VerifyComponent } from './pages/auth/verify/verify';
+import { ResetPasswordComponent } from './auth/reset-password/reset-password';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 
 export const routes: Routes = [
   // ==========================================
@@ -120,6 +122,8 @@ export const routes: Routes = [
     component: OrderListComponent, 
     canActivate: [authGuard] 
   },
+  { path: 'forgot-password', component: ForgotPasswordComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   { path: 'verify', component: VerifyComponent },
   // ==========================================
   // WILDCARD (Error 404)

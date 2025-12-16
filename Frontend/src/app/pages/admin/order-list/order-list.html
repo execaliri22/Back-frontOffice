@@ -4,48 +4,61 @@
     <h2>🚚 Gestión de Pedidos</h2>
   </div>
 
-  <table class="admin-table">
-    <thead>
-      <tr>
-        <th>ID Pedido</th>
-        <th>Fecha</th>
-        <th>Cliente</th>
-        <th>Total</th>
-        <th>Estado Actual</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let p of pedidos">
-        <td style="font-family: monospace; color: #d63384;">#{{ p.idPedido }}</td>
-        
-        <td>{{ p.fecha | date:'short' }}</td>
-        
-        <td>
-          <div style="font-weight: bold;">{{ p.usuario.nombre }}</div>
-          <small>{{ p.usuario.email }}</small>
-        </td>
-        
-        <td class="precio">{{ p.total | currency:'USD' }}</td>
-        
-        <td>
-          <span class="badge" [ngClass]="p.estado">{{ p.estado }}</span>
-        </td>
-        
-        <td>
-          <select [ngModel]="p.estado" (ngModelChange)="cambiarEstado(p, $event)">
-            <option *ngFor="let est of estadosPosibles" [value]="est">
-              {{ est }}
-            </option>
-          </select>
-        </td>
-      </tr>
+  <div class="table-responsive">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Total</th>
+          <th>Estado Actual</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of pedidos">
+          
+          <td class="id-col">#{{ p.idPedido }}</td>
+          
+          <td>{{ p.fecha | date:'short' }}</td>
+          
+          <td>
+            <div *ngIf="p.usuario; else noUser">
+              <div class="user-name">{{ p.usuario?.nombre }} {{ p.usuario?.apellido }}</div>
+              <small class="user-email">{{ p.usuario?.email }}</small>
+            </div>
+            <ng-template #noUser>
+              <span class="text-muted">Cliente Desconocido</span>
+            </ng-template>
+          </td>
+          
+          <td class="precio">{{ p.total | currency:'USD':'symbol':'1.0-0' }}</td>
+          
+          <td>
+            <span class="badge" [ngClass]="getClassEstado(p.estado)">
+              {{ p.estado }}
+            </span>
+          </td>
+          
+          <td>
+            <select 
+              class="status-select" 
+              [value]="p.estado" 
+              (change)="cambiarEstado(p, $event)">
+              <option *ngFor="let est of estadosPosibles" [value]="est">
+                {{ est }}
+              </option>
+            </select>
+          </td>
+        </tr>
 
-      <tr *ngIf="pedidos.length === 0">
-        <td colspan="6" class="text-center">
-           ⚠ No se encontraron registros en el sistema.
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        <tr *ngIf="pedidos.length === 0">
+          <td colspan="6" class="empty-state">
+            ⚠ No se encontraron registros en el sistema.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
