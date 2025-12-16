@@ -4,6 +4,7 @@ import com.example.front_office.controller.dto.ProductoDTO;
 import com.example.front_office.model.Categoria;
 import com.example.front_office.model.Producto;
 import com.example.front_office.repository.CategoriaRepository;
+import com.example.front_office.repository.ProductoRepository;
 import com.example.front_office.service.ProductoService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class ProductoController {
 
     private final ProductoService productoService;
     private final CategoriaRepository categoriaRepository;
-
+    private final ProductoRepository productoRepository;
     // --- GET (Leer Todos) ---
     @GetMapping
     public ResponseEntity<List<Producto>> listarProductos() {
@@ -34,7 +35,11 @@ public class ProductoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
+    @GetMapping
+    public List<Producto> listarActivos() {
+        // Usa el filtro para la tienda
+        return productoRepository.findByActivoTrue();
+    }
     // --- GET (Filtrar por Categoría) ---
     @GetMapping("/categoria/{idCategoria}")
     public ResponseEntity<List<Producto>> listarProductosPorCategoria(@PathVariable Integer idCategoria) {

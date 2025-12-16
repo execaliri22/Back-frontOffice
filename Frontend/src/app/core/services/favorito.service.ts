@@ -34,7 +34,7 @@ export class FavoritoService {
       }
     });
   }
-
+  
   // Carga inicial de favoritos al loguearse o recargar
   private cargarFavoritosIniciales(): void {
     this.http.get<any[]>(this.apiUrl).pipe( // Cambia 'any[]' por 'FavoritoResponse[]' si la defines
@@ -57,37 +57,49 @@ export class FavoritoService {
     });
   }
 
-  // POST /favoritos/{idProducto}
-  agregarFavorito(idProducto: number): Observable<any> { // Cambia 'any' por 'FavoritoResponse'
-    return this.http.post<any>(`${this.apiUrl}/${idProducto}`, {}).pipe(
-      tap(favoritoAgregado => {
-        console.log('Producto añadido a favoritos:', favoritoAgregado);
-        // Actualiza el signal de IDs añadiendo el nuevo ID
-        this.favoritoIds.update(ids => ids.add(idProducto));
-        // Opcional: Actualiza el BehaviorSubject de Productos (más complejo, requiere obtener el producto)
-        // Podrías recargar la lista completa o añadir el producto específico si lo tienes
-         this.favoritosSubject.next([...this.favoritosSubject.value, favoritoAgregado.producto]);
-      }),
-      catchError(err => this.handleError(err, 'agregarFavorito'))
-    );
-  }
+// ... (imports y propiedades)
 
-  // DELETE /favoritos/{idProducto}
-  eliminarFavorito(idProducto: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${idProducto}`).pipe(
-      tap(() => {
-        console.log(`Producto ${idProducto} eliminado de favoritos.`);
-        // Actualiza el signal de IDs quitando el ID
-        this.favoritoIds.update(ids => {
-            ids.delete(idProducto);
-            return ids;
-        });
-        // Opcional: Actualiza el BehaviorSubject de Productos
-        this.favoritosSubject.next(this.favoritosSubject.value.filter(p => p.idProducto !== idProducto));
-      }),
-      catchError(err => this.handleError(err, 'eliminarFavorito'))
-    );
-  }
+// POST /favoritos/{idProducto}
+agregarFavorito(idProducto: number): Observable<any> { 
+  return this.http.post<any>(`${this.apiUrl}/${idProducto}`, {}).pipe(
+    tap(favoritoAgregado => {
+      console.log('Producto añadido a favoritos:', favoritoAgregado);
+      
+      // ✅ CORRECCIÓN EN AGREGAR: Creamos un nuevo Set para forzar la reactividad
+      this.favoritoIds.update(currentIds => {
+          const newIds = new Set(currentIds); // Clonamos el Set actual
+          newIds.add(idProducto);            // Modificamos el nuevo Set
+          return newIds;                     // Devolvemos la nueva referencia
+      });
+      
+      // ... (Opcional: Actualiza el BehaviorSubject de Productos)
+      this.favoritosSubject.next([...this.favoritosSubject.value, favoritoAgregado.producto]);
+    }),
+    catchError(err => this.handleError(err, 'agregarFavorito'))
+  );
+}
+
+// DELETE /favoritos/{idProducto}
+eliminarFavorito(idProducto: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/${idProducto}`).pipe(
+    tap(() => {
+      console.log(`Producto ${idProducto} eliminado de favoritos.`);
+      
+      // ✅ CORRECCIÓN EN ELIMINAR: Creamos un nuevo Set para forzar la reactividad
+      this.favoritoIds.update(currentIds => {
+          const newIds = new Set(currentIds); // Clonamos el Set actual
+          newIds.delete(idProducto);         // Modificamos el nuevo Set
+          return newIds;                     // Devolvemos la nueva referencia
+      });
+      
+      // Opcional: Actualiza el BehaviorSubject de Productos
+      this.favoritosSubject.next(this.favoritosSubject.value.filter(p => p.idProducto !== idProducto));
+    }),
+    catchError(err => this.handleError(err, 'eliminarFavorito'))
+  );
+}
+
+// ... (resto del servicio)
 
   // Comprueba si un producto es favorito usando el signal de IDs
   esFavorito(idProducto: number): boolean {

@@ -1,6 +1,132 @@
 /* =========================================
-   1. BANNER CYBERPUNK (CORREGIDO)
+   1. IMPORTACIÓN DE FUENTES FUTURISTAS
    ========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@300;400;600&display=swap');
+
+/* =========================================
+   2. VARIABLES Y PALETA CYBERPUNK
+   ========================================= */
+:root {
+  /* --- PALETA CYBERPUNK --- */
+  --color-fondo: #05050b;         /* Negro profundo */
+  --color-panel: #11111b;         /* Gris oscuro para menús/tarjetas */
+  
+  --color-primario: #00f3ff;       /* Cyan Neón (Principal) */
+  --color-acento: #bc13fe;        /* Púrpura Neón */
+  --color-peligro: #ff003c;        /* Rojo Neón */
+  
+  --color-texto-principal: #e0e6ed;
+  --color-texto-secundario: #94a3b8;
+  --color-blanco: #ffffff;
+  
+  --color-borde: rgba(0, 243, 255, 0.2); 
+  
+  /* --- CONFIGURACIÓN --- */
+  --container-max-width: 1300px;
+  --borde-radio: 4px;
+  
+  /* --- EFECTOS --- */
+  --sombra-suave: 0 4px 15px rgba(0, 243, 255, 0.05);
+  --sombra-boton: 0 0 10px rgba(0, 243, 255, 0.4);
+  
+  --fuente-titulos: 'Orbitron', sans-serif;
+  --fuente-principal: 'Rajdhani', sans-serif;
+  --fuente-monospaced: monospace;
+  --color-exito-neon: #0aff0a;
+}
+
+/* =========================================
+   3. BASE Y FONDO ANIMADO (BODY)
+   ========================================= */
+body {
+  font-family: var(--fuente-principal);
+  background-color: var(--color-fondo);
+  color: var(--color-texto-principal);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-size: 18px;
+  
+  position: relative; 
+  min-height: 100vh;
+  overflow-x: hidden; 
+  z-index: 1; /* Establece la capa base */
+  
+  /* 1. Cuadrícula que se mueve */
+  background-image: 
+    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-scroll 60s linear infinite; 
+}
+
+/* 2. Scanlines/Ruido sutil */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: -1; 
+    
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.1) 0.5%,
+        transparent 1%
+    );
+    opacity: 0.2; 
+}
+
+/* 3. Holograma Ambiental (Brillo de neón pulsante) */
+body::after {
+    content: '';
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vh; 
+    height: 80vh;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -2; 
+    
+    background: radial-gradient(
+        circle,
+        rgba(0, 243, 255, 0.1), 
+        rgba(188, 19, 254, 0.05) 50%, 
+        transparent 70%
+    );
+    animation: neon-color-shift 30s linear infinite alternate;
+}
+
+/* TÍTULOS */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fuente-titulos);
+  color: var(--color-primario);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* BOTONES GLOBALES (Estilo Neón) */
+.btn-primary {
+  background-color: transparent;
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+  box-shadow: 0 0 5px var(--color-primario) inset;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-primario);
+  color: #000;
+  box-shadow: 0 0 20px var(--color-primario);
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   4. LAYOUT DE TIENDA (SIDEBAR/BANNER)
+   ========================================= */
+
+/* BANNER */
 .banner-full-width {
   width: 100vw;
   height: 400px;
@@ -11,19 +137,16 @@
   margin-right: -50vw;
   overflow: hidden;
   margin-bottom: 40px;
-  box-shadow: none; /* Sin sombra para evitar la línea dura */
+  box-shadow: none;
 }
-
 .banner-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  /* Degradado suave desde el 50% para mejor fusión */
   mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
 }
-
 .banner-texto {
   position: absolute;
   top: 50%;
@@ -33,15 +156,12 @@
   width: 90%;
   z-index: 2;
 }
-
 .banner-texto h1 {
   font-size: 3.5rem;
   font-weight: 900;
-  text-transform: uppercase;
   color: #fff;
-  text-shadow: 0 0 15px #00f3ff;
+  text-shadow: 0 0 15px var(--color-primario);
 }
-
 .banner-texto p {
   color: #fff;
   background-color: rgba(0, 0, 0, 0.6);
@@ -50,39 +170,31 @@
   display: inline-block;
 }
 
-/* =========================================
-   2. LAYOUT PRINCIPAL (ALINEACIÓN FIX)
-   ========================================= */
+/* LAYOUT PRINCIPAL */
 .tienda-layout {
   display: flex;
   gap: 30px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px 60px 20px;
-  /* CRUCIAL: Alinea el inicio del sidebar con el inicio de los productos */
   align-items: flex-start; 
 }
 
-/* =========================================
-   3. SIDEBAR (FILTROS Y BUSCADOR)
-   ========================================= */
+/* SIDEBAR (FILTROS) */
 .tienda-filtros {
   width: 280px;
   flex-shrink: 0;
-  background-color: #11111b; 
+  background-color: var(--color-panel); 
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: var(--borde-radio);
   padding: 24px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   position: sticky;
   top: 20px; 
 }
-
-.filtro-seccion { margin-bottom: 30px; }
-
 .filtro-titulo {
-  font-family: var(--fuente-titulos, sans-serif);
-  color: var(--color-primario, #00f3ff);
+  font-family: var(--fuente-titulos);
+  color: var(--color-primario);
   font-size: 1.1rem;
   margin-bottom: 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -91,86 +203,265 @@
   letter-spacing: 1px;
 }
 
-/* --- Buscador (Código unificado y corregido) --- */
+/* Buscador */
 .search-container { position: relative; width: 100%; }
-
 .filtro-buscar {
-  width: 100%; /* Ocupa todo el contenedor */
-  box-sizing: border-box; /* El padding no deforma el input */
+  width: 100%;
+  box-sizing: border-box; 
   padding: 12px 15px 12px 45px;
-  background-color: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #000; 
+  border: 1px solid rgba(0, 243, 255, 0.2); 
   border-radius: 50px;
-  color: #fff;
+  color: var(--color-texto-principal);
   font-size: 0.95rem;
   outline: none;
   transition: all 0.3s ease;
 }
-
 .filtro-buscar:focus {
-  border-color: var(--color-primario, #00f3ff);
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.15);
+  border-color: var(--color-primario);
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.5); 
 }
-
 .search-icon {
   position: absolute;
   top: 50%;
   left: 15px;
   transform: translateY(-50%);
-  color: #888;
+  color: var(--color-primario); 
   pointer-events: none;
+  text-shadow: 0 0 5px rgba(0, 243, 255, 0.4); 
 }
 
-/* --- Menú Categorías --- */
+/* Categorías Menú */
 .filtro-categorias ul { list-style: none; padding: 0; margin: 0; }
 .filtro-categorias li { margin-bottom: 8px; }
 
 .filtro-categorias a {
   display: block;
   padding: 10px 15px;
-  color: #ccc;
+  color: var(--color-texto-secundario);
   text-decoration: none;
-  border-radius: 6px;
+  border-radius: 4px; 
   transition: all 0.2s;
   cursor: pointer;
   font-size: 0.95rem;
+  border-left: 3px solid transparent; 
 }
 
 .filtro-categorias a:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #fff;
-  transform: translateX(5px);
+  background-color: rgba(0, 243, 255, 0.1); 
+  color: var(--color-texto-principal);
+  border-left-color: var(--color-primario); 
 }
 
 .filtro-categorias a.activo {
-  background-color: var(--color-primario, #00f3ff);
+  background-color: var(--color-primario);
   color: #000;
   font-weight: bold;
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+  box-shadow: 0 0 15px rgba(0, 243, 255, 0.6);
+  border: none;
+  border-left: 3px solid var(--color-primario);
 }
 
-/* =========================================
-   4. CONTENIDO (PRODUCTOS)
-   ========================================= */
+/* Contenido de Productos */
 .tienda-contenido {
   flex-grow: 1;
-  /* Eliminamos márgenes del contenedor */
   margin-top: 0 !important; 
   padding-top: 0 !important;
 }
-
-/* REGLA DE ORO: Esto asegura que el primer elemento dentro de la columna derecha
-   (sea un H2, un Grid o un Div) no tenga margen superior que lo empuje hacia abajo. */
 .tienda-contenido > *:first-child {
   margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* Estado Sin Resultados */
+.tienda-contenido .no-results {
+    background-color: var(--color-panel);
+    border: 1px dashed var(--color-peligro);
+    color: var(--color-texto-secundario);
+    padding: 30px;
+    margin-top: 30px;
+    border-radius: 8px;
+    text-align: center;
+    font-family: var(--fuente-monospaced); 
+    font-size: 1.1rem;
+}
+.tienda-contenido .no-results p {
+    margin: 0;
+    color: var(--color-peligro);
+    text-shadow: 0 0 5px rgba(255, 0, 60, 0.4);
 }
 
 /* =========================================
-   5. RESPONSIVE
+   5. ANIMACIONES (Keyframes)
    ========================================= */
-@media (max-width: 768px) {
-  .tienda-layout { flex-direction: column; }
-  .tienda-filtros { width: 100%; position: static; margin-bottom: 20px; }
-  .banner-full-width { height: 250px; }
-  .banner-texto h1 { font-size: 2rem; }
+
+/* Animación de la Cuadrícula del Fondo */
+@keyframes grid-scroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 5000px; } 
+}
+
+/* Animación de Cambio de Color del Holograma */
+@keyframes neon-color-shift {
+    0% { background: radial-gradient(circle, rgba(0, 243, 255, 0.1), rgba(188, 19, 254, 0.05) 50%, transparent 70%); }
+    100% { background: radial-gradient(circle, rgba(188, 19, 254, 0.1), rgba(0, 243, 255, 0.05) 50%, transparent 70%); }
+}
+
+/* Animación de Botón de Checkout */
+@keyframes neon-pulse {
+  0% {
+  border-color: #00FFFF;
+  box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF inset;
+  }
+  50% {
+  border-color: #FF00FF;
+  box-shadow: 0 0 15px #FF00FF, 0 0 30px #FF00FF inset;
+  }
+  100% {
+  border-color: #00FFFF;
+  box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF inset;
+  }
+}
+/* =========================================
+   6. MEDIA QUERIES (RESPONSIVIDAD - SOLUCIÓN)
+   ========================================= */
+@media (max-width: 992px) {
+    
+    /* CRÍTICO: CAMBIAR LAYOUT A COLUMNA */
+    .tienda-layout {
+        flex-direction: column; /* Apila Sidebar y Contenido */
+        gap: 25px;
+    }
+
+    /* SIDEBAR (FILTROS) */
+    .tienda-filtros { 
+        width: 100%; /* Ocupa todo el ancho */
+        position: static; /* Desactiva el sticky */
+        margin-bottom: 0;
+        padding: 20px; 
+    }
+    
+    /* Banner */
+    .banner-full-width { 
+        height: 250px; 
+        margin-bottom: 20px;
+    }
+    .banner-texto h1 { 
+        font-size: 2.5rem; 
+    }
+}
+
+/* --- Bloque @media (max-width: 576px) en tienda.component.css --- */
+@media (max-width: 576px) {
+    /* CRÍTICO: Eliminar casi todo el padding horizontal del contenido */
+    .tienda-layout {
+        padding-left: 5px; /* Mínimo */
+        padding-right: 5px; /* Mínimo */
+        gap: 15px;
+    }
+
+    /* Opcional: Reducir aún más el padding del sidebar */
+    .tienda-filtros {
+        padding: 12px; /* Reducción máxima del padding interno del sidebar */
+    }
+
+    /* Reducir títulos y banners */
+    .banner-texto h1 { 
+        font-size: 2rem; 
+    }
+    .filtro-titulo {
+        font-size: 0.9rem; /* Reducir tamaño de títulos de filtro */
+    }
+}
+/* =========================================
+   1. LAYOUT PRINCIPAL (Desktop: Dos Columnas)
+   ========================================= */
+.tienda-layout {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px 60px 20px; /* Padding por defecto */
+  align-items: flex-start; /* CRÍTICO: Alinea arriba para que el contenido inicie al mismo nivel que el sidebar */
+}
+
+/* SIDEBAR (FILTROS en Desktop) */
+.tienda-filtros {
+  width: 280px;
+  flex-shrink: 0;
+  background-color: var(--color-panel); 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--borde-radio);
+  padding: 24px; /* Padding por defecto */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: sticky; /* Se mantiene al hacer scroll */
+  top: 20px; 
+}
+
+/* CONTENIDO (Productos en Desktop) */
+.tienda-contenido {
+  flex-grow: 1;
+  /* Asegurar que el contenido inicie en el borde superior del contenedor */
+  margin-top: 0 !important; 
+  padding-top: 0 !important;
+}
+.tienda-contenido > *:first-child {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+/* =========================================
+   2. MEDIA QUERIES (SOLUCIÓN RESPONSIVA)
+   ========================================= */
+
+/* Tableta y Pantallas Medianas (A partir de 992px, el layout cambia a columna) */
+@media (max-width: 992px) {
+    
+    /* CRÍTICO: CAMBIAR LAYOUT A COLUMNA */
+    .tienda-layout {
+        flex-direction: column; /* Apila Sidebar encima del Contenido */
+        gap: 25px;
+    }
+
+    /* SIDEBAR (FILTROS) */
+    .tienda-filtros { 
+        width: 100%; /* Ocupa todo el ancho */
+        position: static; /* Desactiva el sticky para que fluya */
+        margin-bottom: 0;
+        padding: 20px; /* Reducción de 24px a 20px */
+    }
+    
+    /* BANNER */
+    .banner-full-width { 
+        height: 300px; 
+    }
+    .banner-texto h1 { 
+        font-size: 3rem; 
+    }
+}
+
+/* Móviles (La solución a la compresión - 576px hacia abajo) */
+@media (max-width: 576px) {
+    
+    /* CRÍTICO: Reducir el padding horizontal para dar espacio a la tarjeta */
+    .tienda-layout {
+        padding: 0 10px 40px 10px; /* Reducimos el padding horizontal a 10px */
+        gap: 15px; /* Reducir el espacio entre sidebar y contenido */
+    }
+
+    /* Reducir el padding interno del Sidebar */
+    .tienda-filtros {
+        padding: 15px; /* De 20px a 15px para ganar un poco de espacio */
+    }
+
+    /* Reducir títulos y banner */
+    .banner-full-width { 
+        height: 200px; 
+    }
+    .banner-texto h1 { 
+        font-size: 2rem; 
+    }
+    .filtro-titulo {
+        font-size: 1rem;
+    }
 }

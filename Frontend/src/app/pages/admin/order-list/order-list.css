@@ -1,6 +1,10 @@
-/* --- CONTENEDOR GENERAL (Mismo estilo que categorías) --- */
+/* =========================================
+   ESTILOS DE LA TABLA Y CONTENEDOR (YA EXISTENTES)
+   ========================================= */
+
+/* --- CONTENEDOR GENERAL --- */
 .admin-container {
-  max-width: 1000px; /* Un poco más ancho para la tabla */
+  max-width: 1000px;
   margin: 40px auto;
   padding: 30px;
   background-color: rgba(17, 17, 27, 0.95);
@@ -28,7 +32,7 @@
 /* --- TABLA CYBERPUNK --- */
 .admin-table {
   width: 100%;
-  border-collapse: separate; /* Permite bordes redondeados en filas si se quiere */
+  border-collapse: separate;
   border-spacing: 0;
   margin-top: 20px;
   background: transparent;
@@ -53,27 +57,83 @@
   transition: background 0.3s;
 }
 
-/* Efecto Hover en filas (Scanline effect) */
 .admin-table tbody tr:hover td {
   background-color: rgba(0, 243, 255, 0.05);
   color: #fff;
 }
 
 /* Datos específicos */
-.admin-table td small {
-  color: #888;
-  font-style: italic;
-}
-
 .precio {
   font-family: monospace;
   font-size: 1.1rem;
   font-weight: bold;
-  color: #00ff9d !important; /* Verde Matrix */
+  color: #00ff9d !important;
   text-shadow: 0 0 5px rgba(0, 255, 157, 0.3);
 }
 
-/* --- BADGES DE ESTADO (Estilo Neón/Glass) --- */
+/* =========================================
+   1. CORRECCIÓN: Estilos de Cliente
+   ========================================= */
+
+.admin-table .user-name {
+    color: #fff; /* Nombre en blanco brillante */
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.admin-table .user-email {
+    /* Usamos el mismo color que el resto del texto secundario de la tabla */
+    color: #888; 
+    font-style: italic;
+    font-size: 0.75rem;
+    display: block;
+}
+
+.admin-table .text-muted {
+    /* Estilo para 'Cliente Desconocido' */
+    color: #666; 
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   2. CORRECCIÓN: Selector de Estado (SELECT)
+   ========================================= */
+.status-select {
+  background-color: #050505;
+  color: #00f3ff; /* Texto neón */
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  padding: 8px;
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 0.9rem;
+  transition: all 0.3s;
+  appearance: none; /* Elimina la flecha nativa de algunos navegadores */
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f3ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 14px;
+}
+
+.status-select:hover, .status-select:focus {
+  border-color: #00f3ff;
+  box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+}
+
+/* Estilo para las opciones dentro del selector */
+.status-select option {
+    background-color: #11111b; /* Fondo de las opciones oscuro */
+    color: #fff;
+    padding: 10px;
+}
+
+/* =========================================
+   3. ESTILOS DE BADGES (CONSOLIDADOS)
+   ========================================= */
+
 .badge {
   padding: 6px 12px;
   border-radius: 4px;
@@ -87,100 +147,78 @@
   text-align: center;
 }
 
-/* Colores específicos para cada estado */
+/* PROCESANDO / PENDIENTE */
 .badge.PROCESANDO { 
   background-color: rgba(255, 193, 7, 0.15); 
   color: #ffc107; 
   border-color: rgba(255, 193, 7, 0.3);
 }
 
-.badge.ENVIADO { 
+/* ENVIADO o EN_CAMINO */
+.badge.ENVIADO,
+.badge.EN_CAMINO { 
   background-color: rgba(0, 243, 255, 0.15); 
   color: #00f3ff; 
   border-color: rgba(0, 243, 255, 0.3);
 }
 
+/* ENTREGADO */
 .badge.ENTREGADO { 
   background-color: rgba(40, 167, 69, 0.15); 
   color: #28a745; 
   border-color: rgba(40, 167, 69, 0.3);
 }
 
-.badge.CANCELADO { 
+/* CANCELADO o RECHAZADO */
+.badge.CANCELADO,
+.badge.RECHAZADO { 
   background-color: rgba(220, 53, 69, 0.15); 
-  color: #ff4d5a; 
+  color: #ff4d5a;
   border-color: rgba(220, 53, 69, 0.3);
 }
-
-/* --- SELECTOR DE ESTADO (Estilo Consola) --- */
-select {
-  background-color: #050505;
-  color: #fff;
-  border: 1px solid #333;
-  padding: 8px;
-  border-radius: 4px;
-  outline: none;
-  cursor: pointer;
-  font-family: monospace;
-  transition: all 0.3s;
-}
-
-select:hover, select:focus {
-  border-color: #00f3ff;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
-}
-
-/* Botón Volver (Reutilizable) */
-.btn-back {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ccc;
-  padding: 8px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-.btn-back:hover {
-  border-color: #00f3ff;
-  color: #00f3ff;
-}
-
-/* Mensaje vacío */
-.text-center { text-align: center; padding: 40px; color: #666; font-style: italic; }
 /* --- BOTÓN VOLVER (Estilo Cyberpunk Unificado) --- */
 .btn-back {
+  /* 1. Base y Colores */
   background-color: rgba(0, 243, 255, 0.1); /* Fondo sutil cian */
-  border: 1px solid #00f3ff;                 /* Borde neón */
-  color: #00f3ff;                            /* Texto neón */
+  border: 1px solid #00f3ff; /* Borde neón */
+  color: #00f3ff; /* Texto neón */
   
+  /* 2. Tipografía y Forma */
   padding: 10px 20px;
-  border-radius: 4px;                        /* Bordes más rectos (tech) */
+  border-radius: 4px; /* Bordes rectos */
   cursor: pointer;
   
-  font-family: 'Orbitron', sans-serif;       /* Fuente tecnológica */
+  font-family: var(--fuente-titulos, 'Orbitron', sans-serif); /* Fuente tecnológica */
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   text-decoration: none;
   
+  /* 3. Layout (Para el icono/flecha) */
   display: inline-flex;
   align-items: center;
-  gap: 8px;                                  /* Espacio entre texto e icono */
+  gap: 8px; /* Espacio entre texto y flecha */
   
+  /* 4. Efectos */
   transition: all 0.3s ease;
   box-shadow: 0 0 10px rgba(0, 243, 255, 0.1); /* Brillo suave inicial */
 }
 
 .btn-back:hover {
-  background-color: #00f3ff;                 /* Relleno sólido al pasar mouse */
-  color: #000;                               /* Texto negro para contraste */
+  background-color: #00f3ff; /* Relleno sólido al pasar mouse */
+  color: #000;/* Texto negro para contraste */
   box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); /* Brillo intenso */
-  transform: translateY(-2px);               /* Efecto de elevación */
+  transform: translateY(-2px); /* Efecto de elevación */
 }
 
-/* Ajuste por si usas un icono SVG dentro del botón */
-.btn-back svg {
-  stroke: currentColor;
-  width: 18px;
-  height: 18px;
+/* Estilo para la flecha dentro del botón, si usas la entidad ⬅ */
+.btn-back::before {
+    content: "⬅"; /* Mantener la flecha */
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+.btn-back span {
+    /* Opcional: Si el texto está envuelto en un span para la flecha */
+    margin-left: -8px; /* Elimina la flecha original del texto si usas ::before */
 }

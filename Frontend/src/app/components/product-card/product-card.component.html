@@ -7,13 +7,15 @@
       <span *ngIf="producto.stock > 0 && producto.stock < 10" class="badge badge-low">¡Últimos!</span>
     </div>
 
-    <button 
-      class="btn-favorito"
-      [class.es-favorito]="esFavorito()"
-      (click)="toggleFavorito(); $event.stopPropagation()"
-      title="Añadir a favoritos">
-      <span class="heart-icon">❤️</span>
-    </button>
+<button 
+  class="btn-favorito"
+  [class.es-favorito]="esFavorito()"
+  (click)="toggleFavorito(); $event.stopPropagation()"
+  title="Añadir a favoritos">
+  
+  <span class="cyber-icon">⚡</span> 
+  
+</button>
 
     <img [src]="producto.urlImagen || 'assets/placeholder.png'" 
          [alt]="producto.nombre" 

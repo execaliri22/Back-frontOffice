@@ -1,129 +1,127 @@
-.checkout-container {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 2rem;
-  background: var(--color-blanco);
-  box-shadow: var(--sombra-delicada);
-  border-radius: 8px;
+/* --- VARIABLES DE TEMA --- */
+:root {
+    --color-fondo-oscuro: #1A1A1D;
+    --color-texto-principal: #EAEAEA;
+    --color-neon-azul: #00FFFF; /* Azul Eléctrico (Cyan) */
+    --color-neon-magenta: #FF00FF; /* Magenta */
+    --borde-tecnologico: 2px solid var(--color-neon-azul);
+    --sombra-negras: 0 5px 15px rgba(0, 0, 0, 0.5);
 }
+
+/* --- KEYFRAMES DE ANIMACIÓN DE NEÓN --- */
+
+
+/* --- 1. CONTENEDOR PRINCIPAL (Fondo Oscuro) --- */
+.checkout-container {
+    background-color: var(--color-fondo-oscuro);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    min-height: 100vh;
+    color: var(--color-texto-principal);
+}
+
+/* --- 2. LA TARJETA / CARD DE PAGO (Tamaño Ampliado + Animación) --- */
+/* checkout.component.css */
+
+.card-pago {
+    background: #000000;
+    padding: 40px 60px;
+    border-radius: 0; 
+    
+    /* ESTILO BASE (usa las variables definidas globalmente o los códigos) */
+    border: 2px solid var(--color-neon-azul); 
+    
+    /* APLICACIÓN DE LA ANIMACIÓN */
+    animation: neon-pulse 4s infinite alternate; 
+}
+
+/* ... el resto del CSS ... */
+/* --- 3. TIPOGRAFÍA Y TÍTULOS --- */
+h2 {
+    color: var(--color-neon-magenta);
+    margin-bottom: 25px;
+    text-shadow: 0 0 5px var(--color-neon-magenta);
+    font-family: 'Consolas', monospace;
+    letter-spacing: 2px;
+    border-bottom: 1px dashed var(--color-neon-azul);
+    padding-bottom: 10px;
+}
+
+p, label {
+    color: var(--color-texto-principal);
+    font-family: 'Consolas', monospace;
+    font-size: 0.95rem;
+}
+
+/* --- 4. ESTILOS DE FORMULARIO (Inputs de Terminal) --- */
 .form-group {
-  margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
+
 .form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--color-neon-azul);
 }
+
 .form-group input {
-  width: 100%;
-  padding: 0.75rem;
-  border: var(--borde-delicado);
-  border-radius: 6px;
-  box-sizing: border-box;
-}
-.btn-primary {
-  width: 100%;
-}
-/* Contenedor centrado y oscuro/claro según tu tema */
-.checkout-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  background-color: #f8f9fa; /* Fondo gris claro */
-  min-height: 80vh;
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #333333;
+    color: var(--color-neon-azul);
+    border: 1px solid #555;
+    border-radius: 0;
+    box-sizing: border-box;
+    font-family: 'Consolas', monospace;
+    transition: box-shadow 0.2s;
 }
 
-/* La tarjeta blanca */
-.card-pago {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  text-align: center;
-  max-width: 500px;
-  width: 100%;
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-neon-azul);
+    box-shadow: 0 0 5px var(--color-neon-azul);
 }
 
-h2 {
-  color: #009ee3; /* Azul Mercado Pago */
-  margin-bottom: 20px;
-}
-
-p {
-  color: #666;
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
+/* --- 5. DETALLES DE PAGO --- */
 .info-pago {
-  background-color: #f1f1f1;
-  padding: 15px;
-  border-radius: 8px;
-  margin: 20px 0;
-  font-size: 0.9rem;
+    background-color: #2a2a2e;
+    color: var(--color-neon-magenta);
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 5px solid var(--color-neon-magenta);
+    margin: 25px 0;
+    font-size: 0.9rem;
+    box-shadow: var(--sombra-negras);
 }
 
-/* Contenedor centrado y oscuro/claro según tu tema */
-.checkout-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  background-color: #f8f9fa; /* Fondo gris claro */
-  min-height: 80vh;
-}
-
-/* La tarjeta blanca */
-.card-pago {
-  background: white;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-  text-align: center;
-  max-width: 500px;
-  width: 100%;
-}
-
-h2 {
-  color: #009ee3; /* Azul Mercado Pago */
-  margin-bottom: 20px;
-}
-
-p {
-  color: #666;
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-.info-pago {
-  background-color: #f1f1f1;
-  padding: 15px;
-  border-radius: 8px;
-  margin: 20px 0;
-  font-size: 0.9rem;
-}
-
-/* EL BOTÓN QUE TE FALTA */
+/* --- 6. BOTÓN DE ACCIÓN (Neón Brillante) --- */
 .btn-mercado-pago {
-  background-color: #009ee3;
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.3s;
+    background-color: var(--color-neon-azul);
+    color: #1A1A1D;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: box-shadow 0.3s, background-color 0.3s;
+    box-shadow: 0 0 15px var(--color-neon-azul);
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
 }
 
 .btn-mercado-pago:hover {
-  background-color: #007eb5;
+    background-color: #33FFFF;
+    box-shadow: 0 0 25px #33FFFF; 
 }
 
 .btn-mercado-pago:disabled {
-  background-color: #ccc;
-  cursor: wait;
+    background-color: #555;
+    color: #aaa;
+    box-shadow: none;
+    cursor: wait;
 }

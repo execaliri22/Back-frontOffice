@@ -38,9 +38,31 @@ export class ProductListComponent implements OnInit {
   }
 
   // SOLUCIONA TS2339: Agregamos el método que faltaba
-  borrarProducto(id: number) {
-    if(confirm('¿Borrar producto?')) {
-      this.adminService.deleteProducto(id).subscribe(() => this.cargarProductos());
-    }
+borrarProducto(idProducto: number): void {
+  if (confirm(`¿Estás seguro de desactivar el Producto #${idProducto}?`)) {
+    this.adminService.deleteProducto(idProducto).subscribe({
+      next: () => {
+        // Soft Delete exitoso
+        alert(`Producto #${idProducto} desactivado (Soft Delete).`);
+        
+        // ***************************************************
+        // CRÍTICO: FILTRAR LA LISTA LOCAL PARA ACTUALIZAR LA VISTA
+        // ***************************************************
+        this.productos = this.productos.filter(p => p.idProducto !== idProducto);
+        
+        // Opcional: Si el producto tiene una propiedad 'activo', la podrías cambiar
+        // const productoDesactivado = this.productos.find(p => p.idProducto === idProducto);
+        // if (productoDesactivado) {
+        //     productoDesactivado.activo = false;
+        // }
+        // Pero el filtrado es más limpio si no quieres ver los inactivos.
+        
+      },
+      error: (err) => {
+        console.error('Error al desactivar:', err);
+        alert('Error al desactivar. Verifica la conexión o los permisos de ADMIN.');
+      }
+    });
   }
+}
 }

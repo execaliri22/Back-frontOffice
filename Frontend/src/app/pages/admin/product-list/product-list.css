@@ -1,278 +1,303 @@
 /* --- LAYOUT --- */
 .admin-container {
-  padding: 2rem 1.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
+ padding: 2rem 1.5rem;
+ max-width: 1200px;
+ margin: 0 auto;
 }
 
 /* Header */
 .header-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ margin-bottom: 2rem;
+ flex-wrap: wrap;
+ gap: 1rem;
 }
 
 h2 {
-  color: var(--color-primario);
-  font-family: var(--fuente-titulos);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
-  margin: 0;
+ color: var(--color-primario);
+ font-family: var(--fuente-titulos);
+ text-transform: uppercase;
+ letter-spacing: 2px;
+ text-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+ margin: 0;
 }
 
 /* --- BOTONES --- */
+
+/* Botón de volver/secundario (Estilo de terminal) */
 .btn-back {
-  background: transparent;
-  color: var(--color-texto-secundario);
-  border: 1px solid var(--color-texto-secundario);
-  padding: 0.5rem 1rem;
-  font-family: monospace;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-transform: uppercase;
-  font-size: 0.8rem;
+ background-color: rgba(0, 243, 255, 0.1); /* Fondo sutil cian */
+ border: 1px solid #00f3ff;         /* Borde neón */
+ color: #00f3ff;              /* Texto neón */
+ 
+ padding: 10px 20px;
+ border-radius: 4px;            
+ cursor: pointer;
+ 
+ font-family: var(--fuente-titulos, 'Orbitron', sans-serif);    /* Fuente tecnológica */
+ font-size: 0.9rem;
+ text-transform: uppercase;
+ letter-spacing: 1px;
+ text-decoration: none;
+ 
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;                 
+ 
+ transition: all 0.3s ease;
+ box-shadow: 0 0 10px rgba(0, 243, 255, 0.1); 
 }
 
 .btn-back:hover {
-  color: var(--color-blanco);
-  border-color: var(--color-blanco);
-  text-shadow: 0 0 5px white;
+ background-color: #00f3ff;         
+ color: #000;                
+ box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); 
+ transform: translateY(-2px);        
+}
+.btn-back svg {
+ stroke: currentColor;
+ width: 18px;
+ height: 18px;
 }
 
+/* Botón Primario (Añadir/Crear) */
 .btn-neon {
-  background-color: var(--color-primario);
-  color: #000;
-  font-weight: 700;
-  border: none;
-  padding: 0.7rem 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
-  transition: all 0.3s;
+ background-color: var(--color-primario);
+ color: #000;
+ font-weight: 700;
+ border: none;
+ padding: 0.7rem 1.5rem;
+ text-transform: uppercase;
+ letter-spacing: 1px;
+ box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+ transition: all 0.3s;
+  border-radius: 4px;
 }
 
 .btn-neon:hover {
-  background-color: #fff;
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
-  transform: translateY(-2px);
+ background-color: #fff;
+ box-shadow: 0 0 25px rgba(0, 243, 255, 0.6);
+ transform: translateY(-2px);
 }
 
 /* --- TABLA CYBERPUNK --- */
 .table-responsive {
-  overflow-x: auto;
-  border: 1px solid var(--color-borde);
-  border-radius: 8px;
-  background-color: var(--color-panel, #11111b);
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+ overflow-x: auto;
+ border: 1px solid var(--color-borde);
+ border-radius: 8px;
+ background-color: var(--color-panel, #11111b);
+ box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
 .cyber-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px; /* Evita que se aplaste en móvil */
+ width: 100%;
+ border-collapse: collapse;
+ min-width: 800px; /* Evita que se aplaste en móvil */
 }
 
 .cyber-table th {
-  background-color: rgba(0, 243, 255, 0.05);
-  color: var(--color-primario);
-  text-align: left;
-  padding: 1.2rem;
-  font-family: var(--fuente-titulos);
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  border-bottom: 2px solid var(--color-primario);
-  white-space: nowrap;
+ background-color: rgba(0, 243, 255, 0.05);
+ color: var(--color-primario);
+ text-align: left;
+ padding: 1.2rem;
+ font-family: var(--fuente-titulos);
+ text-transform: uppercase;
+ font-size: 0.85rem;
+ border-bottom: 2px solid var(--color-primario);
+ white-space: nowrap;
 }
 
 .cyber-table td {
-  padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: var(--color-texto-principal);
-  vertical-align: middle;
+ padding: 1rem;
+ border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+ color: var(--color-texto-principal);
+ vertical-align: middle;
 }
 
 .cyber-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+ background-color: rgba(255, 255, 255, 0.02);
 }
 
-/* --- ESTILOS DE CELDAS --- */
+/* --- ESTILOS DE FILAS INACTIVAS (Soft Delete) --- */
+.cyber-table tbody tr.row-inactivo td {
+  opacity: 0.4; /* Atenuado */
+  font-style: italic;
+  background-color: rgba(255, 0, 60, 0.02); /* Fondo ligeramente rojo/peligro */
+}
+.cyber-table tbody tr.row-inactivo:hover td {
+    opacity: 0.8; /* Se atenúa menos al pasar el mouse */
+    background-color: rgba(255, 0, 60, 0.05);
+}
+
+
+/* --- ESTILOS DE CELDAS Y DATOS --- */
 .id-col {
-  font-family: monospace;
-  color: var(--color-texto-secundario);
+ font-family: monospace;
+ color: var(--color-texto-secundario);
 }
 
 /* Imagen */
 .thumb-frame {
-  width: 50px;
-  height: 50px;
-  border: 1px solid var(--color-borde);
-  padding: 2px;
-  border-radius: 4px;
-  background-color: #000;
+ width: 50px;
+ height: 50px;
+ border: 1px solid var(--color-borde);
+ padding: 2px;
+ border-radius: 4px;
+ background-color: #000;
 }
 
 .thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
 }
 
 /* Info Producto */
 .prod-name {
-  display: block;
-  font-size: 1rem;
-  margin-bottom: 2px;
+ display: block;
+ font-size: 1rem;
+ margin-bottom: 2px;
 }
 
 .prod-sku {
-  font-size: 0.8rem;
-  color: var(--color-texto-secundario);
-  font-family: monospace;
+ font-size: 0.8rem;
+ color: var(--color-texto-secundario);
+ font-family: monospace;
 }
 
 .cat-col {
-  color: var(--color-acento, #bc13fe);
-  font-weight: 500;
+ color: var(--color-acento, #bc13fe);
+ font-weight: 500;
 }
 
 .price-col {
-  font-family: monospace;
-  font-size: 1.1rem;
+ font-family: monospace;
+ font-size: 1.1rem;
 }
 
 /* --- INDICADOR DE STOCK --- */
 .stock-indicator {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: monospace;
+ display: inline-flex;
+ align-items: center;
+ gap: 8px;
+ font-weight: 700;
+ padding: 4px 8px;
+ border-radius: 4px;
+ font-family: monospace;
 }
 
 .status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  box-shadow: 0 0 5px currentColor;
+ width: 8px;
+ height: 8px;
+ border-radius: 50%;
+ box-shadow: 0 0 5px currentColor;
 }
 
 /* Stock Saludable */
 .stock-indicator.healthy {
-  color: #0aff0a; /* Verde */
+ color: #0aff0a; /* Verde */
 }
 .stock-indicator.healthy .status-dot { background-color: #0aff0a; }
 
 /* Stock Crítico */
 .stock-indicator.critical {
-  color: var(--color-peligro); /* Rojo */
-  background-color: rgba(255, 0, 60, 0.1);
-  animation: pulse 2s infinite;
+ color: var(--color-peligro); /* Rojo */
+ background-color: rgba(255, 0, 60, 0.1);
+ animation: pulse 2s infinite;
 }
 .stock-indicator.critical .status-dot { background-color: var(--color-peligro); }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.5; }
-  100% { opacity: 1; }
+ 0% { opacity: 1; }
+ 50% { opacity: 0.5; }
+ 100% { opacity: 1; }
 }
+
+/* --- BADGES DE ESTADO ACTIVO/INACTIVO --- */
+.badge-activo { 
+  background-color: rgba(40, 167, 69, 0.15); /* Verde */
+  color: #00ff9d; /* Verde Matrix */
+  border-color: rgba(40, 167, 69, 0.3);
+  box-shadow: 0 0 8px rgba(0, 255, 157, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+}
+
+.badge-desactivado { 
+  background-color: rgba(108, 117, 125, 0.15); /* Gris/Plata */
+  color: #94a3b8; /* Gris Secundario */
+  border-color: rgba(108, 117, 125, 0.3);
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid transparent;
+}
+
 
 /* --- BOTONES DE ACCIÓN --- */
 .actions {
-  white-space: nowrap;
+ white-space: nowrap;
 }
 
 .btn-icon {
-  background: transparent;
-  border: 1px solid transparent;
-  cursor: pointer;
-  padding: 8px;
-  margin-right: 5px;
-  border-radius: 4px;
-  transition: all 0.2s;
+ background: transparent;
+ border: 1px solid transparent;
+ cursor: pointer;
+ padding: 8px;
+ margin-right: 5px;
+ border-radius: 4px;
+ transition: all 0.2s;
 }
 
 .btn-edit {
-  color: var(--color-primario);
-  border-color: rgba(0, 243, 255, 0.3);
+ color: var(--color-primario);
+ border-color: rgba(0, 243, 255, 0.3);
 }
 .btn-edit:hover {
-  background-color: var(--color-primario);
-  color: #000;
-  box-shadow: 0 0 10px var(--color-primario);
+ background-color: var(--color-primario);
+ color: #000;
+ box-shadow: 0 0 10px var(--color-primario);
 }
 
 .btn-delete {
-  color: var(--color-peligro);
-  border-color: rgba(255, 0, 60, 0.3);
+ color: var(--color-peligro);
+ border-color: rgba(255, 0, 60, 0.3);
 }
 .btn-delete:hover {
-  background-color: var(--color-peligro);
-  color: #fff;
-  box-shadow: 0 0 10px var(--color-peligro);
+ background-color: var(--color-peligro);
+ color: #fff;
+ box-shadow: 0 0 10px var(--color-peligro);
 }
 
 /* --- ESTADOS DE CARGA Y VACÍO --- */
 .loading-text {
-  text-align: center;
-  color: var(--color-primario);
-  font-family: monospace;
-  margin-top: 3rem;
-  font-size: 1.2rem;
+ text-align: center;
+ color: var(--color-primario);
+ font-family: monospace;
+ margin-top: 3rem;
+ font-size: 1.2rem;
 }
 
 .empty-state {
-  text-align: center;
-  padding: 4rem;
-  background-color: var(--color-panel);
-  border: 1px dashed var(--color-borde);
-  margin-top: 2rem;
-  border-radius: 8px;
+ text-align: center;
+ padding: 4rem;
+ background-color: var(--color-panel);
+ border: 1px dashed var(--color-borde);
+ margin-top: 2rem;
+ border-radius: 8px;
 }
 
 .empty-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-/* --- BOTÓN VOLVER (Estilo Cyberpunk Unificado) --- */
-.btn-back {
-  background-color: rgba(0, 243, 255, 0.1); /* Fondo sutil cian */
-  border: 1px solid #00f3ff;                 /* Borde neón */
-  color: #00f3ff;                            /* Texto neón */
-  
-  padding: 10px 20px;
-  border-radius: 4px;                        /* Bordes más rectos (tech) */
-  cursor: pointer;
-  
-  font-family: 'Orbitron', sans-serif;       /* Fuente tecnológica */
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  text-decoration: none;
-  
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;                                  /* Espacio entre texto e icono */
-  
-  transition: all 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 243, 255, 0.1); /* Brillo suave inicial */
-}
-
-.btn-back:hover {
-  background-color: #00f3ff;                 /* Relleno sólido al pasar mouse */
-  color: #000;                               /* Texto negro para contraste */
-  box-shadow: 0 0 25px rgba(0, 243, 255, 0.6); /* Brillo intenso */
-  transform: translateY(-2px);               /* Efecto de elevación */
-}
-
-/* Ajuste por si usas un icono SVG dentro del botón */
-.btn-back svg {
-  stroke: currentColor;
-  width: 18px;
-  height: 18px;
+ font-size: 3rem;
+ margin-bottom: 1rem;
 }

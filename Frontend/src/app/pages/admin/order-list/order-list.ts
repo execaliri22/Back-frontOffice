@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 // Si usas el select con [(ngModel)], debes importar FormsModule:
 // import { FormsModule } from '@angular/forms'; 
 import { AdminService } from '../../../core/services/admin.service'; // Ajusta ruta
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-order-list',
   standalone: true,
   // Deja solo CommonModule si no usas [ngModel] bidireccional
-  imports: [CommonModule], 
+  imports: [CommonModule, RouterLink], 
   templateUrl: './order-list.html',
   styleUrls: ['./order-list.css']
 })

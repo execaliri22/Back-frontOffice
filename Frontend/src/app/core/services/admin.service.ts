@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { Producto, Categoria, Pedido } from '../models/models'; // <--- Agregamos Pedido
 import { AuthService } from './auth.service';
 @Injectable({
@@ -39,9 +39,23 @@ export class AdminService {
     return this.http.put<Producto>(`${this.baseUrl}/productos/${id}`, producto);
   }
 
-  deleteProducto(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/productos/${id}`);
-  }
+deleteProducto(idProducto: number): Observable<void> {
+    // URL completa usando baseUrl, ya que el helper getHeaders no acepta rutas relativas solas.
+    // Además, aseguramos la autenticación.
+    const url = `${this.baseUrl}/productos/${idProducto}`; 
+    
+    // **CRÍTICO: Usar el helper de Headers**
+    const httpOptions = { headers: this.getHeaders() }; 
+    
+    return this.http.delete<void>(url, httpOptions).pipe(
+        // Manejo de errores
+        catchError(error => {
+            console.error('Error al desactivar producto:', error);
+            // El backend responde con 204 (no content) si tiene éxito.
+            return throwError(() => new Error('Fallo al eliminar/desactivar el producto. Asegure su rol de ADMIN.'));
+        })
+    );
+}
 
   // ----------------------------------------------------------------
   // 🏷️ GESTIÓN DE CATEGORÍAS

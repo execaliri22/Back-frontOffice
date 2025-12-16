@@ -131,3 +131,138 @@
   max-height: 200px; /* Se abre */
   color: #fff;
 }
+/* Definir en src/styles.css (Global) */
+/* Animación de pulso Cyberpunk (Activado) */
+@keyframes neon-pulse-favorite {
+    0% {
+        box-shadow: 0 0 5px #ff00ff; /* Magenta suave */
+        color: #ff00ff;
+    }
+    50% {
+        box-shadow: 0 0 15px #ff00ff, 0 0 30px rgba(255, 0, 255, 0.7); /* Magenta fuerte */
+        color: #fff;
+    }
+    100% {
+        box-shadow: 0 0 5px #ff00ff;
+        color: #ff00ff;
+    }
+}
+/* === 3. ELEMENTOS FLOTANTES (FAVORITOS) === */
+
+.btn-favorito {
+    position: absolute; top: 10px; right: 10px; width: 35px; height: 35px;
+    border-radius: 4px; /* Cambiado a cuadrado para un look más industrial */
+    background-color: rgba(15, 15, 15, 0.8); /* Fondo oscuro transparente */
+    border: 1px solid #444; /* Borde gris oscuro */
+    display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 20;
+    transition: all 0.2s; padding: 0;
+}
+
+.btn-favorito:hover { 
+    transform: scale(1.1); 
+    border-color: #00ffff;
+    background-color: rgba(0, 255, 255, 0.1); /* Ligero toque de neón al pasar el mouse */
+}
+
+/* El icono por defecto (apagado) */
+.btn-favorito .cyber-icon { 
+    font-size: 1.1rem; 
+    color: #666; /* Gris apagado */
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+/* ESTADO FAVORITO (Encendido) */
+.btn-favorito.es-favorito {
+    border-color: #ff00ff; /* Borde magenta */
+    background-color: rgba(255, 0, 255, 0.1); /* Fondo magenta ligero */
+    
+    /* Aplicar la animación de pulso */
+    animation: neon-pulse-favorite 1.5s infinite alternate; 
+}
+
+.btn-favorito.es-favorito .cyber-icon {
+    color: #ff00ff; /* El rayo se enciende en magenta */
+    text-shadow: 0 0 5px #ff00ff; /* Pequeño brillo estático */
+    animation: none; /* Asegurar que el icono no tenga su propia animación */
+}
+
+/* =========================================
+   7. MEDIA QUERIES (RESPONSIVIDAD DE LA TARJETA)
+   ========================================= */
+
+@media (max-width: 576px) {
+
+    /* Reducción de la altura de la imagen */
+    .image-section {
+        height: 200px; /* Reducido de 250px a 200px */
+    }
+
+    /* Reducción del padding de la imagen (más producto, menos espacio en blanco) */
+    .product-img {
+        padding: 10px; /* Reducido de 20px a 10px */
+    }
+
+    /* Reducción del padding interno de la zona de info */
+    .info-section {
+        padding: 12px; /* De 15px a 12px */
+    }
+
+    /* Reducción del tamaño del texto para que quepa mejor */
+    .product-title { 
+        font-size: 0.95rem; /* Un poco más pequeño */
+    }
+    .product-price { 
+        font-size: 1.2rem; 
+    }
+    .product-description {
+        font-size: 0.8rem; /* Descripción más compacta */
+    }
+
+    /* Reducción del tamaño de los botones flotantes */
+    .btn-favorito {
+        width: 30px;
+        height: 30px;
+        top: 8px; 
+        right: 8px;
+    }
+    .badges-container {
+        top: 8px;
+        left: 8px;
+    }
+}
+/* --- Bloque @media (max-width: 576px) en product-card.component.css --- */
+@media (max-width: 576px) {
+
+    /* Reducción de la altura de la imagen */
+    .image-section {
+        height: 180px; /* Reducido de 250px -> 200px -> 180px */
+    }
+
+    /* Reducción del padding interno de la zona de info */
+    .info-section {
+        padding: 10px; /* De 15px a 10px */
+        min-height: auto; /* Dejar que el contenido defina la altura */
+    }
+
+    /* Reducción del padding de la imagen */
+    .product-img {
+        padding: 8px; /* Mínimo */
+    }
+
+    /* Reducción del tamaño de la fuente si aún es un problema */
+    .product-title { 
+        font-size: 0.9rem; 
+    }
+    .product-price { 
+        font-size: 1.1rem; 
+    }
+    .product-description {
+        font-size: 0.75rem; 
+    }
+    
+    /* Botón de añadir (reducir altura) */
+    .btn-add {
+        padding: 8px;
+    }
+}

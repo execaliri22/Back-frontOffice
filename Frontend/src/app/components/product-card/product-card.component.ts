@@ -16,7 +16,7 @@ import { FavoritoService } from '../../core/services/favorito.service';
 export class ProductCardComponent implements OnInit {
   @Input({ required: true }) producto!: Producto;
   
-  // NUEVO: Evento para avisar al padre que muestre la notificación
+  // Evento para avisar al padre que muestre la notificación
   @Output() notificar = new EventEmitter<string>(); 
 
   private carritoService = inject(CarritoService);
@@ -28,6 +28,7 @@ export class ProductCardComponent implements OnInit {
   public errorAgregar: string | null = null;
   public procesandoFavorito = signal(false);
 
+  // El computed leerá el estado ACTUALIZADO del servicio
   public esFavorito = computed(() =>
     this.producto ? this.favoritoService.esFavorito(this.producto.idProducto) : false
   );
@@ -74,15 +75,19 @@ export class ProductCardComponent implements OnInit {
 
     request$.subscribe({
       next: () => {
+        // La actualización visual ocurre AQUÍ porque el 'tap' del servicio ya modificó el Signal.
+        
         this.procesandoFavorito.set(false);
+        
         // EMITIMOS EL MENSAJE AL PADRE
-        const emoji = currentlyFavorite ? '💔' : '⭐';
+        const emoji = currentlyFavorite ? '💔' : '⭐'; // Usa el estado ANTES del cambio
         const actionText = currentlyFavorite ? 'eliminado de' : 'agregado a';
         this.notificar.emit(`${emoji} ${this.producto.nombre} ${actionText} favoritos`);
       },
       error: (err) => {
         console.error('Error favoritos:', err);
         this.procesandoFavorito.set(false);
+        this.notificar.emit(`❌ Error al modificar favoritos.`);
       }
     });
   }

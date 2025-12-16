@@ -1,11 +1,12 @@
 /* === GRID LAYOUT === */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 3fr));
   gap: 30px;
   padding: 40px 20px;
   width: 100%;
   box-sizing: border-box;
+
 }
 
 /* === MENSAJES GLOBALES === */
@@ -25,4 +26,62 @@
 @keyframes slideUp { 
   from { transform: translateY(20px); opacity: 0; } 
   to { transform: translateY(0); opacity: 1; } 
+}
+/* --- CSS: Contenedor de la lista de productos (product-list.component.css) --- */
+
+.grid-productos { 
+    display: grid;
+    /* Desktop/Pantallas grandes: 3 columnas */
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 30px; 
+    width: 100%; 
+}
+
+/* =========================================
+   5. RESPONSIVE (Tableta y Móvil)
+   ========================================= */
+
+/* Aplicar la regla de apilamiento para pantallas hasta 992px */
+@media (max-width: 992px) {
+    
+    /* 1. CRÍTICO: CAMBIAR A LAYOUT DE COLUMNA */
+    .tienda-layout {
+        flex-direction: column; /* Apila Sidebar y Contenido */
+        gap: 25px;
+    }
+
+    /* 2. SIDEBAR (FILTROS) */
+    .tienda-filtros { 
+        width: 100%; /* Ocupa todo el ancho disponible */
+        position: static; /* Desactiva el sticky para que fluya */
+        margin-bottom: 0;
+        padding: 20px; 
+    }
+    
+    /* 3. CONTENIDO (Productos) */
+    .tienda-contenido {
+        /* No necesita cambios, solo fluye debajo del sidebar */
+        width: 100%;
+    }
+
+    /* 4. Banner */
+    .banner-full-width { 
+        height: 250px; 
+        margin-bottom: 20px;
+    }
+    .banner-texto h1 { 
+        font-size: 2.5rem; 
+    }
+}
+/* Media Query Móvil (576px o menos) */
+@media (max-width: 576px) {
+    .grid-productos {
+        grid-template-columns: 1fr; /* Una sola columna */
+        gap: 15px; /* Reducir el espacio vertical entre tarjetas */
+    }
+
+    /* CRÍTICO: Asegúrate de que las tarjetas individuales no tengan padding excesivo */
+    .product-card { 
+        padding: 15px; /* Ajusta el padding interno de la tarjeta si es muy grande */
+    }
 }

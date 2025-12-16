@@ -2,69 +2,149 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@300;400;600&display=swap');
 
 :root {
-  /* --- PALETA CYBERPUNK --- */
-  --color-fondo: #05050b;         /* Negro profundo */
-  --color-panel: #11111b;         /* Gris oscuro para menús/tarjetas */
-  
-  --color-primario: #00f3ff;      /* Cyan Neón (Tu nuevo color principal) */
-  --color-acento: #bc13fe;        /* Púrpura Neón */
-  --color-peligro: #ff003c;       /* Rojo Neón */
-  
-  --color-texto-principal: #e0e6ed;
-  --color-texto-secundario: #94a3b8;
-  --color-blanco: #ffffff;
-  
-  --color-borde: rgba(0, 243, 255, 0.2); /* Bordes sutiles en Cyan */
-  
-  /* --- CONFIGURACIÓN ESTRUCTURAL --- */
-  --container-max-width: 1300px;
-  --borde-radio: 4px; /* Bordes más rectos estilo tech */
-  
-  /* --- EFECTOS --- */
-  --sombra-suave: 0 4px 15px rgba(0, 243, 255, 0.05);
-  --sombra-boton: 0 0 10px rgba(0, 243, 255, 0.4);
-  
-  --fuente-titulos: 'Orbitron', sans-serif;
-  --fuente-principal: 'Rajdhani', sans-serif;
+/* --- PALETA CYBERPUNK --- */
+--color-fondo: #05050b;  /* Negro profundo */
+--color-panel: #11111b; /* Gris oscuro para menús/tarjetas */
+
+--color-primario: #00f3ff; /* Cyan Neón (Tu nuevo color principal) */
+--color-acento: #bc13fe; /* Púrpura Neón */
+--color-peligro: #ff003c;  /* Rojo Neón */
+
+--color-texto-principal: #e0e6ed;
+--color-texto-secundario: #94a3b8;
+--color-blanco: #ffffff;
+
+--color-borde: rgba(0, 243, 255, 0.2); /* Bordes sutiles en Cyan */
+
+/* --- CONFIGURACIÓN ESTRUCTURAL --- */
+--container-max-width: 1300px;
+--borde-radio: 4px; /* Bordes más rectos estilo tech */
+
+/* --- EFECTOS --- */
+--sombra-suave: 0 4px 15px rgba(0, 243, 255, 0.05);
+--sombra-boton: 0 0 10px rgba(0, 243, 255, 0.4);
+
+--fuente-titulos: 'Orbitron', sans-serif;
+--fuente-principal: 'Rajdhani', sans-serif;
 }
 
 /* RESET BÁSICO */
 body {
-  font-family: var(--fuente-principal);
-  background-color: var(--color-fondo);
-  color: var(--color-texto-principal);
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-size: 18px;
-  
-  /* Fondo tecnológico sutil */
-  background-image: 
-    linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-  background-size: 50px 50px;
+font-family: var(--fuente-principal);
+background-color: var(--color-fondo);
+color: var(--color-texto-principal);
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-size: 18px;
+
+/* --- BASE DE FONDO ANIMADO --- */
+position: relative; /* Necesario para el pseudoelemento de neón */
+min-height: 100vh;
+overflow-x: hidden; /* Evita barras de desplazamiento por el neón */
+
+/* 1. Cuadrícula que se mueve */
+background-image: 
+linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+background-size: 50px 50px;
+animation: grid-scroll 60s linear infinite; /* Animación de desplazamiento */
+
+z-index: 1; /* Agrega esto. A veces ayuda a definir una capa base */
+}
+
+/* --- EFECTOS ADICIONALES (Scanlines y Holograma) --- */
+
+/* 2. Scanlines/Ruido sutil */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: -1; /* Detrás del contenido */
+    
+    /* Ruido de TV muy sutil */
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.1) 0.5%,
+        transparent 1%
+    );
+    opacity: 0.2; /* Muy sutil */
+}
+
+/* 3. Holograma Ambiental (Brillo de neón pulsante) */
+body::after {
+    content: '';
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vh; /* Cubre una gran área */
+    height: 80vh;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -2; /* Más detrás aún */
+    
+    /* El degradado central y la animación */
+    background: radial-gradient(
+        circle,
+        rgba(0, 243, 255, 0.1), /* Cyan */
+        rgba(188, 19, 254, 0.05) 50%, /* Púrpura */
+        transparent 70%
+    );
+    animation: neon-color-shift 30s linear infinite alternate;
 }
 
 /* TÍTULOS */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--fuente-titulos);
-  color: var(--color-primario);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+font-family: var(--fuente-titulos);
+color: var(--color-primario);
+text-transform: uppercase;
+letter-spacing: 1px;
 }
 
 /* BOTONES GLOBALES (Estilo Neón) */
 .btn-primary {
-  background-color: transparent;
-  color: var(--color-primario);
-  border: 1px solid var(--color-primario);
-  box-shadow: 0 0 5px var(--color-primario) inset;
-  transition: all 0.3s ease;
+background-color: transparent;
+color: var(--color-primario);
+border: 1px solid var(--color-primario);
+box-shadow: 0 0 5px var(--color-primario) inset;
+transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-  background-color: var(--color-primario);
-  color: #000; /* Texto negro para contraste */
-  box-shadow: 0 0 20px var(--color-primario);
-  transform: translateY(-2px);
+background-color: var(--color-primario);
+color: #000; /* Texto negro para contraste */
+box-shadow: 0 0 20px var(--color-primario);
+transform: translateY(-2px);
+}
+
+/* --- ANIMACIONES --- */
+
+/* Animación de la Cuadrícula del Fondo (Se mueve lentamente) */
+@keyframes grid-scroll {
+    from { background-position: 0 0; }
+    to { background-position: 0 5000px; } /* Desplaza 5000px hacia abajo */
+}
+
+/* Animación de Cambio de Color del Holograma */
+@keyframes neon-color-shift {
+    0% { background: radial-gradient(circle, rgba(0, 243, 255, 0.1), rgba(188, 19, 254, 0.05) 50%, transparent 70%); }
+    100% { background: radial-gradient(circle, rgba(188, 19, 254, 0.1), rgba(0, 243, 255, 0.05) 50%, transparent 70%); }
+}
+
+/* Animación del Botón de Checkout (Mantenida) */
+@keyframes neon-pulse {
+    0% {
+        border-color: #00FFFF; /* CYAN */
+        box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF inset;
+    }
+    50% {
+        border-color: #FF00FF; /* MAGENTA */
+        box-shadow: 0 0 15px #FF00FF, 0 0 30px #FF00FF inset;
+    }
+    100% {
+    border-color: #00FFFF; /* CYAN */
+    box-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF inset;
+    }
 }
